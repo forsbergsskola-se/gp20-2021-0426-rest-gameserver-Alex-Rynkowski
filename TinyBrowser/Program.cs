@@ -1,12 +1,14 @@
 ﻿using System;
+using System.Net.Sockets;
+using System.Text;
 
-namespace TinyBrowser
-{
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            Console.WriteLine("Hello World!");
+namespace TinyBrowser{
+    static class Program{
+        static void Main(string[] args){
+            TcpConnection.ConnectToSite();
+
+            while (true){
+            }
         }
     }
 }
