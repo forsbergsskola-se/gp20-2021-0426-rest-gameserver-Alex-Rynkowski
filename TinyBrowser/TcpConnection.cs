@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,25 +13,17 @@ namespace TinyBrowser{
         const int Port = 80;
 
         int openNewLink = 0;
-        List<string> sitesQue = new();
+        string openPreviousLink = "";
+        readonly UserInput userInput;
 
-        UserInput userInput;
         public TcpConnection(){
             this.userInput = new UserInput(this.sitesDictionary);
-            
         }
 
         public async void ConnectToSite(){
             this.sitesDictionary[Convert.ToInt32(this.openNewLink)] = "";
-            this.sitesQue.Add("");
             while (true){
                 var valueFromWeb = await SendRequest();
-
-                Console.WriteLine($"User input: {this.openNewLink}");
-                Console.WriteLine($"Dictionary: {this.sitesDictionary[Convert.ToInt32(this.openNewLink)]}");
-                foreach (var (key, value) in this.sitesDictionary){
-                    Console.WriteLine($"{key}  {value}");
-                }
 
                 if (Utilities.IsBadRequest(valueFromWeb)){
                     Utilities.PrintOutSites(this.sitesDictionary);
@@ -40,21 +33,12 @@ namespace TinyBrowser{
                     SitesToDictionary(valueFromWeb);
                     Utilities.PrintOutSites(this.sitesDictionary);
                 }
-                
-                this.openNewLink = this.userInput.GetUserChoice<int>();
 
-                // if (this.openNewLink == "b"){
-                //     Console.WriteLine(this.sitesQue.Count);
-                //     this.openNewLink = (this.sitesQue.Count - 2).ToString();
-                // }
-                // else{
-                //     if (!Utilities.IsBadRequest(valueFromWeb))
-                //         this.sitesQue.Add(this.sitesDictionary[Convert.ToInt32(this.openNewLink)]);
-                // }
-
-
-                foreach (var s in this.sitesQue){
-                    Console.WriteLine(s);
+                if (this.userInput.GetUserChoice(out var value)){
+                    this.openNewLink = (int) value;
+                }
+                else{
+                    this.openPreviousLink = (string) value;
                 }
             }
         }
@@ -62,19 +46,24 @@ namespace TinyBrowser{
         async Task<string> SendRequest(){
             var tcpClient = new TcpClient(MainSite, Port);
             var stream = tcpClient.GetStream();
-            await stream.WriteAsync(
-                Encoding.Default.GetBytes(Utilities
-                    .Builder(MainSite, this.sitesDictionary[Convert.ToInt32(this.openNewLink)])
-                    .ToString()));
-
+            await WriteToSite(stream);
             var bytes = new byte[tcpClient.ReceiveBufferSize];
             var receivedBytesLength = await stream.ReadAsync(bytes);
+            Console.WriteLine("Made it here");
             var valueFromWeb = Encoding.Default.GetString(bytes).Remove(receivedBytesLength);
-            // Console.WriteLine($"Site to reach: {Utilities.Builder(MainSite, this.sitesDictionary[this.userChoice])}");
-            // Console.WriteLine(valueFromWeb);
-
             stream.Close();
             return valueFromWeb;
+        }
+
+        async Task WriteToSite(Stream stream){
+            if (this.openPreviousLink.StartsWith('b')){
+                Console.WriteLine(MainSite + this.openPreviousLink.Substring(1));
+                await stream.WriteAsync(Encoding.Default.GetBytes(MainSite + this.openPreviousLink.Substring(1)));
+                return;
+            }
+
+            await stream.WriteAsync(Encoding.Default.GetBytes(Utilities
+                .Builder(MainSite, this.sitesDictionary[this.openNewLink]).ToString()));
         }
 
         void SitesToDictionary(string valueFromWeb){
@@ -103,8 +92,6 @@ namespace TinyBrowser{
 
                 this.sitesDictionary[siteIndex] = $"{foundLink}/";
             }
-
-            Console.WriteLine($"First index in dic: {this.sitesDictionary[0]}");
         }
     }
 }
