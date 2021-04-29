@@ -34,6 +34,10 @@ namespace TinyBrowser{
                     Utilities.PrintOutSites(this.sitesDictionary);
                 }
 
+                foreach (var (key, val) in this.sitesDictionary){
+                    Console.WriteLine($"{key}   {val}");
+                }
+
                 if (this.userInput.GetUserChoice(out var value)){
                     this.openNewLink = (int) value;
                 }

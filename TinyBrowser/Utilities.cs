@@ -4,10 +4,10 @@ using System.Text;
 
 namespace TinyBrowser{
     public static class Utilities{
-        public static StringBuilder Builder(string siteToConnectTo, string newLink){
+        public static StringBuilder Builder(string mainSite, string newLink){
             var builder = new StringBuilder();
             builder.AppendLine($"GET /{newLink} /1.1");
-            builder.AppendLine($"Host: {siteToConnectTo}");
+            builder.AppendLine($"Host: {mainSite}");
             builder.AppendLine("Connection: close");
             builder.AppendLine();
             return builder;
