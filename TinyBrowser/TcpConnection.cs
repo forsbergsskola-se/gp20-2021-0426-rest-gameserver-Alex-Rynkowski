@@ -49,7 +49,6 @@ namespace TinyBrowser{
             await WriteToSite(stream);
             var bytes = new byte[tcpClient.ReceiveBufferSize];
             var receivedBytesLength = await stream.ReadAsync(bytes);
-            Console.WriteLine("Made it here");
             var valueFromWeb = Encoding.Default.GetString(bytes).Remove(receivedBytesLength);
             stream.Close();
             return valueFromWeb;
@@ -57,8 +56,10 @@ namespace TinyBrowser{
 
         async Task WriteToSite(Stream stream){
             if (this.openPreviousLink.StartsWith('b')){
-                Console.WriteLine(MainSite + this.openPreviousLink.Substring(1));
-                await stream.WriteAsync(Encoding.Default.GetBytes(MainSite + this.openPreviousLink.Substring(1)));
+                Console.WriteLine(this.openPreviousLink.Substring(1));
+                await stream.WriteAsync(
+                    Encoding.Default.GetBytes(
+                        Utilities.Builder(MainSite, this.openPreviousLink.Substring(1)).ToString()));
                 return;
             }
 
