@@ -5,10 +5,8 @@ using System.Threading.Tasks;
 
 namespace TinyBrowser{
     public class WowExplorer{
-        
-        
         public async void AddLinksToDictionary(){
-            var tmp = await Testing("Content");
+            var tmp = await ReceiveInfoFromSite("https://worldofwarcraft.com/en-us/");
             var txtStartIndex = 0;
             var siteIndex = 0;
             while (true){
@@ -24,14 +22,11 @@ namespace TinyBrowser{
                 siteIndex++;
             }
 
-            static async Task<string> Testing(string text){
+            static async Task<string> ReceiveInfoFromSite(string site){
                 var httpClient = new HttpClient();
 
-                var parameters = new Dictionary<string, string>();
-                parameters["text"] = text;
-
-                var response = await httpClient.PostAsync("https://worldofwarcraft.com/en-us/",
-                    new FormUrlEncodedContent(parameters));
+                var response = await httpClient.PostAsync(site,
+                    new FormUrlEncodedContent(new Dictionary<string, string>()));
                 var contents = await response.Content.ReadAsStringAsync();
 
                 return contents;
