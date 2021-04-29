@@ -5,49 +5,55 @@ using System.Threading.Tasks;
 
 namespace TinyBrowser{
     public class WowExplorer{
-        public async void AddLinksToDictionary(){
-            var tmp = await ReceiveInfoFromSite("https://worldofwarcraft.com/en-us/");
+        const string wowMainSite = "https://github.com/";
+
+        public async Task<Dictionary<int, string>> AddLinksToDictionary(string site){
+            var sitesDictionary = new Dictionary<int, string>();
+            var siteContent = await ReceiveInfoFromSite(site);
             var txtStartIndex = 0;
             var siteIndex = 0;
+            Console.WriteLine(siteContent);
             while (true){
-                var foundLink = FindTextBetween(tmp, "<a href=\"", "\"", ref txtStartIndex);
+                var foundLink = FindTextBetween(siteContent, "href=\"", "\"", ref txtStartIndex);
 
                 if (foundLink == "") break;
 
-                if (foundLink.StartsWith('/')){
-                    foundLink = foundLink.Substring(1);
-                }
+                // if (foundLink.StartsWith('/')){
+                //     foundLink = foundLink.Substring(1);
+                // }
 
-                Console.WriteLine($"{siteIndex} {foundLink}");
+                sitesDictionary[siteIndex] = foundLink;
                 siteIndex++;
             }
 
-            static async Task<string> ReceiveInfoFromSite(string site){
-                var httpClient = new HttpClient();
+            return sitesDictionary;
+        }
 
-                var response = await httpClient.PostAsync(site,
-                    new FormUrlEncodedContent(new Dictionary<string, string>()));
-                var contents = await response.Content.ReadAsStringAsync();
+        static async Task<string> ReceiveInfoFromSite(string site){
+            var httpClient = new HttpClient();
 
-                return contents;
-            }
+            if (string.IsNullOrEmpty(site))
+                site = wowMainSite;
+            var response = await httpClient.PostAsync(site,
+                new FormUrlEncodedContent(new Dictionary<string, string>()));
+            var contents = await response.Content.ReadAsStringAsync();
+            Console.WriteLine(contents);
+            return contents;
+        }
 
 
-            static string FindTextBetween(string textToSearch, string startText, string endText,
-                ref int startAtIndex){
-                var startIndex = textToSearch.IndexOf(startText, startAtIndex, StringComparison.Ordinal) +
-                                 startText.Length;
-                var endIndex = textToSearch.IndexOf(endText, startIndex, StringComparison.Ordinal);
+        static string FindTextBetween(string textToSearch, string startText, string endText, ref int startAtIndex){
+            var startIndex = textToSearch.IndexOf(startText, startAtIndex, StringComparison.Ordinal) +
+                             startText.Length;
+            var endIndex = textToSearch.IndexOf(endText, startIndex, StringComparison.Ordinal);
 
-                var findLastIndex = textToSearch.LastIndexOf(startText, endIndex, StringComparison.Ordinal);
-                if (startAtIndex > findLastIndex)
-                    return "";
+            var findLastIndex = textToSearch.LastIndexOf(startText, endIndex, StringComparison.Ordinal);
+            if (startAtIndex > findLastIndex)
+                return "";
 
-                startAtIndex = endIndex + 1;
-                var newText = textToSearch.Remove(endIndex).Substring(startIndex);
-
-                return newText;
-            }
+            startAtIndex = endIndex + 1;
+            var newText = textToSearch.Remove(endIndex).Substring(startIndex);
+            return newText;
         }
     }
 }
