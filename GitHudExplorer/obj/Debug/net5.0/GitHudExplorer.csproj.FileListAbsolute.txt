@@ -1,0 +1,16 @@
+F:\Github\gp20-2021-0426-rest-gameserver-Alex-Rynkowski\GitHudExplorer\bin\Debug\net5.0\GitHudExplorer.exe
+F:\Github\gp20-2021-0426-rest-gameserver-Alex-Rynkowski\GitHudExplorer\bin\Debug\net5.0\GitHudExplorer.deps.json
+F:\Github\gp20-2021-0426-rest-gameserver-Alex-Rynkowski\GitHudExplorer\bin\Debug\net5.0\GitHudExplorer.runtimeconfig.json
+F:\Github\gp20-2021-0426-rest-gameserver-Alex-Rynkowski\GitHudExplorer\bin\Debug\net5.0\GitHudExplorer.runtimeconfig.dev.json
+F:\Github\gp20-2021-0426-rest-gameserver-Alex-Rynkowski\GitHudExplorer\bin\Debug\net5.0\GitHudExplorer.dll
+F:\Github\gp20-2021-0426-rest-gameserver-Alex-Rynkowski\GitHudExplorer\bin\Debug\net5.0\ref\GitHudExplorer.dll
+F:\Github\gp20-2021-0426-rest-gameserver-Alex-Rynkowski\GitHudExplorer\bin\Debug\net5.0\GitHudExplorer.pdb
+F:\Github\gp20-2021-0426-rest-gameserver-Alex-Rynkowski\GitHudExplorer\obj\Debug\net5.0\GitHudExplorer.csprojAssemblyReference.cache
+F:\Github\gp20-2021-0426-rest-gameserver-Alex-Rynkowski\GitHudExplorer\obj\Debug\net5.0\GitHudExplorer.GeneratedMSBuildEditorConfig.editorconfig
+F:\Github\gp20-2021-0426-rest-gameserver-Alex-Rynkowski\GitHudExplorer\obj\Debug\net5.0\GitHudExplorer.AssemblyInfoInputs.cache
+F:\Github\gp20-2021-0426-rest-gameserver-Alex-Rynkowski\GitHudExplorer\obj\Debug\net5.0\GitHudExplorer.AssemblyInfo.cs
+F:\Github\gp20-2021-0426-rest-gameserver-Alex-Rynkowski\GitHudExplorer\obj\Debug\net5.0\GitHudExplorer.csproj.CoreCompileInputs.cache
+F:\Github\gp20-2021-0426-rest-gameserver-Alex-Rynkowski\GitHudExplorer\obj\Debug\net5.0\GitHudExplorer.dll
+F:\Github\gp20-2021-0426-rest-gameserver-Alex-Rynkowski\GitHudExplorer\obj\Debug\net5.0\ref\GitHudExplorer.dll
+F:\Github\gp20-2021-0426-rest-gameserver-Alex-Rynkowski\GitHudExplorer\obj\Debug\net5.0\GitHudExplorer.pdb
+F:\Github\gp20-2021-0426-rest-gameserver-Alex-Rynkowski\GitHudExplorer\obj\Debug\net5.0\GitHudExplorer.genruntimeconfig.cache

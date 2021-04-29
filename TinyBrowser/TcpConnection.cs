@@ -19,7 +19,7 @@ namespace TinyBrowser{
         public TcpConnection(){
             this.userInput = new UserInput(this.sitesDictionary);
         }
-
+        
         public async void ConnectToSite(){
             this.sitesDictionary[Convert.ToInt32(this.openNewLink)] = "";
             while (true){
@@ -91,7 +91,7 @@ namespace TinyBrowser{
 
                 siteIndex++;
                 if (foundLink.StartsWith("http")){
-                    this.sitesDictionary[siteIndex] = $"{MainSite}/{foundLink}";
+                    this.sitesDictionary[siteIndex] = $"{foundLink}";
                     continue;
                 }
 
