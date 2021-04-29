@@ -1,0 +1,16 @@
+F:\Github\gp20-2021-0426-rest-gameserver-Alex-Rynkowski\TinyBrowser\bin\Debug\net5.0\TinyBrowser.exe
+F:\Github\gp20-2021-0426-rest-gameserver-Alex-Rynkowski\TinyBrowser\bin\Debug\net5.0\TinyBrowser.deps.json
+F:\Github\gp20-2021-0426-rest-gameserver-Alex-Rynkowski\TinyBrowser\bin\Debug\net5.0\TinyBrowser.runtimeconfig.json
+F:\Github\gp20-2021-0426-rest-gameserver-Alex-Rynkowski\TinyBrowser\bin\Debug\net5.0\TinyBrowser.runtimeconfig.dev.json
+F:\Github\gp20-2021-0426-rest-gameserver-Alex-Rynkowski\TinyBrowser\bin\Debug\net5.0\TinyBrowser.dll
+F:\Github\gp20-2021-0426-rest-gameserver-Alex-Rynkowski\TinyBrowser\bin\Debug\net5.0\ref\TinyBrowser.dll
+F:\Github\gp20-2021-0426-rest-gameserver-Alex-Rynkowski\TinyBrowser\bin\Debug\net5.0\TinyBrowser.pdb
+F:\Github\gp20-2021-0426-rest-gameserver-Alex-Rynkowski\TinyBrowser\obj\Debug\net5.0\TinyBrowser.csprojAssemblyReference.cache
+F:\Github\gp20-2021-0426-rest-gameserver-Alex-Rynkowski\TinyBrowser\obj\Debug\net5.0\TinyBrowser.GeneratedMSBuildEditorConfig.editorconfig
+F:\Github\gp20-2021-0426-rest-gameserver-Alex-Rynkowski\TinyBrowser\obj\Debug\net5.0\TinyBrowser.AssemblyInfoInputs.cache
+F:\Github\gp20-2021-0426-rest-gameserver-Alex-Rynkowski\TinyBrowser\obj\Debug\net5.0\TinyBrowser.AssemblyInfo.cs
+F:\Github\gp20-2021-0426-rest-gameserver-Alex-Rynkowski\TinyBrowser\obj\Debug\net5.0\TinyBrowser.csproj.CoreCompileInputs.cache
+F:\Github\gp20-2021-0426-rest-gameserver-Alex-Rynkowski\TinyBrowser\obj\Debug\net5.0\TinyBrowser.dll
+F:\Github\gp20-2021-0426-rest-gameserver-Alex-Rynkowski\TinyBrowser\obj\Debug\net5.0\ref\TinyBrowser.dll
+F:\Github\gp20-2021-0426-rest-gameserver-Alex-Rynkowski\TinyBrowser\obj\Debug\net5.0\TinyBrowser.pdb
+F:\Github\gp20-2021-0426-rest-gameserver-Alex-Rynkowski\TinyBrowser\obj\Debug\net5.0\TinyBrowser.genruntimeconfig.cache
