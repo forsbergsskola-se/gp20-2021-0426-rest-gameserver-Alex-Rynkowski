@@ -1,4 +1,4 @@
-﻿namespace DefaultNamespace{
+﻿namespace GitHudExplorer{
     public class GitHubUser: IUser{
 
         readonly string user;

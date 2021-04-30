@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using GitHudExplorer.UserData;
+using GitHudExplorer.Utilities;
 
 namespace GitHudExplorer{
     class Program{
@@ -6,12 +9,20 @@ namespace GitHudExplorer{
         const string Language = "en-us";
 
         static void Main(string[] args){
-            IGitHubApi gitHubApi = new GitHubApi();
-            gitHubApi.GetUser("Alex Rynkowski");
+            Run();
             while (true){
+                
             }
         }
 
+        static async void Run(){
+            IGitHubApi gitHubApi = new GitHubApi();
 
+            while (true){
+                Custom.WriteLine("Enter the user you want to lookup...", ConsoleColor.Green);
+                var userInput = Custom.ReadLine(ConsoleColor.Yellow);
+                await gitHubApi.GetUser(userInput);
+            }
+        }
     }
 }
