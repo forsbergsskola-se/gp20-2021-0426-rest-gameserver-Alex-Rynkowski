@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace GitHudExplorer.UserData{
     public class GitHubUser : IUser{
@@ -10,8 +11,14 @@ namespace GitHudExplorer.UserData{
             this.user = user;
         }
 
+        public IRepository Repository(string url){
+            var repo = new Repository(url);
+            return repo;
+        }
+
         public string User => this.userInfo["name"];
 
-        public string Description => $"{this.userInfo["name"]} from {this.userInfo["location"]} is working for {this.userInfo["company"]}";
+        public string Description =>
+            $"{this.userInfo["name"]} from {this.userInfo["location"]} is working for {this.userInfo["company"]}";
     }
 }

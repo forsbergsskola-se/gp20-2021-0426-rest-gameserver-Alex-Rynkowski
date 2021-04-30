@@ -6,19 +6,26 @@ using GitHudExplorer.Utilities;
 
 namespace GitHudExplorer.UserData{
     class GitHubApi : IGitHubApi{
-        Dictionary<string, string> userInfo;
+        readonly Dictionary<string, string> userInfo;
 
-        async Task<bool> UserExists(string user){
-            this.userInfo = new Dictionary<string, string>();
-            var newUser = user.Replace(' ', '-');
+        public GitHubApi(Dictionary<string, string> userInfo){
+            this.userInfo = userInfo;
+        }
+
+        public static async Task<string> ResponseFromServer(string url){
             var httpClient = new HttpClient();
             httpClient.DefaultRequestHeaders.Add("Token", "sda");
             httpClient.DefaultRequestHeaders.Add("User-Agent", "_userAgent");
 
+            httpClient.Timeout = TimeSpan.FromSeconds(2f);
+            return await httpClient.GetStringAsync(url);
+        }
+
+        async Task<bool> UserExists(string user){
+            var newUser = user.Replace(' ', '-');
             string response;
             try{
-                httpClient.Timeout = TimeSpan.FromSeconds(2f);
-                response = await httpClient.GetStringAsync($"https://api.github.com/users/{newUser}");
+                response = await ResponseFromServer($"https://api.github.com/users/{newUser}");
             }
             catch (Exception ex){
                 switch (ex){
