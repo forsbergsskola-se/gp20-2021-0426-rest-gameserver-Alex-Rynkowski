@@ -11,7 +11,6 @@ namespace GitHudExplorer{
         static void Main(string[] args){
             Run();
             while (true){
-                
             }
         }
 
@@ -21,7 +20,11 @@ namespace GitHudExplorer{
             while (true){
                 Custom.WriteLine("Enter the user you want to lookup...", ConsoleColor.Green);
                 var userInput = Custom.ReadLine(ConsoleColor.Yellow);
-                await gitHubApi.GetUser(userInput);
+
+                var user = await gitHubApi.GetUser(userInput);
+                if (user == null) continue;
+
+                Custom.WriteLine(user.Description, ConsoleColor.Cyan);
             }
         }
     }

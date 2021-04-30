@@ -1,12 +1,17 @@
-﻿namespace GitHudExplorer{
-    public class GitHubUser: IUser{
+﻿using System.Collections.Generic;
 
+namespace GitHudExplorer.UserData{
+    public class GitHubUser : IUser{
+        readonly Dictionary<string, string> userInfo;
         readonly string user;
-        public GitHubUser(string user){
+
+        public GitHubUser(Dictionary<string, string> userInfo, string user){
+            this.userInfo = userInfo;
             this.user = user;
         }
 
-        public string Name{ get => this.user; }
-        public string Description{ get; }
+        public string User => this.userInfo["name"];
+
+        public string Description => $"{this.userInfo["name"]} from {this.userInfo["location"]} is working for {this.userInfo["company"]}";
     }
 }

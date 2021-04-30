@@ -1,2 +1,4 @@
-﻿public interface IRepository{
+﻿namespace GitHudExplorer.UserData{
+    public interface IRepository{
+    }
 }

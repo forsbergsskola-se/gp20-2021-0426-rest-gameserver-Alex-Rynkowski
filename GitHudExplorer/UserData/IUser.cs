@@ -1,4 +1,6 @@
-﻿public interface IUser{
-    string Name{ get; }
-    string Description{ get; }
+﻿namespace GitHudExplorer.UserData{
+    public interface IUser{
+        string User{ get; }
+        string Description{ get; }
+    }
 }
