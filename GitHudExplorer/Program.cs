@@ -32,30 +32,38 @@ namespace GitHudExplorer{
 
         static async Task AskForInput(Dictionary<string, string> userInfo, IUser user){
             while (true){
-                Custom.WriteLine("What would you like to do?", ConsoleColor.Yellow);
-                Console.WriteLine("0: Search for new user");
-                Console.WriteLine("1: Check repo");
+                PrintOutChoices();
 
                 var userInput = Console.ReadLine();
-                if (!int.TryParse(userInput, out var userInputResult)){
+                if (!IsInteger(userInput, out var userInputResult)){
                     Custom.WriteLine("Input has to be an integer", ConsoleColor.Red);
                     continue;
                 }
 
                 switch (userInputResult){
                     case 0:
-                        break;
+                        return;
                     case 1:
-                        var repo = await user.Repository().GetRepositoryList(userInfo["repos_url"]);
-                        foreach (var (key, value) in repo){
-                            Custom.WriteLine($"{key}: {value}", ConsoleColor.White);
-                        }
+                        var repositories = await user.Repository().GetRepositories(userInfo["repos_url"]);
+                        Custom.WriteLine("Which repository would you like to investigate?", ConsoleColor.Green);
+                        var repository = Custom.ReadLine(ConsoleColor.Yellow);
+                        await user.Repository().GetRepository(repositories[Convert.ToInt32(repository)]);
                         break;
                     default:
                         Custom.WriteLine("Unknown input", ConsoleColor.Red);
                         continue;
                 }
             }
+        }
+
+        static void PrintOutChoices(){
+            Custom.WriteLine("What would you like to do?", ConsoleColor.Yellow);
+            Console.WriteLine("0: Search for new user");
+            Console.WriteLine("1: Check repo");
+        }
+
+        static bool IsInteger(string userInput, out int userInputResult){
+            return int.TryParse(userInput, out userInputResult);
         }
     }
 }

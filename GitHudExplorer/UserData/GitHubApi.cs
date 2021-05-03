@@ -39,8 +39,8 @@ namespace GitHudExplorer.UserData{
                 .Split(',');
 
             foreach (var s in responseArray){
-                var str = s.Split(':', 2);
-                this.userInfo[str[0]] = str[1];
+                var str = s.Substring(3).Split(':', 2);
+                this.userInfo[str[0]] = str[1][1..];
             }
 
             return true;
