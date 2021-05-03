@@ -12,20 +12,12 @@ namespace GitHudExplorer.UserData{
             this.userInfo = userInfo;
         }
 
-        public static async Task<string> ResponseFromServer(string url){
-            var httpClient = new HttpClient();
-            httpClient.DefaultRequestHeaders.Add("Token", "sda");
-            httpClient.DefaultRequestHeaders.Add("User-Agent", "_userAgent");
-
-            httpClient.Timeout = TimeSpan.FromSeconds(2f);
-            return await httpClient.GetStringAsync(url);
-        }
 
         async Task<bool> UserExists(string user){
             var newUser = user.Replace(' ', '-');
             string response;
             try{
-                response = await ResponseFromServer($"https://api.github.com/users/{newUser}");
+                response = await Connection.GetFromUrl($"https://api.github.com/users/{newUser}");
             }
             catch (Exception ex){
                 switch (ex){
@@ -43,7 +35,6 @@ namespace GitHudExplorer.UserData{
                 return false;
             }
 
-            //TODO remove stuff after this line
             var responseArray = response.Remove(response.Length - 1).Substring(1).Replace("\"", string.Empty)
                 .Split(',');
 

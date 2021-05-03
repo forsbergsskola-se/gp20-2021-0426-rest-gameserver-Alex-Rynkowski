@@ -33,7 +33,7 @@ namespace GitHudExplorer{
 
         static async Task AskForInput(Dictionary<string, string> userInfo, IUser user){
             while (true){
-                Custom.WriteLine("What would you like to do?", ConsoleColor.DarkBlue);
+                Custom.WriteLine("What would you like to do?", ConsoleColor.Yellow);
                 Console.WriteLine("0: Search for new user");
                 Console.WriteLine("1: Check repo");
 
@@ -41,8 +41,11 @@ namespace GitHudExplorer{
                 if (userInput == "0") break;
 
                 if (userInput == "1"){
-                    var repoInfo = new Dictionary<string, string>();
-                    var repo = await user.Repository(userInfo["repos_url"]).GetRepositoryList(userInfo["repos_url"]);
+                    var repo = await user.Repository().GetRepositoryList(userInfo["repos_url"]);
+
+                    foreach (var (key, value) in repo){
+                        Custom.WriteLine($"{key}: {value}", ConsoleColor.White);
+                    }
                 }
             }
         }

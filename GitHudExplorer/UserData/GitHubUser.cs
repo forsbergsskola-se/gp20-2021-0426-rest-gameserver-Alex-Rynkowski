@@ -11,8 +11,8 @@ namespace GitHudExplorer.UserData{
             this.user = user;
         }
 
-        public IRepository Repository(string url){
-            var repo = new Repository(url);
+        public IRepository Repository(){
+            var repo = new Repository();
             return repo;
         }
 

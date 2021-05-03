@@ -3,8 +3,9 @@ using System.Threading.Tasks;
 
 namespace GitHudExplorer.UserData{
     public interface IRepository{
-        Task<List<string>> GetRepositoryList(string url);
+        Task<Dictionary<int, string>> GetRepositoryList(string url);
         
+        Task GetRepository(string url);
         
         string Name{ get; }
         string Description{ get; }
