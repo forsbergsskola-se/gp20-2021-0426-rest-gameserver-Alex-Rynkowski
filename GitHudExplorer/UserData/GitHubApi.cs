@@ -51,7 +51,7 @@ namespace GitHudExplorer.UserData{
             if (!doesExist)
                 return default;
 
-            return new GitHubUser(this.userInfo, userName);
+            return new GitHubUser(this.userInfo);
         }
     }
 }

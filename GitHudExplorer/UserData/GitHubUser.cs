@@ -4,11 +4,9 @@ using System.Collections.Generic;
 namespace GitHudExplorer.UserData{
     public class GitHubUser : IUser{
         readonly Dictionary<string, string> userInfo;
-        readonly string user;
 
-        public GitHubUser(Dictionary<string, string> userInfo, string user){
+        public GitHubUser(Dictionary<string, string> userInfo){
             this.userInfo = userInfo;
-            this.user = user;
         }
 
         public IRepository Repository(){

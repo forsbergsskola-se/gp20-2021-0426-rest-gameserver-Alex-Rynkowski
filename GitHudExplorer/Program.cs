@@ -7,7 +7,6 @@ using GitHudExplorer.Utilities;
 namespace GitHudExplorer{
     class Program{
         static readonly HashSet<string> IgnoreKeyWords = new(){"components", "assets", "login", "logout", "shop"};
-        const string Language = "en-us";
 
         static void Main(string[] args){
             Run();
@@ -38,14 +37,23 @@ namespace GitHudExplorer{
                 Console.WriteLine("1: Check repo");
 
                 var userInput = Console.ReadLine();
-                if (userInput == "0") break;
+                if (!int.TryParse(userInput, out var userInputResult)){
+                    Custom.WriteLine("Input has to be an integer", ConsoleColor.Red);
+                    continue;
+                }
 
-                if (userInput == "1"){
-                    var repo = await user.Repository().GetRepositoryList(userInfo["repos_url"]);
-
-                    foreach (var (key, value) in repo){
-                        Custom.WriteLine($"{key}: {value}", ConsoleColor.White);
-                    }
+                switch (userInputResult){
+                    case 0:
+                        break;
+                    case 1:
+                        var repo = await user.Repository().GetRepositoryList(userInfo["repos_url"]);
+                        foreach (var (key, value) in repo){
+                            Custom.WriteLine($"{key}: {value}", ConsoleColor.White);
+                        }
+                        break;
+                    default:
+                        Custom.WriteLine("Unknown input", ConsoleColor.Red);
+                        continue;
                 }
             }
         }
