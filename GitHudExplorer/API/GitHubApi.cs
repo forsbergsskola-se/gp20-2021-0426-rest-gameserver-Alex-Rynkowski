@@ -7,10 +7,8 @@ using GitHudExplorer.Utilities;
 
 namespace GitHudExplorer.API{
     class GitHubApi : IGitHubApi{
-        readonly Dictionary<string, string> userInfo;
         IUser githubUser;
-        public GitHubApi(Dictionary<string, string> userInfo){
-            this.userInfo = userInfo;
+        public GitHubApi(){
             this.githubUser = new GitHubUser();
         }
 

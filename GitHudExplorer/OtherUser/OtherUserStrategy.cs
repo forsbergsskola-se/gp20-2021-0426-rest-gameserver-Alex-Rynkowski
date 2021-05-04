@@ -7,26 +7,25 @@ using GitHudExplorer.Utilities;
 namespace GitHudExplorer.OtherUser{
     public class OtherUserStrategy{
         public async Task User(){
-            var userInfo = new Dictionary<string, string>();
-            IGitHubApi gitHubApi = new GitHubApi(userInfo);
+            IGitHubApi gitHubApi = new GitHubApi();
             while (true){
                 Custom.WriteLine("Enter the user you want to lookup...", ConsoleColor.Yellow);
                 Console.WriteLine("Go back: \"0\"");
-                
+
                 var userInput = Custom.ReadLine(ConsoleColor.Green);
                 if (userInput == "0")
                     break;
 
                 userInput = userInput.Replace(' ', '-');
-                var user = await gitHubApi.GetUser($"https://api.github.com/users/{userInput}");
+                var user = await gitHubApi.GetUser($"/users/{userInput}");
                 if (user == null) continue;
                 Custom.WriteLine(user.Description(), ConsoleColor.Cyan);
 
-                await AskForInput(userInfo, user);
+                await AskForInput(user);
             }
         }
 
-        static async Task AskForInput(Dictionary<string, string> userInfo, IUser user){
+        async Task AskForInput(IUser user){
             while (true){
                 PrintOutChoices();
 
@@ -40,7 +39,8 @@ namespace GitHudExplorer.OtherUser{
                     case 0:
                         return;
                     case 1:
-                        var repositories = await user.Repository().GetRepositories(userInfo["repos_url"]);
+                        var repositories = await user.Repository().GetRepositories(user.Login);
+                        PrintOutRepos(repositories);
                         Custom.WriteLine("Which repository would you like to investigate?", ConsoleColor.Green);
                         var repository = Custom.ReadLine(ConsoleColor.Yellow);
                         await user.Repository().GetRepository(repositories[Convert.ToInt32(repository)]);
@@ -49,6 +49,12 @@ namespace GitHudExplorer.OtherUser{
                         Custom.WriteLine("Unknown input", ConsoleColor.Red);
                         continue;
                 }
+            }
+        }
+
+        void PrintOutRepos(Dictionary<int, string> repositories){
+            foreach (var (key, value) in repositories){
+                Custom.WriteLine($"{key}: {value}", ConsoleColor.White);
             }
         }
 
