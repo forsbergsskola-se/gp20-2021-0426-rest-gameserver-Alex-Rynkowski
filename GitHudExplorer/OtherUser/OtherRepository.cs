@@ -23,11 +23,14 @@ namespace GitHudExplorer.OtherUser{
 
             return repoDictionary;
         }
-        public async Task GetRepository(string url){
-            var response = await Connection.GetFromUrl(url);
+
+        public async Task GetRepository(string userName, string repositoryName){
+            var response = await Connection.GetFromUrl(repositoryName);
             Console.WriteLine(response);
         }
 
         [JsonPropertyName("name")] public string Name{ get; set; }
+        [JsonPropertyName("open_issues")] public string OpenIssues{ get; set; }
+        [JsonPropertyName("permissions")] public string Permissions{ get; set; }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using GitHudExplorer.Utilities;
 
 namespace GitHudExplorer{
@@ -9,7 +8,7 @@ namespace GitHudExplorer{
 
         static void Main(string[] args){
             Run();
-            while (true){
+            while (Console.ReadKey().Key != ConsoleKey.Escape){
             }
         }
 
@@ -20,7 +19,7 @@ namespace GitHudExplorer{
                 Custom.WriteLine("What do you want to do?", ConsoleColor.Yellow);
                 Console.WriteLine("0: Check out my user (requires private access token)");
                 Console.WriteLine("1: Search for another user");
-                
+
                 int.TryParse(Custom.ReadLine(ConsoleColor.Green), out var userChoice);
 
                 switch (userChoice){
