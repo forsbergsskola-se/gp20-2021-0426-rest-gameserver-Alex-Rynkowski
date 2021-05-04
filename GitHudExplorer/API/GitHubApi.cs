@@ -1,23 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 using GitHudExplorer.Utilities;
 
-namespace GitHudExplorer.UserData{
+namespace GitHudExplorer.API{
     class GitHubApi : IGitHubApi{
         readonly Dictionary<string, string> userInfo;
-
+        IUser githubUser;
         public GitHubApi(Dictionary<string, string> userInfo){
             this.userInfo = userInfo;
+            this.githubUser = new GitHubUser();
         }
 
 
-        async Task<bool> UserExists(string user){
-            var newUser = user.Replace(' ', '-');
+        async Task<bool> UserExists(string url){
             string response;
             try{
-                response = await Connection.GetFromUrl($"https://api.github.com/users/{newUser}");
+                response = await Connection.GetFromUrl(url);
             }
             catch (Exception ex){
                 switch (ex){
@@ -35,13 +36,7 @@ namespace GitHudExplorer.UserData{
                 return false;
             }
 
-            var responseArray = response.Remove(response.Length - 1).Substring(1).Replace("\"", string.Empty)
-                .Split(',');
-
-            foreach (var s in responseArray){
-                var str = s.Substring(3).Split(':', 2);
-                this.userInfo[str[0]] = str[1][1..];
-            }
+            this.githubUser = JsonSerializer.Deserialize<GitHubUser>(response);
 
             return true;
         }
@@ -51,7 +46,7 @@ namespace GitHudExplorer.UserData{
             if (!doesExist)
                 return default;
 
-            return new GitHubUser(this.userInfo);
+            return this.githubUser;
         }
     }
 }

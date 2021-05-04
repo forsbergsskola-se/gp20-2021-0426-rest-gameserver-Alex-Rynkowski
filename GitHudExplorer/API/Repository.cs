@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text.Json;
 using System.Threading.Tasks;
 using GitHudExplorer.Utilities;
 
-namespace GitHudExplorer.UserData{
+namespace GitHudExplorer.API{
     public class Repository : IRepository{
         public async Task<Dictionary<int, string>> GetRepositories(string url){
             var dictionaryIndex = 0;

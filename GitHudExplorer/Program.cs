@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using GitHudExplorer.UserData;
 using GitHudExplorer.Utilities;
 
 namespace GitHudExplorer{
@@ -15,55 +14,27 @@ namespace GitHudExplorer{
         }
 
         static async void Run(){
-            var userInfo = new Dictionary<string, string>();
-            IGitHubApi gitHubApi = new GitHubApi(userInfo);
+            var strategy = new Strategy();
 
             while (true){
-                Custom.WriteLine("Enter the user you want to lookup...", ConsoleColor.Green);
-                var userInput = Custom.ReadLine(ConsoleColor.Yellow);
+                Custom.WriteLine("What do you want to do?", ConsoleColor.Yellow);
+                Console.WriteLine("0: Check out my user (requires private access token)");
+                Console.WriteLine("1: Search for another user");
+                
+                int.TryParse(Custom.ReadLine(ConsoleColor.Green), out var userChoice);
 
-                var user = await gitHubApi.GetUser(userInput);
-                if (user == null) continue;
-                Custom.WriteLine(user.Description, ConsoleColor.Cyan);
-
-                await AskForInput(userInfo, user);
-            }
-        }
-
-        static async Task AskForInput(Dictionary<string, string> userInfo, IUser user){
-            while (true){
-                PrintOutChoices();
-
-                var userInput = Console.ReadLine();
-                if (!IsInteger(userInput, out var userInputResult)){
-                    Custom.WriteLine("Input has to be an integer", ConsoleColor.Red);
-                    continue;
-                }
-
-                switch (userInputResult){
+                switch (userChoice){
                     case 0:
-                        return;
+                        await strategy.User();
+                        break;
                     case 1:
-                        var repositories = await user.Repository().GetRepositories(userInfo["repos_url"]);
-                        Custom.WriteLine("Which repository would you like to investigate?", ConsoleColor.Green);
-                        var repository = Custom.ReadLine(ConsoleColor.Yellow);
-                        await user.Repository().GetRepository(repositories[Convert.ToInt32(repository)]);
+                        await strategy.OtherUser();
                         break;
                     default:
-                        Custom.WriteLine("Unknown input", ConsoleColor.Red);
-                        continue;
+                        Custom.WriteLine("Invalid input", ConsoleColor.Red);
+                        break;
                 }
             }
-        }
-
-        static void PrintOutChoices(){
-            Custom.WriteLine("What would you like to do?", ConsoleColor.Yellow);
-            Console.WriteLine("0: Search for new user");
-            Console.WriteLine("1: Check repo");
-        }
-
-        static bool IsInteger(string userInput, out int userInputResult){
-            return int.TryParse(userInput, out userInputResult);
         }
     }
 }

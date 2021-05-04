@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace GitHudExplorer.UserData{
+namespace GitHudExplorer.API{
     public interface IRepository{
         Task<Dictionary<int, string>> GetRepositories(string url);
         
