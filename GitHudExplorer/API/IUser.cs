@@ -2,7 +2,7 @@
 
 namespace GitHudExplorer.API{
     public interface IUser{
-        IRepository Repository();
+        IRepository Repository(IRepository repository);
 
         string Name{ get; set; }
         string Company{ get; set; }

@@ -39,11 +39,11 @@ namespace GitHudExplorer.OtherUser{
                     case 0:
                         return;
                     case 1:
-                        var repositories = await user.Repository().GetRepositories(user.Login);
+                        var repositories = await user.Repository(new OtherRepository()).GetRepositories(user.Login);
                         PrintOutRepos(repositories);
                         Custom.WriteLine("Which repository would you like to investigate?", ConsoleColor.Green);
                         var repository = Custom.ReadLine(ConsoleColor.Yellow);
-                        await user.Repository().GetRepository(repositories[Convert.ToInt32(repository)]);
+                        await user.Repository(new OtherRepository()).GetRepository(repositories[Convert.ToInt32(repository)]);
                         break;
                     default:
                         Custom.WriteLine("Unknown input", ConsoleColor.Red);

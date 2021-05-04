@@ -4,9 +4,8 @@ using GitHudExplorer.OtherUser;
 
 namespace GitHudExplorer.API{
     public class GitHubUser : IUser{
-        public IRepository Repository(){
-            var repo = new OtherRepository();
-            return repo;
+        public IRepository Repository(IRepository repository) {
+            return repository;
         }
 
         [JsonPropertyName("name")] public string Name{ get; set; }
