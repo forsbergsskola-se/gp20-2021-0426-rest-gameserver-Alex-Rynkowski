@@ -8,6 +8,9 @@ namespace GitHudExplorer{
 
         static void Main(string[] args){
             Run();
+            while (true){
+                
+            }
             while (Console.ReadKey().Key != ConsoleKey.Escape){
             }
         }
