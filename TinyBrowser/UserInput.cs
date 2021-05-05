@@ -11,7 +11,7 @@ namespace TinyBrowser{
         public bool GetUserChoice(out object value, Dictionary<int, string> sitesDictionary){
             while (true){
                 CustomOutputs.ConsoleWriteLine(
-                    $"Type in a number between 0-{sitesDictionary.Count - 1}, or type \"b\" to go back",
+                    $"Type in a number between 0-{sitesDictionary.Count - 1}, or type \"b\" to go back or \"f\" to go forward",
                     ConsoleColor.Green);
                 var userInput = CustomOutputs.ConsoleReadLine(ConsoleColor.Yellow);
 
