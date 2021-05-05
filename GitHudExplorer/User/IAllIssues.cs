@@ -2,10 +2,9 @@
 using System.Threading.Tasks;
 
 namespace GitHudExplorer.User{
-    public interface IIssues{
+    public interface IAllIssues{
         Task<List<string>> GetIssuesList(string userName, string repositoryName);
-        string Title{ get; set; }
-        string Body{ get; set; }
-        string Login{ get; set; }
+
+        IIssue Issue();
     }
 }
