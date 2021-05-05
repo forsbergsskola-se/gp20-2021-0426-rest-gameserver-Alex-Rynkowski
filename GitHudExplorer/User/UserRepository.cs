@@ -9,16 +9,17 @@ using GitHudExplorer.Utilities;
 namespace GitHudExplorer.User{
     public class UserRepository : IRepository{
         public async Task<Dictionary<int, string>> GetRepositories(string user){
-            var newDic = new Dictionary<int, string>();
+            var repoDictionary = new Dictionary<int, string>();
             var response = await Connection.GetFromUrl("/user/repos");
 
             var repositoriesList = JsonSerializer.Deserialize<List<Repositories>>(response);
 
             for (var i = 0; i < repositoriesList.Count; i++){
-                newDic[i] = repositoriesList[i].Name;
+                var repoName = repositoriesList[i].Name;
+                repoDictionary[i + 1] = repoName;
             }
 
-            return newDic;
+            return repoDictionary;
         }
 
         public async Task GetRepository(string userName, string repositoryName){

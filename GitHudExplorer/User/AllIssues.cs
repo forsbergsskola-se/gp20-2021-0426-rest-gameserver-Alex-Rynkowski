@@ -11,8 +11,9 @@ namespace GitHudExplorer.User{
             var responseList = JsonSerializer.Deserialize<List<Issue>>(response);
 
             foreach (var issue in responseList){
-                Console.WriteLine(issue.Title);
-                Console.WriteLine(issue.Body);
+                Custom.WriteLine($"Issue \n{issue.Title}\n", ConsoleColor.White);
+                Console.WriteLine($"Body: \n{issue.Body}");
+                Console.WriteLine("--------------");
             }
 
             return default;

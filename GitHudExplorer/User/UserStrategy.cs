@@ -14,10 +14,13 @@ namespace GitHudExplorer.User{
                 PrintOutAllRepositories(repositories);
                 Custom.WriteLine($"Welcome {user.Name} from {user.Location} -\"{user.Company}\"", ConsoleColor.Blue);
                 Custom.WriteLine(
-                    $"Which repository would you like to investigate? Give me an integer between 0-{repositories.Count - 1}",
+                    $"Which repository would you like to investigate? Give me an integer between 1-{repositories.Count - 1}",
                     ConsoleColor.Yellow);
+                Console.WriteLine("\"0\": To go back");
                 var userInput = Custom.ReadLine(ConsoleColor.Green);
 
+                if (userInput == "0")
+                    break;
                 var tryParse = int.TryParse(userInput, out var result);
 
                 if (!tryParse || result > repositories.Count){
