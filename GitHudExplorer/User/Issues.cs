@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
+using System.Net.Http;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using System.Xml;
 using GitHudExplorer.Utilities;
 
 namespace GitHudExplorer.User{
@@ -15,7 +18,11 @@ namespace GitHudExplorer.User{
             foreach (var issue in responseList){
                 Console.WriteLine(issue.Title);
                 Console.WriteLine(issue.Body);
+
+                await Connection.CreateIssue($"/repos/{userName}/{repositoryName}/issues", "Tesssst",
+                    "lol, wtf is this");
             }
+
 
             return default;
         }

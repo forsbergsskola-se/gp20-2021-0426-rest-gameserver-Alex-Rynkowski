@@ -37,6 +37,7 @@ namespace GitHudExplorer.User{
         public string Permissions{ get; set; }
     }
 
+
     public class Repositories : IRepositories{
         [JsonPropertyName("name")] public string Name{ get; set; }
     }

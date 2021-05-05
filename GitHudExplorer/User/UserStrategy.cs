@@ -11,10 +11,10 @@ namespace GitHudExplorer.User{
             //while (true){
             var user = await gitHubApi.GetUser("/user");
             var repositories = await user.Repository(new UserRepository()).GetRepositories(user.Login);
-
             PrintOutAllRepositories(repositories);
+            Custom.WriteLine($"Welcome {user.Name} from {user.Location} -\"{user.Company}\"", ConsoleColor.Blue);
             Custom.WriteLine(
-                $"Which repository would you like to open? Enter an integer between 0-{repositories.Count - 1}",
+                $"Which repository would you like to investigate? Give me an integer between 0-{repositories.Count - 1}",
                 ConsoleColor.Yellow);
             var userInput = Custom.ReadLine(ConsoleColor.Green);
 
