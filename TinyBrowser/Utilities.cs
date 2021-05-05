@@ -10,6 +10,7 @@ namespace TinyBrowser{
             builder.AppendLine($"Host: {mainSite}");
             builder.AppendLine("Connection: close");
             builder.AppendLine();
+            Console.WriteLine(mainSite + "/" +  newLink);
             return builder;
         }
         
@@ -29,7 +30,7 @@ namespace TinyBrowser{
 
         public static void PrintOutSites(Dictionary<int, string> sites){
             foreach (var (key, value) in sites){
-                CustomOutputs.ConsoleWriteLine($"{key} {value.Replace('/', ' ')} ({value})");
+                CustomOutputs.ConsoleWriteLine($"{key} {value.Replace('/', ' ')}");
             }
         }
 

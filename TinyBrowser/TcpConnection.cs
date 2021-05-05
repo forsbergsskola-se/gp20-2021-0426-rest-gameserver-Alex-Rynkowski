@@ -12,16 +12,15 @@ namespace TinyBrowser{
         const string MainSite = "www.Acme.com";
         const int Port = 80;
 
-        int openNewLink = 0;
-        string openPreviousLink = "";
+        string linkToOpen = "";
         readonly UserInput userInput;
 
         public TcpConnection(){
-            this.userInput = new UserInput(this.sitesDictionary);
+            this.userInput = new UserInput();
         }
-        
+
         public async void ConnectToSite(){
-            this.sitesDictionary[Convert.ToInt32(this.openNewLink)] = "";
+            this.sitesDictionary[0] = "";
             while (true){
                 var valueFromWeb = await SendRequest();
 
@@ -34,15 +33,12 @@ namespace TinyBrowser{
                     Utilities.PrintOutSites(this.sitesDictionary);
                 }
 
-                foreach (var (key, val) in this.sitesDictionary){
-                    Console.WriteLine($"{key}   {val}");
-                }
-
-                if (this.userInput.GetUserChoice(out var value)){
-                    this.openNewLink = (int) value;
+                if (this.userInput.GetUserChoice(out var value, this.sitesDictionary)){
+                    this.linkToOpen = this.sitesDictionary[(int) value];
                 }
                 else{
-                    this.openPreviousLink = (string) value;
+                    this.linkToOpen = (string) value;
+                    Console.WriteLine($"Out value is: {this.linkToOpen}");
                 }
             }
         }
@@ -59,16 +55,8 @@ namespace TinyBrowser{
         }
 
         async Task WriteToSite(Stream stream){
-            if (this.openPreviousLink.StartsWith('b')){
-                Console.WriteLine(this.openPreviousLink.Substring(1));
-                await stream.WriteAsync(
-                    Encoding.Default.GetBytes(
-                        Utilities.Builder(MainSite, this.openPreviousLink.Substring(1)).ToString()));
-                return;
-            }
-
             await stream.WriteAsync(Encoding.Default.GetBytes(Utilities
-                .Builder(MainSite, this.sitesDictionary[this.openNewLink]).ToString()));
+                .Builder(MainSite, this.linkToOpen).ToString()));
         }
 
         void SitesToDictionary(string valueFromWeb){
@@ -84,6 +72,7 @@ namespace TinyBrowser{
                 var foundLink = Utilities.FindTextBetween(valueFromWeb, "<a href=\"", "\"", ref txtStartIndex);
 
                 if (foundLink == "") break;
+                if (foundLink.Contains("mailto") || foundLink.Contains("https")) continue;
 
                 if (foundLink.StartsWith('/')){
                     foundLink = foundLink.Substring(1);

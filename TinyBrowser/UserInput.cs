@@ -4,38 +4,26 @@ using System.Globalization;
 
 namespace TinyBrowser{
     public class UserInput{
-        readonly Dictionary<int, string> sitesDictionary;
+        Stack<string> back = new();
+        Stack<string> forward = new();
+        string currentSite = "";
 
-        Dictionary<int, string> sitesQue = new();
-
-        public UserInput(Dictionary<int, string> sitesDictionary){
-            this.sitesDictionary = sitesDictionary;
-            this.sitesQue[0] = "";
-        }
-
-        public int CurrentSiteIndex{ get; set; }
-
-        public void AddSiteToQue(string site){
-            this.CurrentSiteIndex++;
-            this.sitesQue[this.CurrentSiteIndex] = site;
-        }
-
-        public void RemoveSiteFromQue(){
-            if (this.CurrentSiteIndex == 0) return;
-            this.sitesQue.Remove(this.CurrentSiteIndex);
-            this.CurrentSiteIndex--;
-        }
-
-        public bool GetUserChoice(out object value){
+        public bool GetUserChoice(out object value, Dictionary<int, string> sitesDictionary){
             while (true){
                 CustomOutputs.ConsoleWriteLine(
-                    $"Type in a number between 0-{this.sitesDictionary.Count - 1}, or type \"b\" to go back",
+                    $"Type in a number between 0-{sitesDictionary.Count - 1}, or type \"b\" to go back",
                     ConsoleColor.Green);
                 var userInput = CustomOutputs.ConsoleReadLine(ConsoleColor.Yellow);
 
                 if (IsNumeric(userInput, out var numericInput)){
-                    if (IsValidNumber(ref numericInput)){
+                    if (IsValidNumber(ref numericInput, sitesDictionary)){
+                        this.forward.Clear();
                         value = numericInput;
+                        this.back.Push(this.currentSite);
+                        Console.WriteLine($"Current site is: {this.currentSite}");
+                        this.currentSite = sitesDictionary[numericInput];
+                        this.forward.Push(this.currentSite);
+                        Console.WriteLine($"Forward site: {this.forward.Peek()}  back site: {this.back.Peek()}");
                         return true;
                     }
 
@@ -44,7 +32,8 @@ namespace TinyBrowser{
                 }
 
                 if (IsValidCharacter(ref userInput)){
-                    value = "b" + GetPreviousSite(userInput);
+                    value = GetSite(userInput);
+                    this.currentSite = (string) value;
                     return false;
                 }
 
@@ -59,17 +48,29 @@ namespace TinyBrowser{
             return int.TryParse(s, NumberStyles.Integer, new NumberFormatInfo(), out userChoice);
         }
 
-        bool IsValidNumber(ref int value){
-            return value < 0 || value > this.sitesDictionary.Count - 1;
+        bool IsValidNumber(ref int value, Dictionary<int, string> sitesDictionary){
+            return value < 0 || value < sitesDictionary.Count - 1;
         }
 
         bool IsValidCharacter(ref string value){
-            return value == "b";
+            return value is "b" or "f";
         }
 
-        string GetPreviousSite(string value){
-            if (value == "b"){
-                return this.CurrentSiteIndex <= 1 ? this.sitesQue[0] : this.sitesQue[this.CurrentSiteIndex - 1];
+        string GetSite(string value){
+            //Console.WriteLine($"Forward site: {this.forward.Peek()}  back site: {this.back.Peek()}");
+            if (value == "b" && this.back.Count > 0){
+                this.forward.Push(this.currentSite);
+                return this.back.Pop();
+            }
+
+            if (this.forward.Peek() == this.currentSite){
+                return this.forward.Peek();
+            }
+
+            if (value == "f" && this.forward.Count > 0){
+                Console.WriteLine("should not be here");
+                this.back.Push(this.currentSite);
+                return this.forward.Pop();
             }
 
             return "";
