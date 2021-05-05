@@ -30,7 +30,7 @@ namespace GitHudExplorer.OtherUser{
         }
 
         [JsonPropertyName("name")] public string Name{ get; set; }
-        [JsonPropertyName("open_issues")] public string OpenIssues{ get; set; }
-        [JsonPropertyName("permissions")] public string Permissions{ get; set; }
+        public string OpenIssues{ get; set; }
+        public string Permissions{ get; set; }
     }
 }
