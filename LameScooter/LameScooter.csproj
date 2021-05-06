@@ -11,4 +11,10 @@
     </Compile>
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="scooter.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
