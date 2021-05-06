@@ -12,7 +12,7 @@ namespace LameScooter{
     class Program{
         static async Task Main(string[] args){
             if (args[0].Any(char.IsDigit)){
-                throw new ArgumentException($"\"{args[0]}\" is an invalid argument");
+                throw new ArgumentException("Invalid argument");
             }
 
             ILameScooterRental lameScooterRental = new OfflineLameScooterRental();
@@ -22,15 +22,24 @@ namespace LameScooter{
     }
 
     public class OfflineLameScooterRental : ILameScooterRental{
-        async Task<IEnumerable<ScootersesDataList>> ScooterDataToList(){
+        async Task<List<ScootersesDataList>> ScooterDataToList(){
             var jsonFile = await File.ReadAllTextAsync("scooter.json");
             return JsonSerializer.Deserialize<List<ScootersesDataList>>(jsonFile);
         }
 
         public async Task<int> GetScooterCountInStation(string stationName){
-            return (from jsonData in await ScooterDataToList()
+            var scooterDataList = await ScooterDataToList();
+            if (!Exists(scooterDataList, stationName)){
+                throw new NotFoundException($"{stationName} does not exist");
+            }
+
+            return (from jsonData in scooterDataList
                 where stationName == jsonData.Name
                 select jsonData.BikesAvailable).Sum();
+        }
+
+        static bool Exists(IEnumerable<ScootersesDataList> scootersDataLists, string argument){
+            return scootersDataLists.Any(list => list.Name == argument);
         }
     }
 
