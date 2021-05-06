@@ -11,6 +11,10 @@ using System.Threading.Tasks;
 namespace LameScooter{
     class Program{
         static async Task Main(string[] args){
+            if (args[0].Any(char.IsDigit)){
+                throw new ArgumentException($"\"{args[0]}\" is an invalid argument");
+            }
+
             ILameScooterRental lameScooterRental = new OfflineLameScooterRental();
             var count = await lameScooterRental.GetScooterCountInStation(args[0]);
             Console.WriteLine($"Number of available scooters in {args[0]}: {count}");
