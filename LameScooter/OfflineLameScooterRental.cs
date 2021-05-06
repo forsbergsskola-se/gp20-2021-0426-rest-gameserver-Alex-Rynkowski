@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace LameScooter{
     public class OfflineLameScooterRental : ILameScooterRental{
-        async Task<List<ScootersesDataList>> ScooterDataToList(){
-            return JsonSerializer.Deserialize<List<ScootersesDataList>>(
+        async Task<List<ScootersDataList>> ScooterDataToList(){
+            return JsonSerializer.Deserialize<List<ScootersDataList>>(
                 await Utilities.ReadFromFile.ReadFile("scooter.json"));
         }
 
@@ -22,7 +22,7 @@ namespace LameScooter{
                 select jsonData.BikesAvailable).Sum();
         }
 
-        static bool Exists(IEnumerable<ScootersesDataList> scootersDataLists, string argument){
+        static bool Exists(IEnumerable<ScootersDataList> scootersDataLists, string argument){
             return scootersDataLists.Any(list => list.Name == argument);
         }
     }

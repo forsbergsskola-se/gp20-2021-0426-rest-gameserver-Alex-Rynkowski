@@ -10,15 +10,18 @@ namespace LameScooter{
                 switch (args[1]){
                     case "offline":
                         ILameScooterRental lameScooterRental = new OfflineLameScooterRental();
-                        var count = await lameScooterRental.GetScooterCountInStation(args[0]);
-                        Console.WriteLine($"Number of available scooters in {args[0]}: {count}");
+                        var offlineTimeCount = await lameScooterRental.GetScooterCountInStation(args[0]);
+                        Console.WriteLine($"Number of available scooters in {args[0]}: {offlineTimeCount}");
                         break;
                     case "deprecated":
-                        var scooters = new DeprecatedLameScooterRental();
-                        var result = await scooters.GetScooterCountInStation(args[0]);
-                        Console.WriteLine(result);
+                        ILameScooterRental deprecatedScooters = new DeprecatedLameScooterRental();
+                        var deprecatedCount = await deprecatedScooters.GetScooterCountInStation(args[0]);
+                        Console.WriteLine($"Number of available scooters in {args[0]}: {deprecatedCount}");
                         break;
                     case "realtime":
+                        ILameScooterRental realTimeScooters = new RealTimeLameScooterRental();
+                        var realTimeCount = await realTimeScooters.GetScooterCountInStation(args[0]);
+                        Console.WriteLine($"Number of available scooters in {args[0]}: {realTimeCount}");
                         break;
                     default:
                         throw new ArgumentException("Invalid argument");

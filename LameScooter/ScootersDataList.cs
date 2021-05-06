@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 
 namespace LameScooter{
-    public class ScootersesDataList : IScootersDataList{
+    public class ScootersDataList : IScootersDataList{
         [JsonPropertyName("id")] public string Id{ get; set; }
         [JsonPropertyName("name")] public string Name{ get; set; }
         [JsonPropertyName("x")] public float X{ get; set; }
