@@ -1,4 +1,4 @@
-[
+([
         {
             "id": "1215",
             "name": "Luhtimäki",
@@ -8117,4 +8117,4 @@
             ],
             "realTimeData": true
         }
-    ]
+    ]);

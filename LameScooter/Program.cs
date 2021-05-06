@@ -1,35 +1,43 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text.Json;
 using System.Threading.Tasks;
+using MongoDB.Bson;
+using MongoDB.Driver;
+using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Attributes;
 
 //Assignment 3:
 //https://github.com/marczaku/GP20-2021-0426-Rest-Gameserver/blob/main/assignments/assignment3.md
 namespace LameScooter{
     class Program{
         static async Task Main(string[] args){
-            try{
-                switch (args[1]){
-                    case "offline":
-                        ILameScooterRental lameScooterRental = new OfflineLameScooterRental();
-                        var offlineTimeCount = await lameScooterRental.GetScooterCountInStation(args[0]);
-                        Console.WriteLine($"Number of available scooters in {args[0]}: {offlineTimeCount}");
-                        break;
-                    case "deprecated":
-                        ILameScooterRental deprecatedScooters = new DeprecatedLameScooterRental();
-                        var deprecatedCount = await deprecatedScooters.GetScooterCountInStation(args[0]);
-                        Console.WriteLine($"Number of available scooters in {args[0]}: {deprecatedCount}");
-                        break;
-                    case "realtime":
-                        ILameScooterRental realTimeScooters = new RealTimeLameScooterRental();
-                        var realTimeCount = await realTimeScooters.GetScooterCountInStation(args[0]);
-                        Console.WriteLine($"Number of available scooters in {args[0]}: {realTimeCount}");
-                        break;
-                    default:
-                        throw new ArgumentException("Invalid argument");
+            var client =
+                new MongoClient(
+                    "mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&ssl=false");
+
+            var database = client.GetDatabase("LameScooters");
+            var collection = database.GetCollection<BsonDocument>("inventory");
+
+            var tmp = await collection.Find(new BsonDocument()).ToListAsync();
+
+            Dictionary<BsonValue, Dictionary<string, BsonValue>> newDic =
+                new Dictionary<BsonValue, Dictionary<string, BsonValue>>();
+
+            foreach (var t in tmp){
+                foreach (var id in t.Elements){
+                    if (id.Name == "_id"){
+                        newDic[id.Value] = new Dictionary<string, BsonValue>();
+                        foreach (var tElement in t.Elements){
+                            newDic[id.Value][tElement.Name] = tElement.Value;
+                        }
+                    }
                 }
             }
-            catch (IndexOutOfRangeException){
-                Console.WriteLine("Argument 2 has to be: \"offline\", \"deprecated\" or \"realtime\"");
-                throw;
+
+            foreach (var (key, value) in newDic){
+                if (value["bikesAvailable"] > 0)
+                    Console.WriteLine($"Bikes available at- {value["name"]}: {value["bikesAvailable"]}");
             }
         }
     }
