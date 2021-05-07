@@ -1,25 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Text.Json;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace LameScooter{
     public class RealTimeLameScooterRental : ILameScooterRental{
-        async Task<List<ScootersDataList>> ScooterDataList(){
+        async Task<StationsList> ScooterDataList(){
             var client = new HttpClient{
                 BaseAddress = new Uri(
                     "https://raw.githubusercontent.com/marczaku/GP20-2021-0426-Rest-Gameserver/main/assignments/scooters.json")
             };
             var response = await client.GetStringAsync(client.BaseAddress);
-            return JsonSerializer.Deserialize<List<ScootersDataList>>(response);
+            return JsonConvert.DeserializeObject<StationsList>(response);
         }
 
         public async Task<int> GetScooterCountInStation(string stationName){
             var resultList = await ScooterDataList();
-            return (from result in resultList where stationName == result.Name select result.BikesAvailable)
-                .Sum();
+            return (from s in resultList.Stations where stationName == s.Name select s.BikesAvailable).FirstOrDefault();
         }
     }
 }

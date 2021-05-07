@@ -9,15 +9,16 @@ namespace LameScooter{
             var dataList = new Dictionary<string, int>();
             var txtFile = await Utilities.ReadFromFile.ReadFile("scooters.txt");
             var splitText = txtFile.Split(" : ");
-            for (var i = 0; i < splitText.Length; i += 2){
+            for (var i = 0; i < splitText.Length; i++){
+                if (i + 1 == splitText.Length) break;
+                if (i < 0) continue;
                 var nr = splitText[i + 1];
-                var str = "";
-                for (var j = 0; j < nr.Length; j++){
-                    if (!char.IsDigit(nr[j])) continue;
-                    str += nr[j];
-                    j++;
-                }
-                dataList[splitText[i]] = Convert.ToInt32(str);
+                var txt = splitText[i];
+                var str = txt.Where(t => !char.IsDigit(t)).Aggregate("", (current, t) => current + t);
+
+                var strNr = nr.Where(char.IsDigit).Aggregate("", (current, t) => current + t);
+
+                dataList[str.Trim()] = Convert.ToInt32(strNr);
             }
 
             return dataList;
