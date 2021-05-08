@@ -18,7 +18,7 @@ namespace MMORPG.Controllers{
         public void ConfigureServices(IServiceCollection services){
             services.AddControllers();
             
-            services.AddScoped<IRepository, FileRepository>();
+            services.AddScoped<IRepository, MongoDbRepository>();
             services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo{Title = "MMORPG", Version = "v1"}); });
         }
 
