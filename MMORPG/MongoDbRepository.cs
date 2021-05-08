@@ -57,8 +57,17 @@ namespace MMORPG{
             throw new NotImplementedException();
         }
 
-        public Task<Player> Delete(Guid id){
-            throw new NotImplementedException();
+
+        public async Task<Player> Delete(Guid id){
+            Player player;
+            var filter = Builders<BsonDocument>.Filter.Eq(nameof(player.Id), id.ToString());
+            var foundPlayer = await this.collection.Find(filter).SingleAsync();
+            //await this.collection.DeleteOneAsync(filter);
+            player = BsonSerializer.Deserialize<Player>(foundPlayer);
+            player.IsDeleted = true;
+            Custom.WriteLine($"\"{player.Name}\" at level \"{player.Level}\"\nIs deleted: {player.IsDeleted} ",
+                ConsoleColor.White);
+            return player;
         }
     }
 }
