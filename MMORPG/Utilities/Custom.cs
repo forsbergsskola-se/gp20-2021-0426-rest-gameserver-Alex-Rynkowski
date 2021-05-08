@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 
 namespace MMORPG.Utilities{
     public static class Custom{
@@ -14,6 +15,13 @@ namespace MMORPG.Utilities{
         public static string ReadLine(ConsoleColor color){
             Console.ForegroundColor = color;
             return Console.ReadLine();
+        }
+
+        public static void MultiWriteLine(ConsoleColor color, params string[] args){
+            Console.ForegroundColor = color;
+            foreach (var t in args){
+                Console.WriteLine(t);
+            }
         }
     }
 }

@@ -17,9 +17,7 @@ namespace MMORPG{
         readonly IMongoCollection<BsonDocument> collection;
 
         public MongoDbRepository(){
-            var client = new MongoClient("mongodb://localhost:27017");
-            var database = client.GetDatabase("game");
-            this.collection = database.GetCollection<BsonDocument>("Players");
+            this.collection = DatabaseConnection.GetDatabase().GetCollection<BsonDocument>("Players");
         }
 
         public async Task<Player> Get(Guid id){
@@ -32,16 +30,24 @@ namespace MMORPG{
 
         public async Task<List<Player>> GetAll(){
             var allPlayers = await this.collection.Find(_ => true).ToListAsync();
-            return allPlayers.Select(t => BsonSerializer.Deserialize<Player>(t)).ToList();
+            return allPlayers.Select(player => BsonSerializer.Deserialize<Player>(player))
+                .Where(playerDe => !playerDe.IsDeleted).ToList();
         }
 
         public async Task<Player> Create(Player player){
             Custom.WriteLine("Enter character name:", ConsoleColor.Yellow);
-            player.Name = Custom.ReadLine(ConsoleColor.DarkGreen);
-            SetupPlayerStandardValues(player);
+            var newPlayer = new NewPlayer(Custom.ReadLine(ConsoleColor.DarkGreen));
+            newPlayer.SetupNewPlayer(player);
             await SendPlayerDataToMongo(player);
-            Custom.WriteLine($"Character \"{player.Name}\" created with id \"{player.Id}\".", ConsoleColor.White);
+            PrintOutInfo(player);
             return player;
+        }
+
+        static void PrintOutInfo(Player player){
+            Custom.MultiWriteLine(ConsoleColor.White,
+                $"Id: {player.Id}", $"Name: {player.Name}", $"Level: {player.Level}",
+                $"Current exp: {player.CurrentExperience}", $"Exp to next level: {player.ExperienceToNextLevel}",
+                $"Created: {player.CreationTime}");
         }
 
         async Task SendPlayerDataToMongo(Player player){
@@ -50,23 +56,16 @@ namespace MMORPG{
             await this.collection.InsertOneAsync(bsonDocument);
         }
 
-        static void SetupPlayerStandardValues(Player player){
-            player.Id = Guid.NewGuid();
-            player.Score = 0;
-            player.Level = 1;
-            player.IsDeleted = false;
-            player.CreationTime = DateTime.Now;
-        }
-
         public Task<Player> Modify(Guid id, ModifiedPlayer player){
             throw new NotImplementedException();
         }
 
 
         public async Task<Player> Delete(Guid id){
+            var filter = Builders<BsonDocument>.Filter.Eq(nameof(Player.Id), id.ToString());
+            var update = Builders<BsonDocument>.Update.Set("IsDeleted", true);
+            await this.collection.UpdateOneAsync(filter, update, new UpdateOptions{IsUpsert = false});
             var player = await Get(id);
-            player.IsDeleted = true;
-            //await this.collection.DeleteOneAsync(filter);
             Custom.WriteLine($"\"{player.Name}\" at level \"{player.Level}\"\nIs deleted: {player.IsDeleted} ",
                 ConsoleColor.White);
             return player;
