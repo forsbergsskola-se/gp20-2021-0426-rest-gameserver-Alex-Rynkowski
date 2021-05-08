@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using MMORPG.Utilities;
@@ -8,7 +7,6 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Bson;
 
 namespace MMORPG{
     //Your data should follow this format:
@@ -16,7 +14,7 @@ namespace MMORPG{
     //* Players should be stored in a collection called players
     //* Items should be stored in a list inside the Player document
     public class MongoDbRepository : IRepository{
-        IMongoCollection<BsonDocument> collection;
+        readonly IMongoCollection<BsonDocument> collection;
 
         public MongoDbRepository(){
             var client = new MongoClient("mongodb://localhost:27017");
@@ -24,8 +22,12 @@ namespace MMORPG{
             this.collection = database.GetCollection<BsonDocument>("Players");
         }
 
-        public Task<Player> Get(Guid id){
-            throw new NotImplementedException();
+        public async Task<Player> Get(Guid id){
+            Player player;
+            var filter = Builders<BsonDocument>.Filter.Eq(nameof(player.Id), id.ToString());
+            var foundPlayer = await this.collection.Find(filter).SingleAsync();
+            player = BsonSerializer.Deserialize<Player>(foundPlayer);
+            return player;
         }
 
         public async Task<List<Player>> GetAll(){
@@ -62,12 +64,9 @@ namespace MMORPG{
 
 
         public async Task<Player> Delete(Guid id){
-            Player player;
-            var filter = Builders<BsonDocument>.Filter.Eq(nameof(player.Id), id.ToString());
-            var foundPlayer = await this.collection.Find(filter).SingleAsync();
-            //await this.collection.DeleteOneAsync(filter);
-            player = BsonSerializer.Deserialize<Player>(foundPlayer);
+            var player = await Get(id);
             player.IsDeleted = true;
+            //await this.collection.DeleteOneAsync(filter);
             Custom.WriteLine($"\"{player.Name}\" at level \"{player.Level}\"\nIs deleted: {player.IsDeleted} ",
                 ConsoleColor.White);
             return player;
