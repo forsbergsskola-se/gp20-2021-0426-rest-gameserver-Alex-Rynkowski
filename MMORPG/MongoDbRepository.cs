@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
+using MMORPG.Utilities;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
@@ -30,12 +31,26 @@ namespace MMORPG{
         }
 
         public async Task<Player> Create(Player player){
-            var newPlayer = player;
-            newPlayer.Name = "Alex Holmes";
-            var json = JsonConvert.SerializeObject(newPlayer);
-            var doc = BsonDocument.Parse(json);
-            await this.collection.InsertOneAsync(doc);
-            return newPlayer;
+            Custom.WriteLine("Enter character name:", ConsoleColor.Yellow);
+            player.Name = Custom.ReadLine(ConsoleColor.DarkGreen);
+            SetupPlayerStandardValues(player);
+            await SendPlayerDataToMongo(player);
+            Custom.WriteLine($"Character \"{player.Name}\" created with id \"{player.Id}\".", ConsoleColor.White);
+            return player;
+        }
+
+        async Task SendPlayerDataToMongo(Player player){
+            var serializedPlayer = JsonConvert.SerializeObject(player);
+            var bsonDocument = BsonDocument.Parse(serializedPlayer);
+            await this.collection.InsertOneAsync(bsonDocument);
+        }
+
+        static void SetupPlayerStandardValues(Player player){
+            player.Id = Guid.NewGuid();
+            player.Score = 0;
+            player.Level = 1;
+            player.IsDeleted = false;
+            player.CreationTime = DateTime.Now;
         }
 
         public Task<Player> Modify(Guid id, ModifiedPlayer player){

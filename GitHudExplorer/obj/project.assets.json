@@ -20,12 +20,14 @@
       "outputPath": "F:\\Github\\gp20-2021-0426-rest-gameserver-Alex-Rynkowski\\GitHudExplorer\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\alexr\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\alexr\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net5.0"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
