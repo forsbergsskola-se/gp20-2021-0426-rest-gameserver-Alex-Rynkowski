@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using MMORPG.Utilities;
 using MongoDB.Bson;
@@ -26,8 +28,9 @@ namespace MMORPG{
             throw new NotImplementedException();
         }
 
-        public Task<Player[]> GetAll(){
-            throw new NotImplementedException();
+        public async Task<List<Player>> GetAll(){
+            var allPlayers = await this.collection.Find(_ => true).ToListAsync();
+            return allPlayers.Select(t => BsonSerializer.Deserialize<Player>(t)).ToList();
         }
 
         public async Task<Player> Create(Player player){

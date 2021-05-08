@@ -15,7 +15,12 @@ namespace MMORPG{
         public static async Task Main(string[] args){
             var mongo = new MongoDbRepository();
             //await mongo.Create(new Player());
-            await mongo.Delete(Guid.Parse("4adf61f7-b9fe-4f19-9369-728485ca8c16"));
+            var tmp = await mongo.GetAll();
+
+            foreach (var player in tmp){
+                Console.WriteLine(player.Name);
+            }
+            //await mongo.Delete(Guid.Parse("4adf61f7-b9fe-4f19-9369-728485ca8c16"));
 
             //await CreateHostBuilder(args).Build().RunAsync();
         }
