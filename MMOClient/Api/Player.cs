@@ -15,8 +15,8 @@ namespace Client.Api{
         public int ExperienceToNextLevel{ get; set; }
 
         public async Task<Player> Get(Guid id){
-            var player = await ApiConnection.GetResponse<IPlayer>("/Get");
-            return (Player) player;
+            var player = await ApiConnection.GetResponse<Player>("/Get");
+            return player;
         }
 
         public async Task<List<Player>> GetAll(){
