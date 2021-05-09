@@ -14,16 +14,7 @@ namespace MMORPG{
         //my ID: Guid.Parse("0801cbfe-3867-4224-9730-b7704aec44a9");
         public static async Task Main(string[] args){
             var mongo = new MongoDbRepository();
-            //var player = await mongo.Get(Guid.Parse("4adf61f7-b9fe-4f19-9369-728485ca8c16"));
-            await mongo.Create(new Player());
-            // var tmp = await mongo.GetAll();
-            //
-            // foreach (var player in tmp){
-            //     Console.WriteLine(player.Name);
-            // }
-            //await mongo.Delete(Guid.Parse("6fabe85b-4cca-40d9-be49-3c4220054eb9"));
-
-            //await CreateHostBuilder(args).Build().RunAsync();
+            await CreateHostBuilder(args).Build().RunAsync();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>

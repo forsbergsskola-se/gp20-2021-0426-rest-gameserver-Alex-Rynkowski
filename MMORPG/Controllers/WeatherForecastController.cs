@@ -5,8 +5,8 @@ using Microsoft.Extensions.Logging;
 
 namespace MMORPG.Controllers
 {
-    [ApiController]
-    [Route("[controller]")]
+    // [ApiController]
+    // [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
     {
         private static readonly string[] Summaries = new[]
@@ -21,8 +21,9 @@ namespace MMORPG.Controllers
 
         [HttpGet]
         public IEnumerable<Player> Get(){
-            return Enumerable.Range(1, 5).Select(i => new Player(){
-            }).ToArray();
+            return default;
+            // return Enumerable.Range(1, 5).Select(i => new Player(){
+            // }).ToArray();
             //var rng = new Random();
             // return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             // {

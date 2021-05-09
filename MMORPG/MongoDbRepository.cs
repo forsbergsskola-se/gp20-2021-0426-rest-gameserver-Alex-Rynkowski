@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using MMORPG.Utilities;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
@@ -13,6 +14,8 @@ namespace MMORPG{
     //* You can name your database to game
     //* Players should be stored in a collection called players
     //* Items should be stored in a list inside the Player document
+    [ApiController]
+    [Route("[controller]")]
     public class MongoDbRepository : IRepository{
         readonly IMongoCollection<BsonDocument> collection;
 
@@ -20,6 +23,7 @@ namespace MMORPG{
             this.collection = DatabaseConnection.GetDatabase().GetCollection<BsonDocument>("Players");
         }
 
+        [HttpGet("Get player: {id}")]
         public async Task<Player> Get(Guid id){
             Player player;
             var filter = Builders<BsonDocument>.Filter.Eq(nameof(player.Id), id.ToString());
@@ -28,15 +32,16 @@ namespace MMORPG{
             return player;
         }
 
+        [HttpGet("Get all players")]
         public async Task<List<Player>> GetAll(){
             var allPlayers = await this.collection.Find(_ => true).ToListAsync();
             return allPlayers.Select(player => BsonSerializer.Deserialize<Player>(player))
                 .Where(playerDe => !playerDe.IsDeleted).ToList();
         }
 
-        public async Task<Player> Create(Player player){
-            Custom.WriteLine("Enter character name:", ConsoleColor.Yellow);
-            var newPlayer = new NewPlayer(Custom.ReadLine(ConsoleColor.DarkGreen));
+        [HttpPost("Create new player: {name}")]
+        public async Task<Player> Create(Player player, string name){
+            var newPlayer = new NewPlayer(name);
             newPlayer.SetupNewPlayer(player);
             await SendPlayerDataToMongo(player);
             PrintOutInfo(player);
@@ -56,11 +61,13 @@ namespace MMORPG{
             await this.collection.InsertOneAsync(bsonDocument);
         }
 
+        [HttpPost("Modify player: {id}")]
         public Task<Player> Modify(Guid id, ModifiedPlayer player){
             throw new NotImplementedException();
         }
 
 
+        [HttpPost("Delete player: {id}")]
         public async Task<Player> Delete(Guid id){
             var filter = Builders<BsonDocument>.Filter.Eq(nameof(Player.Id), id.ToString());
             var update = Builders<BsonDocument>.Update.Set("IsDeleted", true);
