@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using MMORPG.Exceptions;
 using MMORPG.Utilities;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
@@ -23,23 +24,26 @@ namespace MMORPG.Api{
             this.collection = DatabaseConnection.GetDatabase().GetCollection<BsonDocument>("Players");
         }
 
-        [HttpGet("Get player: {id}")]
+        [HttpGet("Get/{id:guid}")]
         public async Task<Player> Get(Guid id){
             Player player;
             var filter = Builders<BsonDocument>.Filter.Eq(nameof(player.Id), id.ToString());
             var foundPlayer = await this.collection.Find(filter).SingleAsync();
             player = BsonSerializer.Deserialize<Player>(foundPlayer);
-            return player;
+
+            if (!player.IsDeleted) return player;
+
+            throw new NotFoundException("Player does not exist or has been deleted");
         }
 
-        [HttpGet("Get all players")]
+        [HttpGet("GetAll")]
         public async Task<List<Player>> GetAll(){
             var allPlayers = await this.collection.Find(_ => true).ToListAsync();
             return allPlayers.Select(player => BsonSerializer.Deserialize<Player>(player))
                 .Where(playerDe => !playerDe.IsDeleted).ToList();
         }
 
-        [HttpPost("Create new player: {name}")]
+        [HttpPost("Create/{name}")]
         public async Task<Player> Create(Player player, string name){
             var newPlayer = new NewPlayer(name);
             newPlayer.SetupNewPlayer(player);
@@ -53,13 +57,13 @@ namespace MMORPG.Api{
             await this.collection.InsertOneAsync(bsonDocument);
         }
 
-        [HttpPost("Modify player: {id}")]
+        [HttpPost("Modify/{id:guid}")]
         public Task<Player> Modify(Guid id, ModifiedPlayer player){
             throw new NotImplementedException();
         }
 
 
-        [HttpPost("Delete player: {id}")]
+        [HttpPost("Delete/{id:guid}")]
         public async Task<Player> Delete(Guid id){
             var filter = Builders<BsonDocument>.Filter.Eq(nameof(Player.Id), id.ToString());
             var update = Builders<BsonDocument>.Update.Set("IsDeleted", true);
