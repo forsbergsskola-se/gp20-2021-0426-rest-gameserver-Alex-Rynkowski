@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace MMORPG{
+namespace MMORPG.Api{
     public interface IRepository{
         Task<Player> Get(Guid id);
         Task<List<Player>> GetAll();

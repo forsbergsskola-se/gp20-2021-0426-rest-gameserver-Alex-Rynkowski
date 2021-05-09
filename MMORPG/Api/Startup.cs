@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using MMORPG.Api;
 
 namespace MMORPG.Controllers{
     public class Startup{
@@ -16,10 +17,10 @@ namespace MMORPG.Controllers{
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services){
-            services.AddControllers();
-            
-            services.AddScoped<IRepository, MongoDbRepository>();
+            services.Configure<IRepository>(this.Configuration.GetSection(nameof(MongoDbRepository)));
+            services.AddSingleton<IRepository, MongoDbRepository>();
             services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo{Title = "MMORPG", Version = "v1"}); });
+            services.AddControllers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

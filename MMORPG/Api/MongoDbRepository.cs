@@ -9,13 +9,13 @@ using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using Newtonsoft.Json;
 
-namespace MMORPG{
+namespace MMORPG.Api{
     //Your data should follow this format:
     //* You can name your database to game
     //* Players should be stored in a collection called players
     //* Items should be stored in a list inside the Player document
     [ApiController]
-    [Route("[controller]")]
+    [Route("players")]
     public class MongoDbRepository : IRepository{
         readonly IMongoCollection<BsonDocument> collection;
 
@@ -44,15 +44,7 @@ namespace MMORPG{
             var newPlayer = new NewPlayer(name);
             newPlayer.SetupNewPlayer(player);
             await SendPlayerDataToMongo(player);
-            PrintOutInfo(player);
             return player;
-        }
-
-        static void PrintOutInfo(Player player){
-            Custom.MultiWriteLine(ConsoleColor.White,
-                $"Id: {player.Id}", $"Name: {player.Name}", $"Level: {player.Level}",
-                $"Current exp: {player.CurrentExperience}", $"Exp to next level: {player.ExperienceToNextLevel}",
-                $"Created: {player.CreationTime}");
         }
 
         async Task SendPlayerDataToMongo(Player player){
@@ -73,8 +65,6 @@ namespace MMORPG{
             var update = Builders<BsonDocument>.Update.Set("IsDeleted", true);
             await this.collection.UpdateOneAsync(filter, update, new UpdateOptions{IsUpsert = false});
             var player = await Get(id);
-            Custom.WriteLine($"\"{player.Name}\" at level \"{player.Level}\"\nIs deleted: {player.IsDeleted} ",
-                ConsoleColor.White);
             return player;
         }
     }
