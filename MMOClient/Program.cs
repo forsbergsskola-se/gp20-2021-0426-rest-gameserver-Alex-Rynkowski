@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Client.Api;
 using Client.Utilities;
@@ -12,7 +13,8 @@ namespace Client{
     class Program{
         static async Task Main(string[] args){
             Custom.WriteLine("\"Q[q]uit\" to stop the application from running", ConsoleColor.Yellow);
-            var character = new Character();
+            var player = new Player();
+            var playerList = new List<Player>();
             while (true){
                 Custom.WriteLine("What would you like to do:", ConsoleColor.Yellow);
                 Custom.WriteMultiLines(ConsoleColor.Yellow, "1: Create Character",
@@ -22,21 +24,39 @@ namespace Client{
 
                 switch (userInput){
                     case "1":
-                        await character.Create("SuperNoob");
+                        player = await CreateCharacter(player);
                         break;
                     case "2":
-                        await character.Get(Guid.Parse("5ae5e31c-ffd4-4c4e-847f-7d98f02a319c"));
+                        player = await GetPlayer(player);
                         break;
                     case "3":
-                        var players = await character.GetAll();
-                        foreach (var player in players){
-                            Custom.WriteMultiLines(ConsoleColor.White,
-                                $"Id: {player.Id}", $"Name: {player.Name}", $"Level: {player.Level}");
-                        }
-
+                        playerList = await GetAllPlayers(player);
                         break;
                 }
             }
+        }
+
+        static async Task<Player> GetPlayer(Player player){
+            return await player.Get(Guid.Parse("5ae5e31c-ffd4-4c4e-847f-7d98f02a319c"));
+        }
+
+        static async Task<List<Player>> GetAllPlayers(Player player){
+            var players = await player.GetAll();
+            foreach (var getPlayer in players){
+                Custom.WriteMultiLines(ConsoleColor.White,
+                    $"Id: {getPlayer.Id}", $"Name: {getPlayer.Name}", $"Level: {getPlayer.Level}");
+            }
+
+            return players;
+        }
+
+        static async Task<Player> CreateCharacter(Player player){
+            Custom.WriteLine("Character name:", ConsoleColor.Yellow);
+            var userInput = Custom.ReadLine(ConsoleColor.Green);
+            var createdPlayer = await player.Create(userInput);
+            Custom.WriteMultiLines(ConsoleColor.White, "Created player:", $"Id: {createdPlayer.Id}",
+                $"Name: {createdPlayer.Name}", $"Level: {createdPlayer.Level}");
+            return createdPlayer;
         }
     }
 }
