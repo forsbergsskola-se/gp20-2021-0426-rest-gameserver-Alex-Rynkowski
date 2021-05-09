@@ -1,26 +1,42 @@
 ﻿using System;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
+using Client.Api;
+using Client.Utilities;
 
+//Color codes:
+// Output White
+// Yellow instructions
+// Green user input
+// red error or exception
 namespace Client{
     class Program{
         static async Task Main(string[] args){
-            var clientHandler = new HttpClientHandler{
-                ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
-            };
-            
-            var client = new HttpClient(clientHandler){BaseAddress = new Uri("https://localhost:44317/")};
-            client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Accept.Add(
-                new MediaTypeWithQualityHeaderValue("application/json"));
+            Custom.WriteLine("\"Q[q]uit\" to stop the application from running", ConsoleColor.Yellow);
+            var character = new Character();
+            while (true){
+                Custom.WriteLine("What would you like to do:", ConsoleColor.Yellow);
+                Custom.WriteMultiLines(ConsoleColor.Yellow, "1: Create Character",
+                    "2: Get Character", "3: Get all Characters");
+                var userInput = Custom.ReadLine(ConsoleColor.Green);
+                Custom.Exit(userInput);
 
-            var response =
-                await client.GetAsync(client.BaseAddress + "players/Get/92e7ef3e-45c5-44f2-a3b2-be28d76ceb6f");
+                switch (userInput){
+                    case "1":
+                        await character.Create("SuperNoob");
+                        break;
+                    case "2":
+                        await character.Get(Guid.Parse("5ae5e31c-ffd4-4c4e-847f-7d98f02a319c"));
+                        break;
+                    case "3":
+                        var players = await character.GetAll();
+                        foreach (var player in players){
+                            Custom.WriteMultiLines(ConsoleColor.White,
+                                $"Id: {player.Id}", $"Name: {player.Name}", $"Level: {player.Level}");
+                        }
 
-            Console.WriteLine(JsonConvert.DeserializeObject(await response.Content.ReadAsStringAsync()));
-            Console.WriteLine("Hello World!");
+                        break;
+                }
+            }
         }
     }
 }

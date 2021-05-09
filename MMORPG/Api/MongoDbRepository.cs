@@ -44,7 +44,9 @@ namespace MMORPG.Api{
         }
 
         [HttpPost("Create/{name}")]
-        public async Task<Player> Create(Player player, string name){
+        public async Task<Player> Create(string name){
+            Console.WriteLine("Did i get herE?");
+            var player = new Player();
             var newPlayer = new NewPlayer(name);
             newPlayer.SetupNewPlayer(player);
             await SendPlayerDataToMongo(player);
