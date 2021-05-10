@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using MMORPG.Database;
 using MMORPG.Players;
 
 namespace MMORPG.Api{

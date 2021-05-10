@@ -4,7 +4,7 @@ using MMORPG.Utilities;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace MMORPG.Items{
-    public class Item : IItem{
+    public class Item{
         [BsonElement] public string ItemName{ get; set; }
         [BsonElement] public string ItemType{ get; set; }
         [BsonElement] public int LevelRequirement{ get; set; }

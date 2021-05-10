@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using MMORPG.Api;
 using MMORPG.Exceptions;
 using MMORPG.Players;
 using MMORPG.Utilities;
 using MongoDB.Driver;
 
-namespace MMORPG.Api{
+namespace MMORPG.Database{
     public class MongoDbRepository : IRepository{
         
         public async Task<Player> Get(Guid id){
