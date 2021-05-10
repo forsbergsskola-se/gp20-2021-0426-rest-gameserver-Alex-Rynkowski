@@ -9,10 +9,9 @@ namespace MMORPG{
         //my ID: Guid.Parse("0801cbfe-3867-4224-9730-b7704aec44a9");
         public static async Task Main(string[] args){
             var tmp = new ItemRepository();
-            for (var i = 0; i < 10; i++){
-                await tmp.Create("Weapon");
-                
-            }
+            await tmp.Create<Weapon>("Weapon", "Sword of a thousand truths");
+            await tmp.Create<Armor>("Armor", "Heavy Plate");
+            await tmp.Create<Helmet>("Helmet", "Sunglasses");
             //await CreateHostBuilder(args).Build().RunAsync();
         }
 

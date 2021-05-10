@@ -17,22 +17,25 @@ namespace MMORPG.Items{
             this.collection = DatabaseConnection.GetDatabase().GetCollection<BsonDocument>("Items");
         }
 
-        [HttpGet("Create{itemType}")]
-        public async Task<IItem> Create(string itemType){
-            var item = new Weapon("Ball Crusher", itemType);
-            try{
-                foreach (var type in AppDomain.CurrentDomain.GetAssemblies().SelectMany(s => s.GetTypes())
-                    .Where(p => typeof(IItem).IsAssignableFrom(p))){
-                    if (type.Name != itemType) continue;
-                    var serializedPlayer = JsonConvert.SerializeObject(item);
-                    var bsonDocument = BsonDocument.Parse(serializedPlayer);
-                    await this.collection.InsertOneAsync(bsonDocument);
-                }
-            }
-            catch (Exception e){
-                Console.WriteLine("Item type doesn't exist " + e);
+        [HttpGet("Create{itemType} {itemName}")]
+        public async Task<IItem> Create<T>(string itemType, string itemName) where T : new(){
+            var itemsTypes = AppDomain.CurrentDomain.GetAssemblies().SelectMany(s => s.GetTypes())
+                .Where(p => typeof(IItem).IsAssignableFrom(p));
+
+            if (itemsTypes.Any(type => type.Name == itemType)){
+                return await GenerateItem<T>(itemName);
             }
 
+            throw new Exception("Item type does not exist");
+        }
+
+        async Task<IItem> GenerateItem<T>(string itemName) where T : new(){
+            var itemType = new T();
+            var item = (IItem) Convert.ChangeType(itemType, typeof(T));
+            item.ItemName = itemName;
+            var serializedPlayer = JsonConvert.SerializeObject(item);
+            var bsonDocument = BsonDocument.Parse(serializedPlayer);
+            await this.collection.InsertOneAsync(bsonDocument);
             return item;
         }
     }
