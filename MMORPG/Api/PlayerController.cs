@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using MMORPG.Exceptions;
+using MMORPG.Players;
 using MMORPG.Utilities;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
@@ -11,17 +12,13 @@ using MongoDB.Driver;
 using Newtonsoft.Json;
 
 namespace MMORPG.Api{
-    //Your data should follow this format:
-    //* You can name your database to game
-    //* Players should be stored in a collection called players
-    //* Items should be stored in a list inside the Player document
     [ApiController]
     [Route("players")]
-    public class MongoDbRepository : IRepository{
+    public class PlayerController : IPlayerController{
         readonly IMongoCollection<BsonDocument> collection;
 
-        public MongoDbRepository(){
-            this.collection = DatabaseConnection.GetDatabase().GetCollection<BsonDocument>("Players");
+        public PlayerController(){
+            this.collection = ApiUtility.GetDatabase().GetCollection<BsonDocument>("Players");
         }
 
         [HttpGet("Get/{id:guid}")]
@@ -37,10 +34,10 @@ namespace MMORPG.Api{
         }
 
         [HttpGet("GetAll")]
-        public async Task<List<Player>> GetAll(){
+        public async Task<Player[]> GetAll(){
             var allPlayers = await this.collection.Find(_ => true).ToListAsync();
             return allPlayers.Select(player => BsonSerializer.Deserialize<Player>(player))
-                .Where(playerDe => !playerDe.IsDeleted).ToList();
+                .Where(playerDe => !playerDe.IsDeleted).ToArray();
         }
 
         [HttpPost("Create/{name}")]
@@ -65,13 +62,18 @@ namespace MMORPG.Api{
         }
 
 
-        [HttpPost("Delete/{id:guid}")]
+        [HttpDelete("Delete/{id:guid}")]
         public async Task<Player> Delete(Guid id){
             var filter = Builders<BsonDocument>.Filter.Eq(nameof(Player.Id), id.ToString());
             var update = Builders<BsonDocument>.Update.Set("IsDeleted", true);
             await this.collection.UpdateOneAsync(filter, update, new UpdateOptions{IsUpsert = false});
             var player = await Get(id);
             return player;
+        }
+        //players/alex/inventory
+        [HttpGet]
+        public Task<Inventory> GetInventory(Guid id){
+            throw new NotImplementedException();
         }
     }
 }

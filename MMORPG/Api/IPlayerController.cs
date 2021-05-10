@@ -1,13 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
+using MMORPG.Players;
 
 namespace MMORPG.Api{
-    public interface IRepository{
+    public interface IPlayerController{
         Task<Player> Get(Guid id);
-        Task<List<Player>> GetAll();
+        Task<Player[]> GetAll();
         Task<Player> Create(string name);
         Task<Player> Modify(Guid id, ModifiedPlayer player);
         Task<Player> Delete(Guid id);
+        
+        Task<Inventory> GetInventory(Guid id);
     }
 }

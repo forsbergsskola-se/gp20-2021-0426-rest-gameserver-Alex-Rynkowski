@@ -1,4 +1,5 @@
 ﻿using System;
+using MMORPG.Players;
 using MMORPG.Utilities;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -10,7 +11,7 @@ namespace MMORPG{
 
         public NewPlayer(string name){
             this.name = name;
-            this.collection = DatabaseConnection.GetDatabase().GetCollection<BsonDocument>("Utilities");
+            this.collection = ApiUtility.GetDatabase().GetCollection<BsonDocument>("Utilities");
         }
 
         public void SetupNewPlayer(Player player){

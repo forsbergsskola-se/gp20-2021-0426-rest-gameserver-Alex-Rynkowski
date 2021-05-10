@@ -1,7 +1,7 @@
 ﻿using System;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace MMORPG{
+namespace MMORPG.Players{
     [BsonIgnoreExtraElements]
     [BsonNoId]
     public class Player{
