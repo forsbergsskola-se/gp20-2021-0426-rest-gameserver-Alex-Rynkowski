@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using MMORPG.Api;
 using MMORPG.Items;
 using MongoDB.Bson.Serialization.Attributes;
 
@@ -11,6 +10,7 @@ namespace MMORPG.Players{
         public string Id{ get; set; }
         public string Name{ get; set; }
         public int Score{ get; set; }
+        public int Gold{ get; set; }
         public int Level{ get; set; }
         public bool IsDeleted{ get; set; }
         public DateTime CreationTime{ get; set; }

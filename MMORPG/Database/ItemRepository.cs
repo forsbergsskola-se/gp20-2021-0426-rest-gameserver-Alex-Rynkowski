@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using MMORPG.Exceptions;
 using MMORPG.Items;
 using MMORPG.Players;
 using MMORPG.Utilities;
@@ -30,6 +33,30 @@ namespace MMORPG.Database{
             var update = Builders<Player>.Update.Set("Inventory.$.IsDeleted", true);
             await ApiUtility.GetPlayerCollection().UpdateOneAsync(newFilter, update);
             return default;
+        }
+
+        public async Task<List<Item>> GetInventory(Guid id){
+            try{
+                var filter = Builders<Player>.Filter.Eq(x => x.Id, id.ToString());
+                var inventory = await ApiUtility.GetPlayerCollection().Find(filter).SingleAsync();
+                return inventory.Inventory.Where(x => !x.IsDeleted).Select(item => item).ToList();
+            }
+            catch (Exception e){
+                throw new NotFoundException("Player not found or has been deleted " + e);
+            }
+        }
+
+        public async Task<Item> GetItem(Guid id, string name){
+            var inventory = await GetInventory(id);
+            return inventory.Find(item => item.ItemName == name);
+        }
+
+        public async Task<Item> SellItem(Guid id, string itemName){
+            var item = await GetItem(id, itemName);
+            var filter = Builders<Player>.Filter.Eq(x => x.Id, id.ToString());
+            var update = Builders<Player>.Update.Inc(x => x.Gold, item.SellValue);
+            await ApiUtility.GetPlayerCollection().UpdateOneAsync(filter, update, new UpdateOptions{IsUpsert = true});
+            return await DeleteItem(id, itemName);
         }
     }
 }

@@ -19,12 +19,6 @@ namespace MMORPG.Api{
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services){
             
-            services.Configure<IRepository>(this.Configuration.GetSection(nameof(MongoDbRepository)));
-            //services.Configure<IItemRepository>(this.Configuration.GetSection(nameof(ItemRepository)));
-            
-            //services.AddScoped<IItemController, ItemController>();
-
-            services.AddScoped<IRepository, PlayerController>();
             services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo{Title = "MMORPG", Version = "v1"}); });
             services.AddControllers();
         }

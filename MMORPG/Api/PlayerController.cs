@@ -6,7 +6,7 @@ using MMORPG.Players;
 
 namespace MMORPG.Api{
     [ApiController]
-    [Route("players")]
+    [Route("api/players")]
     public class PlayerController : IRepository{
         readonly IRepository repository;
 
@@ -14,7 +14,7 @@ namespace MMORPG.Api{
             this.repository = new MongoDbRepository();
         }
 
-        [HttpGet("Get/")]
+        [HttpGet("Get")]
         public async Task<Player> Get(Guid id)
             => await this.repository.Get(id);
 
@@ -22,15 +22,15 @@ namespace MMORPG.Api{
         public Task<Player[]> GetAll()
             => this.repository.GetAll();
 
-        [HttpPost("Create/")]
+        [HttpPost("Create")]
         public Task<Player> Create(string name)
             => this.repository.Create(name);
 
-        [HttpPost("Modify/")]
+        [HttpPost("Modify")]
         public Task<Player> Modify(Guid id, ModifiedPlayer player)
             => this.repository.Modify(id, player);
 
-        [HttpDelete("Delete/")]
+        [HttpDelete("Delete")]
         public Task<Player> Delete(Guid id)
             => this.repository.Delete(id);
     }

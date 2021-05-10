@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using MMORPG.Api;
 using MMORPG.Exceptions;
 using MMORPG.Players;
 using MMORPG.Utilities;
@@ -9,13 +8,10 @@ using MongoDB.Driver;
 
 namespace MMORPG.Database{
     public class MongoDbRepository : IRepository{
-        
         public async Task<Player> Get(Guid id){
             Player player;
             var filter = Builders<Player>.Filter.Eq(nameof(player.Id), id.ToString());
             var foundPlayer = await ApiUtility.GetPlayerCollection().Find(filter).SingleAsync();
-            //player = BsonSerializer.Deserialize<Player>(foundPlayer);
-
             if (!foundPlayer.IsDeleted) return foundPlayer;
 
             throw new NotFoundException("Player does not exist or has been deleted");
