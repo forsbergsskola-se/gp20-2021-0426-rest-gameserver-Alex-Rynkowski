@@ -1,8 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using MMORPG.Items;
 
 namespace MMORPG.Api{
     public interface IItemController{
-        public Task<IItem> CreateItem(string itemType, string itemName);
+        public Task<IItem> CreateItem(Guid id, string itemName, ItemTypes itemType);
+        public Task<IItem> DeleteItem(Guid id, string itemName);
     }
 }

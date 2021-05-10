@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Microsoft.Extensions.Configuration;
+using MMORPG.Players;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
@@ -27,13 +28,12 @@ namespace MMORPG.Utilities{
             return builder.Build().GetSection("MongoDatabase").GetSection("DatabaseName").Value;
         }
 
-        public static IMongoCollection<BsonDocument> GetItemCollection(){
+        public static IMongoCollection<Player> GetPlayerCollection(){
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile(JsonPath, true, true);
-            var collection = builder.Build().GetSection("ItemCollection").GetSection("CollectionString").Value;
-            Console.WriteLine(collection);
-            return GetDatabase().GetCollection<BsonDocument>(collection);
+            var collection = builder.Build().GetSection("PlayerCollection").GetSection("CollectionString").Value;
+            return GetDatabase().GetCollection<Player>(collection);
         }
     }
 }

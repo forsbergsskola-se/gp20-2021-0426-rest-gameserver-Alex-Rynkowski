@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
+using MMORPG.Api;
+using MMORPG.Items;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace MMORPG.Players{
     [BsonIgnoreExtraElements]
     [BsonNoId]
     public class Player{
-        public Guid Id{ get; set; }
+        public string Id{ get; set; }
         public string Name{ get; set; }
         public int Score{ get; set; }
         public int Level{ get; set; }
@@ -13,5 +16,6 @@ namespace MMORPG.Players{
         public DateTime CreationTime{ get; set; }
         public int CurrentExperience{ get; set; }
         public int ExperienceToNextLevel{ get; set; }
+        public List<Item> Inventory{ get; set; }
     }
 }

@@ -17,10 +17,11 @@ namespace MMORPG.Api{
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services){
+            
             services.Configure<IPlayerController>(this.Configuration.GetSection(nameof(PlayerController)));
             //services.Configure<IItemRepository>(this.Configuration.GetSection(nameof(ItemRepository)));
             
-            services.AddScoped<IItemController, ItemController>();
+            //services.AddScoped<IItemController, ItemController>();
 
             services.AddScoped<IPlayerController, PlayerController>();
             services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo{Title = "MMORPG", Version = "v1"}); });
@@ -34,6 +35,8 @@ namespace MMORPG.Api{
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "MMORPG v1"));
             }
+            
+            
 
             app.UseHttpsRedirection();
 

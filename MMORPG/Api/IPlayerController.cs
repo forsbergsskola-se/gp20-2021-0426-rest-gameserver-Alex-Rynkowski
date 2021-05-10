@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using MMORPG.Items;
 using MMORPG.Players;
 
 namespace MMORPG.Api{
@@ -9,7 +10,5 @@ namespace MMORPG.Api{
         Task<Player> Create(string name);
         Task<Player> Modify(Guid id, ModifiedPlayer player);
         Task<Player> Delete(Guid id);
-        
-        Task<Inventory> GetInventory(Guid id);
     }
 }

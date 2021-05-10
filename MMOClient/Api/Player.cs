@@ -13,6 +13,7 @@ namespace Client.Api{
         public DateTime CreationTime{ get; set; }
         public int CurrentExperience{ get; set; }
         public int ExperienceToNextLevel{ get; set; }
+        public List<Item> InventoryList{ get; set; }
 
         public async Task<Player> Get(Guid id){
             var player = await ApiConnection.GetResponse<Player>("/Get");
