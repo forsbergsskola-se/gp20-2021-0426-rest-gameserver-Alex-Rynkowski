@@ -4,7 +4,7 @@ using MMORPG.Items;
 using MMORPG.Players;
 
 namespace MMORPG.Api{
-    public interface IPlayerController{
+    public interface IRepository{
         Task<Player> Get(Guid id);
         Task<Player[]> GetAll();
         Task<Player> Create(string name);
