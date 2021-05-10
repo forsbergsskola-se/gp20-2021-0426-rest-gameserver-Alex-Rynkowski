@@ -27,8 +27,8 @@ namespace MMORPG.Api{
             => this.repository.Create(name);
 
         [HttpPost("Modify")]
-        public Task<Player> Modify(Guid id, ModifiedPlayer player)
-            => this.repository.Modify(id, player);
+        public Task<Player> Modify(Guid id, ModifiedPlayer modifiedPlayer)
+            => this.repository.Modify(id, modifiedPlayer);
 
         [HttpDelete("Delete")]
         public Task<Player> Delete(Guid id)

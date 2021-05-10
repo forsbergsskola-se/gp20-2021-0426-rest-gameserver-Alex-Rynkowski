@@ -35,8 +35,16 @@ namespace MMORPG.Database{
             await ApiUtility.GetPlayerCollection().InsertOneAsync(player);
         }
 
-        public Task<Player> Modify(Guid id, ModifiedPlayer player){
-            throw new NotImplementedException();
+        public async Task<Player> Modify(Guid id, ModifiedPlayer modifiedPlayer){
+            var filter = Builders<Player>.Filter.Eq("Id", id.ToString());
+            
+            var update = Builders<Player>.Update
+                .Set("Gold", modifiedPlayer.Gold)
+                .Set("Score", modifiedPlayer.Score);
+
+            var tmp = await ApiUtility.GetPlayerCollection()
+                .UpdateManyAsync(filter, update);
+            return default;
         }
 
 
