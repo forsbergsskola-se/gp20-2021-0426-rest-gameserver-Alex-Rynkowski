@@ -36,10 +36,11 @@ namespace MMORPG.Database{
 
         public async Task<Player> Modify(Guid id, ModifiedPlayer modifiedPlayer){
             var filter = Builders<Player>.Filter.Eq("Id", id.ToString());
-            
+
             var update = Builders<Player>.Update
                 .Set("Gold", modifiedPlayer.Gold)
-                .Set("Score", modifiedPlayer.Score);
+                .Set("Score", modifiedPlayer.Score)
+                .Set("Level", modifiedPlayer.Level);
 
             var tmp = await ApiUtility.GetPlayerCollection()
                 .UpdateManyAsync(filter, update);

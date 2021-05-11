@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using MMORPG.Api;
 using MMORPG.Exceptions;
 using MMORPG.Items;
 using MMORPG.Players;
@@ -9,8 +10,10 @@ using MongoDB.Driver;
 namespace MMORPG.Database{
     public class EquipItem : IEquip{
         readonly IItemRepository itemRepository;
+        readonly IRepository repository;
 
         public EquipItem(){
+            this.repository = new MongoDbRepository();
             this.itemRepository = new ItemRepository();
         }
 
@@ -31,6 +34,11 @@ namespace MMORPG.Database{
             var item = await this.itemRepository.GetItem(id, name);
             if (IsNullOrWrongType(type, item))
                 throw new NotFoundException("Item not found in player inventory");
+
+            var player = await this.repository.Get(id);
+            //TODO implement custom exception
+            if (player.Level < item.LevelRequirement)
+                throw new Exception("Level not high enough");
 
             var update = Builders<Player>.Update.Set(x => x.EquippedItems[item.ItemType], item);
             await ApiUtility.GetPlayerCollection()
