@@ -132,12 +132,23 @@ namespace MMORPG.Database{
             if (player.Level < item.LevelRequirement)
                 throw new Exception("Level not high enough");
 
+            await UnEquip(id, name);
             var update = Builders<Player>.Update
                 .Set(x => x.EquippedItems[item.ItemType], item)
                 .Inc(x => x.Level, item.LevelBonus);
             await ApiUtility.GetPlayerCollection()
                 .UpdateOneAsync(Db.GetPlayerById(id), update, new UpdateOptions{IsUpsert = true});
             return item;
+        }
+
+        public async Task<Item> UnEquip(Guid id, string name){
+            var item = await GetItem(id, name);
+            var update = Builders<Player>.Update
+                .Set(x => x.EquippedItems[item.ItemType], null)
+                .Inc(player => player.Level, -item.LevelBonus);
+
+            await ApiUtility.GetPlayerCollection().UpdateOneAsync(Db.GetPlayerById(id), update);
+            return default;
         }
 
         static bool IsNullOrWrongType(ItemTypes type, Item item){

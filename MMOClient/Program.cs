@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Client.Api;
 using Client.Utilities;
@@ -10,8 +11,31 @@ using Client.Utilities;
 // Green user input
 // red error or exception
 namespace Client{
+    public class Item{
+        public string WName{ get; set; }
+        public string Rarity{ get; set; }
+
+        public Item(string wName, string rarity){
+            this.WName = wName;
+            this.Rarity = rarity;
+        }
+    }
     class Program{
         static async Task Main(string[] args){
+            var equippedItems = new Dictionary<string, Item>{
+                ["Epic"] = new ("Holy Sword", "Epic"), 
+                ["Rare"] = new("Shit Sword", "Rare")
+            };
+
+            var str = equippedItems.Where(item => item.Value.WName == "Holy Sword")
+                .Select(x => x.Value.Rarity).First();
+
+            var tmp = equippedItems[equippedItems
+                .Where(x => x.Value.WName is "Holy Sword")
+                .Select(y => y.Value.Rarity).First()];
+            Console.WriteLine(tmp.WName);
+            return;
+            
             Custom.WriteLine("\"Q[q]uit\" to stop the application from running", ConsoleColor.Yellow);
             var player = new Player();
             var playerList = new List<Player>();
