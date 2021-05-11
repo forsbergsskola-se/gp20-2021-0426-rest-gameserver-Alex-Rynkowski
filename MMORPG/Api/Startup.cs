@@ -5,7 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using MMORPG.Database;
-using MMORPG.Items;
 
 namespace MMORPG.Api{
     public class Startup{
@@ -19,6 +18,7 @@ namespace MMORPG.Api{
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services){
             
+            services.AddSingleton<IRepository, MongoDbRepository>();
             services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo{Title = "MMORPG", Version = "v1"}); });
             services.AddControllers();
         }

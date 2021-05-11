@@ -1,34 +1,33 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using MMORPG.Database;
 using MMORPG.Items;
 
 namespace MMORPG.Api{
     [ApiController]
     [Route("/api/players/{id}/items/equip")]
-    public class EquipController : IEquip{
-        readonly IEquip equipItem;
+    public class EquipController : ControllerBase{
+        readonly IRepository repository;
 
-        public EquipController(){
-            this.equipItem = new EquipItem();
+        public EquipController(IRepository repository){
+            this.repository = repository;
         }
 
 
         [HttpPost("Weapon")]
         public async Task<Item> EquipSword(Guid id, string weaponName)
-            => await this.equipItem.EquipSword(id, weaponName);
+            => await this.repository.EquipSword(id, weaponName);
 
         [HttpPost("Shield")]
         public async Task<Item> EquipShield(Guid id, string shieldName)
-            => await this.equipItem.EquipShield(id, shieldName);
+            => await this.repository.EquipShield(id, shieldName);
 
         [HttpPost("Armor")]
         public async Task<Item> EquipArmor(Guid id, string armorName)
-            => await this.equipItem.EquipArmor(id, armorName);
+            => await this.repository.EquipArmor(id, armorName);
 
         [HttpPost("Helmet")]
         public async Task<Item> EquipHelmet(Guid id, string helmetName)
-            => await this.equipItem.EquipHelmet(id, helmetName);
+            => await this.repository.EquipHelmet(id, helmetName);
     }
 }

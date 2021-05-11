@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using MMORPG.Database;
 using MMORPG.Players;
 
 namespace MMORPG.Api{
     [ApiController]
     [Route("api/players")]
-    public class PlayerController : IRepository{
+    public class PlayerController{
         readonly IRepository repository;
 
-        public PlayerController(){
-            this.repository = new MongoDbRepository();
+        public PlayerController(IRepository repository){
+            this.repository = repository;
         }
 
         [HttpGet("Get")]
@@ -29,6 +28,7 @@ namespace MMORPG.Api{
         [HttpPost("Modify")]
         public Task<Player> Modify(Guid id, ModifiedPlayer modifiedPlayer)
             => this.repository.Modify(id, modifiedPlayer);
+
 
         [HttpDelete("Delete")]
         public Task<Player> Delete(Guid id)
