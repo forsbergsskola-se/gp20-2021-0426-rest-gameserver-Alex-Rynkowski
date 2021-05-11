@@ -103,6 +103,11 @@ namespace MMORPG.Database{
 
         public async Task<Item> SellItem(Guid id, string itemName){
             var item = await GetItem(id, itemName);
+            var equippedItems = await ApiUtility.GetPlayerCollection()
+                .FindAsync(x => x.EquippedItems[item.ItemType] == item);
+            if (equippedItems != null)
+                await UnEquip(id, itemName);
+
             var update = Builders<Player>.Update.Inc(x => x.Gold, item.SellValue);
             await ApiUtility.GetPlayerCollection()
                 .UpdateOneAsync(Db.GetPlayerById(id), update, new UpdateOptions{IsUpsert = true});
@@ -141,14 +146,13 @@ namespace MMORPG.Database{
             return item;
         }
 
-        public async Task<Item> UnEquip(Guid id, string name){
+        async Task UnEquip(Guid id, string name){
             var item = await GetItem(id, name);
             var update = Builders<Player>.Update
                 .Set(x => x.EquippedItems[item.ItemType], null)
                 .Inc(player => player.Level, -item.LevelBonus);
 
             await ApiUtility.GetPlayerCollection().UpdateOneAsync(Db.GetPlayerById(id), update);
-            return default;
         }
 
         static bool IsNullOrWrongType(ItemTypes type, Item item){
