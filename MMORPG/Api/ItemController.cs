@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using MMORPG.Items;
-using MMORPG.Players;
+using MMORPG.Database;
 
 namespace MMORPG.Api{
     [ApiController]

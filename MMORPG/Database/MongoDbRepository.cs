@@ -4,17 +4,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using MMORPG.Api;
 using MMORPG.Exceptions;
-using MMORPG.Items;
-using MMORPG.Players;
 using MMORPG.Utilities;
 using MongoDB.Driver;
 
 namespace MMORPG.Database{
     public class MongoDbRepository : IRepository{
-
         public async Task<Player> Get(Guid id){
-            var filter = Builders<Player>.Filter.Eq(x => x.Id, id.ToString());
-            var foundPlayer = await ApiUtility.GetPlayerCollection().Find(filter).SingleAsync();
+            var foundPlayer = await ApiUtility.GetPlayerCollection().Find(Db.GetPlayerById(id)).SingleAsync();
             if (!foundPlayer.IsDeleted) return foundPlayer;
 
             throw new NotFoundException("Player does not exist or has been deleted");
@@ -54,9 +50,8 @@ namespace MMORPG.Database{
 
 
         public async Task<Player> Delete(Guid id){
-            var filter = Builders<Player>.Filter.Eq(nameof(Player.Id), id.ToString());
             var update = Builders<Player>.Update.Set("IsDeleted", true);
-            return await ApiUtility.GetPlayerCollection().FindOneAndUpdateAsync(filter, update,
+            return await ApiUtility.GetPlayerCollection().FindOneAndUpdateAsync(Db.GetPlayerById(id), update,
                 new FindOneAndUpdateOptions<Player>(){
                     ReturnDocument = ReturnDocument.After
                 });
@@ -68,12 +63,14 @@ namespace MMORPG.Database{
             }
 
             var item = new Item(itemName, itemType.ToString());
-            var filter = Builders<Player>.Filter.Eq(x => x.Id, id.ToString());
+            
+            var filter = Builders<Player>.Filter.Eq(new StringFieldDefinition<Player, Guid>(nameof(Player.Id)), id);
             var update = Builders<Player>.Update.Push(x => x.Inventory, item);
-            return await ApiUtility.GetPlayerCollection().FindOneAndUpdateAsync(filter, update, new FindOneAndUpdateOptions<Player>{
-                ReturnDocument = ReturnDocument.After,
-                IsUpsert = true
-            });
+            return await ApiUtility.GetPlayerCollection().FindOneAndUpdateAsync(filter, update,
+                new FindOneAndUpdateOptions<Player>{
+                    ReturnDocument = ReturnDocument.After,
+                    IsUpsert = true
+                });
         }
 
         static bool IsCorrectItemType(ItemTypes itemType){
@@ -81,7 +78,7 @@ namespace MMORPG.Database{
         }
 
         public async Task<Item> DeleteItem(Guid id, string itemName){
-            var newFilter = Builders<Player>.Filter.And(Builders<Player>.Filter.Where(x => x.Id == id.ToString()),
+            var newFilter = Builders<Player>.Filter.And(Builders<Player>.Filter.Where(x => x.Id == id),
                 Builders<Player>.Filter.ElemMatch(x => x.Inventory, x => x.ItemName == itemName));
 
             var update = Builders<Player>.Update.Set("Inventory.$.IsDeleted", true);
@@ -91,8 +88,7 @@ namespace MMORPG.Database{
 
         public async Task<List<Item>> GetInventory(Guid id){
             try{
-                var filter = Builders<Player>.Filter.Eq(x => x.Id, id.ToString());
-                var inventory = await ApiUtility.GetPlayerCollection().Find(filter).SingleAsync();
+                var inventory = await ApiUtility.GetPlayerCollection().Find(Db.GetPlayerById(id)).SingleAsync();
                 return inventory.Inventory.Where(x => !x.IsDeleted).Select(item => item).ToList();
             }
             catch (Exception e){
@@ -107,9 +103,8 @@ namespace MMORPG.Database{
 
         public async Task<Item> SellItem(Guid id, string itemName){
             var item = await GetItem(id, itemName);
-            var filter = Builders<Player>.Filter.Eq(x => x.Id, id.ToString());
             var update = Builders<Player>.Update.Inc(x => x.Gold, item.SellValue);
-            await ApiUtility.GetPlayerCollection().UpdateOneAsync(filter, update, new UpdateOptions{IsUpsert = true});
+            await ApiUtility.GetPlayerCollection().UpdateOneAsync(Db.GetPlayerById(id), update, new UpdateOptions{IsUpsert = true});
             return await DeleteItem(id, itemName);
         }
 

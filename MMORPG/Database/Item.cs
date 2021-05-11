@@ -3,7 +3,7 @@ using System.Linq;
 using MMORPG.Utilities;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace MMORPG.Items{
+namespace MMORPG.Database{
     public class Item{
         [BsonElement] public string ItemName{ get; set; }
         [BsonElement] public string ItemType{ get; set; }
@@ -29,8 +29,7 @@ namespace MMORPG.Items{
                     (int) Enum.GetValues(typeof(ItemRarity)).Cast<ItemRarity>().Last() + 1);
             this.Rarity = rarity.ToString();
             this.SellValue = Calculate.CalculateItemSellValue(50, this.LevelRequirement, rarity + 1);
-            Console.WriteLine(
-                $"Sell value: {this.SellValue}  Rarity: {rarity} Level requirement: {this.LevelRequirement}");
+            this.LevelBonus = (int) rarity;
         }
     }
 

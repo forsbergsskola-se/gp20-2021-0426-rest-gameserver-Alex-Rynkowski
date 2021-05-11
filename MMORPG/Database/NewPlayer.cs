@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using MMORPG.Items;
 
-namespace MMORPG.Players{
+namespace MMORPG.Database{
     public class NewPlayer{
         readonly string name;
 
@@ -12,7 +11,7 @@ namespace MMORPG.Players{
 
         public Player SetupNewPlayer(Player player){
             player.Name = this.name;
-            player.Id = Guid.NewGuid().ToString();
+            player.Id = Guid.NewGuid();
             player.Score = 0;
             player.Level = 0;
             player.IsDeleted = false;

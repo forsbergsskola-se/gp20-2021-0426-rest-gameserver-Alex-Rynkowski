@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using MMORPG.Items;
-using MMORPG.Players;
+using MMORPG.Database;
 
 namespace MMORPG.Api{
     public interface IRepository{

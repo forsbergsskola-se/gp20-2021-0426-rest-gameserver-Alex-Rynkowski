@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using MMORPG.Items;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace MMORPG.Players{
+namespace MMORPG.Database{
     [BsonIgnoreExtraElements]
     [BsonNoId]
     public class Player{
-        public string Id{ get; set; }
+        public Guid Id{ get; set; }
         public string Name{ get; set; }
         public int Score{ get; set; }
         public int Gold{ get; set; }

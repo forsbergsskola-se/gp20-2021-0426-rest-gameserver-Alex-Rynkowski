@@ -1,11 +1,12 @@
 ﻿using System;
-using MMORPG.Players;
+using MMORPG.Database;
 using MongoDB.Driver;
 
 namespace MMORPG.Utilities{
-    public class Db{
+    public static class Db{
         public static FilterDefinition<Player> GetPlayerById(Guid id){
-            return Builders<Player>.Filter.Eq(x => x.Id, id.ToString());
+            var idDef = new StringFieldDefinition<Player, Guid>(nameof(Player.Id));
+            return Builders<Player>.Filter.Eq(idDef, id);
         }
     }
 }

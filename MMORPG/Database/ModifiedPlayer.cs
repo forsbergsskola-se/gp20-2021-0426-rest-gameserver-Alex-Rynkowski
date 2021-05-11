@@ -1,4 +1,4 @@
-﻿namespace MMORPG.Players{
+﻿namespace MMORPG.Database{
     public class ModifiedPlayer{
         public int Score{ get; set; }
         public int Gold{ get; set; }
