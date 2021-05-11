@@ -63,7 +63,7 @@ namespace MMORPG.Database{
             }
 
             var item = new Item(itemName, itemType.ToString());
-            
+
             var filter = Builders<Player>.Filter.Eq(new StringFieldDefinition<Player, Guid>(nameof(Player.Id)), id);
             var update = Builders<Player>.Update.Push(x => x.Inventory, item);
             return await ApiUtility.GetPlayerCollection().FindOneAndUpdateAsync(filter, update,
@@ -104,7 +104,8 @@ namespace MMORPG.Database{
         public async Task<Item> SellItem(Guid id, string itemName){
             var item = await GetItem(id, itemName);
             var update = Builders<Player>.Update.Inc(x => x.Gold, item.SellValue);
-            await ApiUtility.GetPlayerCollection().UpdateOneAsync(Db.GetPlayerById(id), update, new UpdateOptions{IsUpsert = true});
+            await ApiUtility.GetPlayerCollection()
+                .UpdateOneAsync(Db.GetPlayerById(id), update, new UpdateOptions{IsUpsert = true});
             return await DeleteItem(id, itemName);
         }
 
@@ -131,7 +132,9 @@ namespace MMORPG.Database{
             if (player.Level < item.LevelRequirement)
                 throw new Exception("Level not high enough");
 
-            var update = Builders<Player>.Update.Set(x => x.EquippedItems[item.ItemType], item);
+            var update = Builders<Player>.Update
+                .Set(x => x.EquippedItems[item.ItemType], item)
+                .Inc(x => x.Level, item.LevelBonus);
             await ApiUtility.GetPlayerCollection()
                 .UpdateOneAsync(Db.GetPlayerById(id), update, new UpdateOptions{IsUpsert = true});
             return item;
