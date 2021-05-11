@@ -33,4 +33,19 @@ namespace MMORPG.Items{
                 $"Sell value: {this.SellValue}  Rarity: {rarity} Level requirement: {this.LevelRequirement}");
         }
     }
+
+    public enum ItemRarity{
+        Common,
+        Uncommon,
+        Rare,
+        Epic
+    }
+
+    public enum ItemTypes{
+        Sword,
+        Shield,
+        Armor,
+        Helmet,
+        Potion,
+    }
 }

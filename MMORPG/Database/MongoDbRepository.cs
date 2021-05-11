@@ -11,6 +11,7 @@ using MongoDB.Driver;
 
 namespace MMORPG.Database{
     public class MongoDbRepository : IRepository{
+
         public async Task<Player> Get(Guid id){
             var filter = Builders<Player>.Filter.Eq(x => x.Id, id.ToString());
             var foundPlayer = await ApiUtility.GetPlayerCollection().Find(filter).SingleAsync();
