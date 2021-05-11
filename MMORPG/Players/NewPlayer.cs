@@ -5,6 +5,7 @@ using MMORPG.Items;
 namespace MMORPG.Players{
     public class NewPlayer{
         readonly string name;
+
         public NewPlayer(string name){
             this.name = name;
         }
@@ -19,6 +20,12 @@ namespace MMORPG.Players{
             player.CurrentExperience = 0;
             player.ExperienceToNextLevel = 100;
             player.Inventory = new List<Item>();
+            player.EquippedItems = new Dictionary<string, Item>{
+                ["Sword"] = null,
+                ["Offhand"] = null,
+                ["Armor"] = null,
+                ["Helmet"] = null
+            };
             return player;
         }
     }

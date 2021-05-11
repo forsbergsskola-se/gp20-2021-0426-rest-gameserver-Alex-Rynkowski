@@ -9,8 +9,7 @@ using MongoDB.Driver;
 namespace MMORPG.Database{
     public class MongoDbRepository : IRepository{
         public async Task<Player> Get(Guid id){
-            Player player;
-            var filter = Builders<Player>.Filter.Eq(nameof(player.Id), id.ToString());
+            var filter = Builders<Player>.Filter.Eq(x => x.Id, id.ToString());
             var foundPlayer = await ApiUtility.GetPlayerCollection().Find(filter).SingleAsync();
             if (!foundPlayer.IsDeleted) return foundPlayer;
 
