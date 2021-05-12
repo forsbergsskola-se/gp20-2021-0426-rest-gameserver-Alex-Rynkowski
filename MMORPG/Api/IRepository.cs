@@ -10,16 +10,17 @@ namespace MMORPG.Api{
         Task<Player> Create(string name);
         Task<Player> Modify(Guid id, ModifiedPlayer modifiedPlayer);
         Task<Player> Delete(Guid id);
+        Task<Player> PurchaseLevel(Guid id);
+
+        Task<Player> CreateItem(Guid id, string itemName, ItemTypes itemType);
+        Task<Item> DeleteItem(Guid id, string itemName);
+        Task<List<Item>> GetInventory(Guid id);
+        Task<Item> GetItem(Guid id, string name);
+        Task<Item> SellItem(Guid id, string itemName);
         
-        public Task<Player> CreateItem(Guid id, string itemName, ItemTypes itemType);
-        public Task<Item> DeleteItem(Guid id, string itemName);
-        public Task<List<Item>> GetInventory(Guid id);
-        public Task<Item> GetItem(Guid id,string name);
-        public Task<Item> SellItem(Guid id, string itemName);
-        
-        public Task<Item> EquipSword(Guid id, string weaponName);
-        public Task<Item> EquipShield(Guid id, string shieldName);
-        public Task<Item> EquipArmor(Guid id, string armorName);
-        public Task<Item> EquipHelmet(Guid id, string helmetName);
+        Task<Item> EquipSword(Guid id, string weaponName);
+        Task<Item> EquipShield(Guid id, string shieldName);
+        Task<Item> EquipArmor(Guid id, string armorName);
+        Task<Item> EquipHelmet(Guid id, string helmetName);
     }
 }

@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using MMORPG.Api;
 using MMORPG.Database;
 
-namespace MMORPG.Api{
+namespace MMORPG.Controllers{
     [ApiController]
     [Route("api/players")]
     public class PlayerController{
@@ -28,10 +29,13 @@ namespace MMORPG.Api{
         [HttpPost("Modify")]
         public Task<Player> Modify(Guid id, ModifiedPlayer modifiedPlayer)
             => this.repository.Modify(id, modifiedPlayer);
-
-
+        
         [HttpDelete("Delete")]
         public Task<Player> Delete(Guid id)
             => this.repository.Delete(id);
+
+        [HttpPost("PurchaseLevel")]
+        public Task<Player> PurchaseLevel(Guid id)
+            => this.repository.PurchaseLevel(id);
     }
 }

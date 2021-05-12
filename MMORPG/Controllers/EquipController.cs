@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using MMORPG.Api;
 using MMORPG.Database;
 
-namespace MMORPG.Api{
+namespace MMORPG.Controllers{
     [ApiController]
     [Route("/api/players/{id}/items/equip")]
     public class EquipController : ControllerBase{

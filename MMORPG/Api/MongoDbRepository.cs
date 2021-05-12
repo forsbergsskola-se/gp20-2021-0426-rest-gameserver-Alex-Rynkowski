@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MMORPG.Api;
+using MMORPG.Database;
 using MMORPG.Exceptions;
 using MMORPG.Utilities;
 using MongoDB.Driver;
 
-namespace MMORPG.Database{
+namespace MMORPG.Api{
     public class MongoDbRepository : IRepository{
         public async Task<Player> Get(Guid id){
             var foundPlayer = await ApiUtility.GetPlayerCollection().Find(Db.GetPlayerById(id)).SingleAsync();
@@ -53,6 +53,23 @@ namespace MMORPG.Database{
             var update = Builders<Player>.Update.Set("IsDeleted", true);
             return await ApiUtility.GetPlayerCollection().FindOneAndUpdateAsync(Db.GetPlayerById(id), update,
                 new FindOneAndUpdateOptions<Player>(){
+                    ReturnDocument = ReturnDocument.After
+                });
+        }
+
+        public async Task<Player> PurchaseLevel(Guid id){
+            var player = await Get(id);
+            if (!Calculate.CanAffordLevel(player.Level, player.Gold))
+                throw new Exception("Not enough gold");
+            Console.WriteLine($"Before after: {player.Gold}");
+            player.Gold -= (player.Level + 1) * 100;
+            player.Level++;
+            Console.WriteLine($"Gold after: {player.Gold}");
+            var update = Builders<Player>.Update
+                .Inc(l => l.Level, player.Level)
+                .Set(g => g.Gold, player.Gold);
+            return await ApiUtility.GetPlayerCollection().FindOneAndUpdateAsync(Db.GetPlayerById(id), update,
+                new FindOneAndUpdateOptions<Player>{
                     ReturnDocument = ReturnDocument.After
                 });
         }

@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using MMORPG.Api;
 using MMORPG.Database;
 
-namespace MMORPG.Api{
+namespace MMORPG.Controllers{
     [ApiController]
     [Route("api/players/{id:guid}/items")]
     public class ItemController : ControllerBase{
@@ -19,7 +20,7 @@ namespace MMORPG.Api{
             => this.repository.CreateItem(id, itemName, itemType);
 
         [HttpDelete("DeleteItem")]
-        public Task<Item> DeleteItem(Guid id, string itemName)
+        public Task DeleteItem(Guid id, string itemName)
             => this.repository.DeleteItem(id, itemName);
 
         [HttpGet("GetInventory")]
