@@ -10,7 +10,7 @@ using MongoDB.Driver;
 namespace MMORPG.Api{
     public class MongoDbRepository : IRepository{
         public async Task<Player> Get(Guid id){
-            var foundPlayer = await ApiUtility.GetPlayerCollection().Find(Db.GetPlayerById(id)).SingleAsync();
+            var foundPlayer = await ApiUtility.GetPlayerCollection().Find(id.GetPlayerById()).SingleAsync();
             if (!foundPlayer.IsDeleted) return foundPlayer;
 
             throw new NotFoundException("Player does not exist or has been deleted");
@@ -23,9 +23,7 @@ namespace MMORPG.Api{
         }
 
         public async Task<Player> Create(string name){
-            Console.WriteLine("Sending created player to client");
             var player = new NewPlayer(name).SetupNewPlayer(new Player());
-            Console.WriteLine(player.Id);
             await SendPlayerDataToMongo(player);
             return player;
         }
@@ -35,14 +33,12 @@ namespace MMORPG.Api{
         }
 
         public async Task<Player> Modify(Guid id, ModifiedPlayer modifiedPlayer){
-            var filter = Db.GetPlayerById(id);
-
             var update = Builders<Player>.Update
                 .Set(x => x.Gold, modifiedPlayer.Gold)
                 .Set(x => x.Score, modifiedPlayer.Score)
                 .Set(x => x.Level, modifiedPlayer.Level);
 
-            return await ApiUtility.GetPlayerCollection().FindOneAndUpdateAsync(filter, update,
+            return await ApiUtility.GetPlayerCollection().FindOneAndUpdateAsync(id.GetPlayerById(), update,
                 new FindOneAndUpdateOptions<Player>{
                     ReturnDocument = ReturnDocument.After
                 });
@@ -51,7 +47,7 @@ namespace MMORPG.Api{
 
         public async Task<Player> Delete(Guid id){
             var update = Builders<Player>.Update.Set("IsDeleted", true);
-            return await ApiUtility.GetPlayerCollection().FindOneAndUpdateAsync(Db.GetPlayerById(id), update,
+            return await ApiUtility.GetPlayerCollection().FindOneAndUpdateAsync(id.GetPlayerById(), update,
                 new FindOneAndUpdateOptions<Player>(){
                     ReturnDocument = ReturnDocument.After
                 });
@@ -68,7 +64,7 @@ namespace MMORPG.Api{
             var update = Builders<Player>.Update
                 .Inc(l => l.Level, player.Level)
                 .Set(g => g.Gold, player.Gold);
-            return await ApiUtility.GetPlayerCollection().FindOneAndUpdateAsync(Db.GetPlayerById(id), update,
+            return await ApiUtility.GetPlayerCollection().FindOneAndUpdateAsync(id.GetPlayerById(), update,
                 new FindOneAndUpdateOptions<Player>{
                     ReturnDocument = ReturnDocument.After
                 });
@@ -81,9 +77,8 @@ namespace MMORPG.Api{
 
             var item = new Item(itemName, itemType.ToString());
 
-            var filter = Builders<Player>.Filter.Eq(new StringFieldDefinition<Player, Guid>(nameof(Player.Id)), id);
             var update = Builders<Player>.Update.Push(x => x.Inventory, item);
-            return await ApiUtility.GetPlayerCollection().FindOneAndUpdateAsync(filter, update,
+            return await ApiUtility.GetPlayerCollection().FindOneAndUpdateAsync(id.GetPlayerById(), update,
                 new FindOneAndUpdateOptions<Player>{
                     ReturnDocument = ReturnDocument.After,
                     IsUpsert = true
@@ -95,11 +90,11 @@ namespace MMORPG.Api{
         }
 
         public async Task<Item> DeleteItem(Guid id, string itemName){
-            var newFilter = Builders<Player>.Filter.And(Builders<Player>.Filter.Where(x => x.Id == id),
+            var filter = Builders<Player>.Filter.And(id.GetPlayerById(),
                 Builders<Player>.Filter.ElemMatch(x => x.Inventory, x => x.ItemName == itemName));
 
             var update = Builders<Player>.Update.Set("Inventory.$.IsDeleted", true);
-            await ApiUtility.GetPlayerCollection().UpdateOneAsync(newFilter, update);
+            await ApiUtility.GetPlayerCollection().UpdateOneAsync(filter, update);
             return default;
         }
 
@@ -127,7 +122,7 @@ namespace MMORPG.Api{
 
             var update = Builders<Player>.Update.Inc(x => x.Gold, item.SellValue);
             await ApiUtility.GetPlayerCollection()
-                .UpdateOneAsync(Db.GetPlayerById(id), update, new UpdateOptions{IsUpsert = true});
+                .UpdateOneAsync(id.GetPlayerById(), update, new UpdateOptions{IsUpsert = true});
             return await DeleteItem(id, itemName);
         }
 
@@ -159,7 +154,7 @@ namespace MMORPG.Api{
                 .Set(x => x.EquippedItems[item.ItemType], item)
                 .Inc(x => x.Level, item.LevelBonus);
             await ApiUtility.GetPlayerCollection()
-                .UpdateOneAsync(Db.GetPlayerById(id), update, new UpdateOptions{IsUpsert = true});
+                .UpdateOneAsync(id.GetPlayerById(), update, new UpdateOptions{IsUpsert = true});
             return item;
         }
 
@@ -169,7 +164,7 @@ namespace MMORPG.Api{
                 .Set(x => x.EquippedItems[item.ItemType], null)
                 .Inc(player => player.Level, -item.LevelBonus);
 
-            await ApiUtility.GetPlayerCollection().UpdateOneAsync(Db.GetPlayerById(id), update);
+            await ApiUtility.GetPlayerCollection().UpdateOneAsync(id.GetPlayerById(), update);
         }
 
         static bool IsNullOrWrongType(ItemTypes type, Item item){
