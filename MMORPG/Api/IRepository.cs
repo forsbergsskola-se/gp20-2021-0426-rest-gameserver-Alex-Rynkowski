@@ -22,5 +22,9 @@ namespace MMORPG.Api{
         Task<Item> EquipShield(Guid id, string shieldName);
         Task<Item> EquipArmor(Guid id, string armorName);
         Task<Item> EquipHelmet(Guid id, string helmetName);
+
+        Task<Quest> CreateQuest(string questName, int levelRequirement);
+        Task<Quest> GetQuest(Guid id);
+        Task<Quest[]> GetAllQuests();
     }
 }

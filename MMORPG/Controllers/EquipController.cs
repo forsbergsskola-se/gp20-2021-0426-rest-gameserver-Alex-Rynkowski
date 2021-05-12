@@ -7,7 +7,7 @@ using MMORPG.Database;
 namespace MMORPG.Controllers{
     [ApiController]
     [Route("/api/players/{id}/items/equip")]
-    public class EquipController : ControllerBase{
+    public class EquipController{
         readonly IRepository repository;
 
         public EquipController(IRepository repository){

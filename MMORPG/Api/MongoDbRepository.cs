@@ -48,22 +48,24 @@ namespace MMORPG.Api{
         public async Task<Player> Delete(Guid id){
             var update = Builders<Player>.Update.Set("IsDeleted", true);
             return await ApiUtility.GetPlayerCollection().FindOneAndUpdateAsync(id.GetPlayerById(), update,
-                new FindOneAndUpdateOptions<Player>(){
+                new FindOneAndUpdateOptions<Player>{
                     ReturnDocument = ReturnDocument.After
                 });
         }
 
         public async Task<Player> PurchaseLevel(Guid id){
             var player = await Get(id);
+            if (player.CurrentExperience < player.ExperienceToNextLevel)
+                throw new Exception("Not enough experience");
             if (!Calculate.CanAffordLevel(player.Level, player.Gold))
                 throw new Exception("Not enough gold");
-            Console.WriteLine($"Before after: {player.Gold}");
+
             player.Gold -= (player.Level + 1) * 100;
             player.Level++;
-            Console.WriteLine($"Gold after: {player.Gold}");
             var update = Builders<Player>.Update
                 .Inc(l => l.Level, player.Level)
-                .Set(g => g.Gold, player.Gold);
+                .Set(g => g.Gold, player.Gold)
+                .Set(e => e.CurrentExperience, 0);
             return await ApiUtility.GetPlayerCollection().FindOneAndUpdateAsync(id.GetPlayerById(), update,
                 new FindOneAndUpdateOptions<Player>{
                     ReturnDocument = ReturnDocument.After
@@ -138,7 +140,6 @@ namespace MMORPG.Api{
         public async Task<Item> EquipHelmet(Guid id, string helmetName)
             => await Equip(id, helmetName, ItemTypes.Helmet);
 
-
         async Task<Item> Equip(Guid id, string name, ItemTypes type){
             var item = await GetItem(id, name);
             if (IsNullOrWrongType(type, item))
@@ -156,6 +157,22 @@ namespace MMORPG.Api{
             await ApiUtility.GetPlayerCollection()
                 .UpdateOneAsync(id.GetPlayerById(), update, new UpdateOptions{IsUpsert = true});
             return item;
+        }
+
+        public async Task<Quest> CreateQuest(string questName, int levelRequirement){
+            var quest = new NewQuest(questName, levelRequirement).SetupNewQuest();
+            await ApiUtility.GetQuestCollection().InsertOneAsync(quest);
+            return quest;
+        }
+
+        //TODO implement get quest
+        public Task<Quest> GetQuest(Guid id){
+            return default;
+        }
+
+        //TODO implement get all quests
+        public Task<Quest[]> GetAllQuests(){
+            return default;
         }
 
         async Task UnEquip(Guid id, string name){

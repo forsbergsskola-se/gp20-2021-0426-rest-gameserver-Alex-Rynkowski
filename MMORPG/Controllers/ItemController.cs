@@ -8,7 +8,7 @@ using MMORPG.Database;
 namespace MMORPG.Controllers{
     [ApiController]
     [Route("api/players/{id:guid}/items")]
-    public class ItemController : ControllerBase{
+    public class ItemController{
         readonly IRepository repository;
 
         public ItemController(IRepository repository){
