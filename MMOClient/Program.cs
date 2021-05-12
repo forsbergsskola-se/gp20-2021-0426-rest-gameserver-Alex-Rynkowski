@@ -20,22 +20,9 @@ namespace Client{
             this.Rarity = rarity;
         }
     }
+
     class Program{
         static async Task Main(string[] args){
-            var equippedItems = new Dictionary<string, Item>{
-                ["Epic"] = new ("Holy Sword", "Epic"), 
-                ["Rare"] = new("Shit Sword", "Rare")
-            };
-
-            var str = equippedItems.Where(item => item.Value.WName == "Holy Sword")
-                .Select(x => x.Value.Rarity).First();
-
-            var tmp = equippedItems[equippedItems
-                .Where(x => x.Value.WName is "Holy Sword")
-                .Select(y => y.Value.Rarity).First()];
-            Console.WriteLine(tmp.WName);
-            return;
-            
             Custom.WriteLine("\"Q[q]uit\" to stop the application from running", ConsoleColor.Yellow);
             var player = new Player();
             var playerList = new List<Player>();
@@ -52,6 +39,7 @@ namespace Client{
                         break;
                     case "2":
                         player = await GetPlayer(player);
+                        await PlayerStrategy(player);
                         break;
                     case "3":
                         playerList = await GetAllPlayers(player);
@@ -60,8 +48,36 @@ namespace Client{
             }
         }
 
+        static async Task PlayerStrategy(IPlayer player){
+            Custom.WriteLine($"Hello {player.Name}, what would you like to do?", ConsoleColor.White);
+            while (true){
+                Custom.WriteMultiLines(ConsoleColor.Yellow, "1: Check items",
+                    "2: Check out equipment", "3: Check out quests");
+                var userInput = Custom.ReadLine(ConsoleColor.Green);
+                switch (userInput){
+                    case "1":
+                        
+                        Console.WriteLine("Doing something item related");
+                        break;
+                    case "2":
+                        Console.WriteLine("Doing something equipment related");
+                        break;
+                    case "3":
+                        Console.WriteLine("Doing something quest related");
+                        break;
+                    default:
+                        Custom.WriteLine("Unknown input", ConsoleColor.Red);
+                        break;
+                }
+            }
+        }
+        
+        
+
         static async Task<Player> GetPlayer(Player player){
-            return await player.Get(Guid.Parse("5ae5e31c-ffd4-4c4e-847f-7d98f02a319c"));
+            Custom.WriteLine("Give me a user ID:", ConsoleColor.Yellow);
+            var userInput = Custom.ReadLine(ConsoleColor.Green);
+            return await player.Get(Guid.Parse(userInput));
         }
 
         static async Task<List<Player>> GetAllPlayers(Player player){

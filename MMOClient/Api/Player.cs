@@ -16,7 +16,7 @@ namespace Client.Api{
         public List<Item> InventoryList{ get; set; }
 
         public async Task<Player> Get(Guid id){
-            var player = await ApiConnection.GetResponse<Player>("/Get");
+            var player = await ApiConnection.GetResponse<Player>($"/Get/{id}");
             return player;
         }
 
