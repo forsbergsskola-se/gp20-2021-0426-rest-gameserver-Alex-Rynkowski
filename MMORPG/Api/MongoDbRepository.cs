@@ -166,13 +166,15 @@ namespace MMORPG.Api{
         }
 
         //TODO implement get quest
-        public Task<Quest> GetQuest(Guid id){
-            return default;
+        public async Task<Quest> GetQuest(Guid id){
+            var filter = Builders<Quest>.Filter.Eq(x => x.QuestId, id);
+            return await ApiUtility.GetQuestCollection().Find(filter).SingleAsync();
         }
 
         //TODO implement get all quests
-        public Task<Quest[]> GetAllQuests(){
-            return default;
+        public async Task<Quest[]> GetAllQuests(){
+            var allQuests = await ApiUtility.GetQuestCollection().Find(_ => true).ToListAsync();
+            return allQuests.ToArray();
         }
 
         async Task UnEquip(Guid id, string name){

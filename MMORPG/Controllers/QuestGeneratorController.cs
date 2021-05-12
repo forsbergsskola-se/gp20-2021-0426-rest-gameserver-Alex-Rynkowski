@@ -21,5 +21,9 @@ namespace MMORPG.Controllers{
         [HttpGet("GetQuest")]
         public Task<Quest> GetQuest(Guid id)
             => this.repository.GetQuest(id);
+
+        [HttpGet("GetAllQuests")]
+        public Task<Quest[]> GetAllQuests()
+            => this.repository.GetAllQuests();
     }
 }
