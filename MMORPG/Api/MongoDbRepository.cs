@@ -256,5 +256,36 @@ namespace MMORPG.Api{
                 }
             ).Start();
         }
+
+        public async Task<Player> CompleteQuest(Guid id, string questName){
+            var match = new BsonDocument{
+                {
+                    "$match", new BsonDocument{
+                        {"QuestName", questName}
+                    }
+                }
+            };
+            var pipeline = new BsonDocument[]{match};
+            var player = await Get(id);
+            var questAgg = await ApiUtility.GetQuestCollection().AggregateAsync<Quest>(pipeline);
+            var quest = questAgg.First();
+
+            if (player.Level < quest.LevelRequirement)
+                throw new Exception("Not high enough level to complete quest");
+
+
+            var filter = Builders<Player>.Filter.ElemMatch(p => p.Quests, q => q.QuestName == questName);
+            var updateQuest =
+                Builders<Player>.Update.Set(x => x.Quests[-1], null);
+
+            var update = Builders<Player>.Update
+                .Inc(g => g.Gold, quest.GoldReward)
+                .Inc(e => e.CurrentExperience, quest.ExpReward);
+
+            await ApiUtility.GetPlayerCollection().FindOneAndUpdateAsync(filter, updateQuest);
+
+            return await ApiUtility.GetPlayerCollection().FindOneAndUpdateAsync(id.GetPlayerById(), update,
+                new FindOneAndUpdateOptions<Player>{ReturnDocument = ReturnDocument.After});
+        }
     }
 }

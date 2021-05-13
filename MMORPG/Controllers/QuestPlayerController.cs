@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using MMORPG.Api;
+using MMORPG.Database;
 
 namespace MMORPG.Controllers{
     [ApiController]
@@ -14,5 +17,9 @@ namespace MMORPG.Controllers{
         [HttpGet("ReceiveRandomQuest")]
         public void ReceiveNewQuest()
             => this.repository.AssignQuestInterval();
+
+        [HttpPost("CompleteQuest/{id:guid}/{questName}")]
+        public Task<Player> CompleteQuest(Guid id, string questName)
+            => this.repository.CompleteQuest(id, questName);
     }
 }
