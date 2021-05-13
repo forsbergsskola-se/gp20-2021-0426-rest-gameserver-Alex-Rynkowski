@@ -26,5 +26,6 @@ namespace MMORPG.Api{
         Task<Quest> CreateQuest(string questName, int levelRequirement);
         Task<Quest> GetQuest(Guid id);
         Task<Quest[]> GetAllQuests();
+        void AssignQuestInterval();
     }
 }
