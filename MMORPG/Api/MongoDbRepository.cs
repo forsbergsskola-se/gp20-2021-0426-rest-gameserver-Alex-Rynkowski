@@ -20,6 +20,19 @@ namespace MMORPG.Api{
             throw new NotFoundException("Player does not exist or has been deleted");
         }
 
+        public async Task<Player> GetPlayerByName(string name){
+            var match = new BsonDocument{
+                {
+                    "$match", new BsonDocument{
+                        {"Name", name}
+                    }
+                }
+            };
+            var pipeline = new[]{match};
+            var playerAgg = await ApiUtility.GetPlayerCollection().AggregateAsync<Player>(pipeline);
+            return playerAgg.ToList().First();
+        }
+
         public async Task<Player[]> GetAll(){
             var allPlayers = await ApiUtility.GetPlayerCollection().Find(_ => true).ToListAsync();
             return allPlayers.Select(player => player)

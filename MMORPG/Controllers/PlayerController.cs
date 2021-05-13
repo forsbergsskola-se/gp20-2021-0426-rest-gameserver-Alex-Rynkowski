@@ -18,6 +18,10 @@ namespace MMORPG.Controllers{
         public async Task<Player> Get(Guid id)
             => await this.repository.Get(id);
 
+        [HttpGet("GetByName/{name}")]
+        public async Task<Player> GetPlayerByName(string name)
+            => await this.repository.GetPlayerByName(name);
+
         [HttpGet("GetAll")]
         public Task<Player[]> GetAll()
             => this.repository.GetAll();
