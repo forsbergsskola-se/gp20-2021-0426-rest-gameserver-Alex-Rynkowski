@@ -11,17 +11,7 @@ using Client.Utilities;
 // Green user input
 // red error or exception
 namespace Client{
-    public class Item{
-        public string WName{ get; set; }
-        public string Rarity{ get; set; }
-
-        public Item(string wName, string rarity){
-            this.WName = wName;
-            this.Rarity = rarity;
-        }
-    }
-
-    class Program{
+   class Program{
         static async Task Main(string[] args){
             Custom.WriteLine("\"Q[q]uit\" to stop the application from running", ConsoleColor.Yellow);
             var player = new Player();
@@ -51,12 +41,15 @@ namespace Client{
         static async Task PlayerStrategy(IPlayer player){
             Custom.WriteLine($"Hello {player.Name}, what would you like to do?", ConsoleColor.White);
             while (true){
-                Custom.WriteMultiLines(ConsoleColor.Yellow, "1: Check items",
+                Custom.WriteMultiLines(ConsoleColor.Yellow, 
+                    "0: Go back","1: Check items",
                     "2: Check out equipment", "3: Check out quests");
                 var userInput = Custom.ReadLine(ConsoleColor.Green);
                 switch (userInput){
+                    case "0":
+                        return;
                     case "1":
-                        
+                        await ItemStrategy(player);
                         Console.WriteLine("Doing something item related");
                         break;
                     case "2":
@@ -71,8 +64,34 @@ namespace Client{
                 }
             }
         }
-        
-        
+
+        static async Task ItemStrategy(IPlayer player){
+            Custom.WriteLine($"{player.Name}, what would you like to do?", ConsoleColor.White);
+            var item = new Item();
+            while (true){
+                Custom.WriteMultiLines(ConsoleColor.Yellow,"0: Go back", "1: Create an item",
+                    "2: Get inventory", "3: Get an item", "4: Sell an item", "5: Delete an item");
+                var userInput = Custom.ReadLine(ConsoleColor.Green);
+                switch (userInput){
+                    case "0":
+                        return;
+                    case "1":
+                        break;
+                    case "2":
+                        break;
+                    case "3":
+                        break;
+                    case "4":
+                        break;
+                    case "5":
+                        break;
+                    default:
+                        Custom.WriteLine("Unknown input", ConsoleColor.Red);
+                        break;
+                }
+            }
+        }
+
 
         static async Task<Player> GetPlayer(Player player){
             Custom.WriteLine("Give me a user ID:", ConsoleColor.Yellow);

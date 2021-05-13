@@ -25,6 +25,8 @@ namespace MMORPG.Database{
                 ["Armor"] = null,
                 ["Helmet"] = null
             };
+            
+            player.Quests = new Stack<Quest>();
             return player;
         }
     }
