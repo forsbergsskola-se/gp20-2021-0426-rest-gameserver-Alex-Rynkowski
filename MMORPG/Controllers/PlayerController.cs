@@ -16,30 +16,30 @@ namespace MMORPG.Controllers{
 
         [HttpGet("players/get/{id:guid}")]
         public async Task<Player> Get(Guid id)
-            => await this.repository.Get(id);
+            => await this.repository.PlayerRepository.Get(id);
 
         [HttpGet("players/getByName/{name}")]
         public async Task<Player> GetPlayerByName(string name)
-            => await this.repository.GetPlayerByName(name);
+            => await this.repository.PlayerRepository.GetPlayerByName(name);
 
         [HttpGet("players/getAll")]
         public Task<Player[]> GetAll()
-            => this.repository.GetAll();
+            => this.repository.PlayerRepository.GetAll();
 
         [HttpPost("players/create/{name}")]
         public Task<Player> Create(string name)
-            => this.repository.Create(name);
+            => this.repository.PlayerRepository.Create(name);
 
         [HttpPost("players/{id:guid}/modify/{modifiedPlayer}")]
         public Task<Player> Modify(Guid id, ModifiedPlayer modifiedPlayer)
-            => this.repository.Modify(id, modifiedPlayer);
+            => this.repository.PlayerRepository.Modify(id, modifiedPlayer);
 
         [HttpDelete("/players/{id:guid}/delete")]
         public Task<Player> Delete(Guid id)
-            => this.repository.Delete(id);
+            => this.repository.PlayerRepository.Delete(id);
 
         [HttpPost("players/{id:guid}/purchaseLevel")]
         public Task<Player> PurchaseLevel(Guid id)
-            => this.repository.PurchaseLevel(id);
+            => this.repository.PlayerRepository.PurchaseLevel(id);
     }
 }

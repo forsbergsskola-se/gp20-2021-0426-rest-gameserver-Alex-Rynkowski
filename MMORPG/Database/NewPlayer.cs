@@ -20,10 +20,10 @@ namespace MMORPG.Database{
             player.ExperienceToNextLevel = 100;
             player.Inventory = new List<Item>();
             player.EquippedItems = new Dictionary<string, Item>{
-                ["Sword"] = null,
-                ["Offhand"] = null,
-                ["Armor"] = null,
-                ["Helmet"] = null
+                [ItemTypes.Sword.ToString()] = null,
+                [ItemTypes.Shield.ToString()] = null,
+                [ItemTypes.Armor.ToString()] = null,
+                [ItemTypes.Helmet.ToString()] = null
             };
             player.Quests = new Quest[5];
             return player;

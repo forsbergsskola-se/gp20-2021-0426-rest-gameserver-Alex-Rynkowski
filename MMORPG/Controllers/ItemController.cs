@@ -15,24 +15,24 @@ namespace MMORPG.Controllers{
             this.repository = repository;
         }
 
-        [HttpPost("{id:guid}/items/createItem/{itemName}/{itemType}")]
-        public Task<Player> CreateItem(Guid id, string itemName, ItemTypes itemType)
-            => this.repository.CreateItem(id, itemName, itemType);
+        [HttpPost("{id:guid}/items/createItem")]
+        public Task<Player> CreateItem(Guid id, ModifyItem modifyItem)
+            => this.repository.ItemRepository.CreateItem(id, modifyItem);
 
         [HttpDelete("{id:guid}/items/deleteItem/{itemName}")]
         public Task DeleteItem(Guid id, string itemName)
-            => this.repository.DeleteItem(id, itemName);
+            => this.repository.ItemRepository.DeleteItem(id, itemName);
 
         [HttpGet("{id:guid}/getInventory")]
         public Task<List<Item>> GetInventory(Guid id)
-            => this.repository.GetInventory(id);
+            => this.repository.ItemRepository.GetInventory(id);
 
         [HttpGet("{id:guid}/items/getItem/{name}")]
         public Task<Item> GetItem(Guid id, string name)
-            => this.repository.GetItem(id, name);
+            => this.repository.ItemRepository.GetItem(id, name);
 
         [HttpPost("{id:guid}/items/sellItem/{itemName}")]
         public Task<Item> SellItem(Guid id, string itemName)
-            => this.repository.SellItem(id, itemName);
+            => this.repository.ItemRepository.SellItem(id, itemName);
     }
 }
