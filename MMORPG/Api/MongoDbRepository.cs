@@ -186,8 +186,8 @@ namespace MMORPG.Api{
             return quest;
         }
 
-        public async Task<Quest> GetQuest(Guid id){
-            var filter = Builders<Quest>.Filter.Eq(x => x.QuestId, id);
+        public async Task<Quest> GetQuest(Guid questId){
+            var filter = Builders<Quest>.Filter.Eq(x => x.QuestId, questId);
             return await ApiUtility.GetQuestCollection().Find(filter).SingleAsync();
         }
 
@@ -274,6 +274,14 @@ namespace MMORPG.Api{
             var questAgg = await ApiUtility.GetQuestCollection().AggregateAsync<Quest>(pipeline);
             var quest = questAgg.First();
 
+
+            try{
+                player.Quests.First(q => q.QuestName == questName);
+            }
+            catch (InvalidOperationException e){
+                throw new InvalidOperationException("Player does not have that quest " + e);
+            }
+
             if (player.Level < quest.LevelRequirement)
                 throw new Exception("Not high enough level to complete quest");
 
@@ -282,14 +290,26 @@ namespace MMORPG.Api{
             var updateQuest =
                 Builders<Player>.Update.Set(x => x.Quests[-1], null);
 
-            var update = Builders<Player>.Update
-                .Inc(g => g.Gold, quest.GoldReward)
-                .Inc(e => e.CurrentExperience, quest.ExpReward);
-
+            var update = Builders<Player>.Update.Inc(g => g.Gold, quest.GoldReward);
+            await AwardExp(id, quest.ExpReward);
             await ApiUtility.GetPlayerCollection().FindOneAndUpdateAsync(filter, updateQuest);
 
             return await ApiUtility.GetPlayerCollection().FindOneAndUpdateAsync(id.GetPlayerById(), update,
                 new FindOneAndUpdateOptions<Player>{ReturnDocument = ReturnDocument.After});
+        }
+
+        async Task AwardExp(Guid id, int expToGive){
+            var increment = Builders<Player>.Update.Inc(x => x.CurrentExperience, expToGive);
+
+            var player = await ApiUtility.GetPlayerCollection().FindOneAndUpdateAsync(id.GetPlayerById(), increment,
+                new FindOneAndUpdateOptions<Player>{
+                    ReturnDocument = ReturnDocument.After
+                });
+
+            if (player.CurrentExperience > player.ExperienceToNextLevel){
+                var update = Builders<Player>.Update.Set(x => x.CurrentExperience, player.ExperienceToNextLevel);
+                await ApiUtility.GetPlayerCollection().FindOneAndUpdateAsync(id.GetPlayerById(), update);
+            }
         }
     }
 }

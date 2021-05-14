@@ -25,7 +25,7 @@ namespace MMORPG.Api{
         Task<Item> EquipHelmet(Guid id, string helmetName);
 
         Task<Quest> CreateQuest(string questName, int levelRequirement);
-        Task<Quest> GetQuest(Guid id);
+        Task<Quest> GetQuest(Guid questId);
         Task<Quest[]> GetAllQuests();
         void AssignQuestInterval();
         Task<Player> CompleteQuest(Guid id, string questName);

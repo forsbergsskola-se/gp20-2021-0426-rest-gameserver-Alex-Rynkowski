@@ -6,7 +6,7 @@ using MMORPG.Database;
 
 namespace MMORPG.Controllers{
     [ApiController]
-    [Route("api/Testing")]
+    [Route("api/players")]
     public class QuestPlayerController{
         readonly IRepository repository;
 
@@ -14,11 +14,7 @@ namespace MMORPG.Controllers{
             this.repository = repository;
         }
 
-        [HttpGet("ReceiveRandomQuest")]
-        public void ReceiveNewQuest()
-            => this.repository.AssignQuestInterval();
-
-        [HttpPost("CompleteQuest/{id:guid}/{questName}")]
+        [HttpPost("CompleteQuest/{id:guid}/questing/{questName}")]
         public Task<Player> CompleteQuest(Guid id, string questName)
             => this.repository.CompleteQuest(id, questName);
     }

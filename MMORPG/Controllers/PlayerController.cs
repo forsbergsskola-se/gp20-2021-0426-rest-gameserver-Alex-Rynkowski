@@ -6,7 +6,7 @@ using MMORPG.Database;
 
 namespace MMORPG.Controllers{
     [ApiController]
-    [Route("api/players")]
+    [Route("api")]
     public class PlayerController{
         readonly IRepository repository;
 
@@ -14,31 +14,31 @@ namespace MMORPG.Controllers{
             this.repository = repository;
         }
 
-        [HttpGet("Get/{id:guid}")]
+        [HttpGet("players/get/{id:guid}")]
         public async Task<Player> Get(Guid id)
             => await this.repository.Get(id);
 
-        [HttpGet("GetByName/{name}")]
+        [HttpGet("players/getByName/{name}")]
         public async Task<Player> GetPlayerByName(string name)
             => await this.repository.GetPlayerByName(name);
 
-        [HttpGet("GetAll")]
+        [HttpGet("players/getAll")]
         public Task<Player[]> GetAll()
             => this.repository.GetAll();
 
-        [HttpPost("Create/{name}")]
+        [HttpPost("players/create/{name}")]
         public Task<Player> Create(string name)
             => this.repository.Create(name);
 
-        [HttpPost("Modify/{id:guid},{modifiedPlayer}")]
+        [HttpPost("players/{id:guid}/modify/{modifiedPlayer}")]
         public Task<Player> Modify(Guid id, ModifiedPlayer modifiedPlayer)
             => this.repository.Modify(id, modifiedPlayer);
 
-        [HttpDelete("Delete/{id:guid}")]
+        [HttpDelete("/players/{id:guid}/delete")]
         public Task<Player> Delete(Guid id)
             => this.repository.Delete(id);
 
-        [HttpPost("PurchaseLevel/{id:guid}")]
+        [HttpPost("players/{id:guid}/purchaseLevel")]
         public Task<Player> PurchaseLevel(Guid id)
             => this.repository.PurchaseLevel(id);
     }

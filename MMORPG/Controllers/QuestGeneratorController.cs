@@ -6,7 +6,7 @@ using MMORPG.Database;
 
 namespace MMORPG.Controllers{
     [ApiController]
-    [Route("api/players")]
+    [Route("api")]
     public class QuestGeneratorController{
         readonly IRepository repository;
 
@@ -14,16 +14,20 @@ namespace MMORPG.Controllers{
             this.repository = repository;
         }
 
-        [HttpPost("CreateQuest")]
+        [HttpPost("quests/createQuest")]
         public Task<Quest> CreateQuest(string questName, int levelRequirement)
             => this.repository.CreateQuest(questName, levelRequirement);
 
-        [HttpGet("GetQuest")]
-        public Task<Quest> GetQuest(Guid id)
-            => this.repository.GetQuest(id);
+        [HttpGet("quests/getQuest/{questId:guid}")]
+        public Task<Quest> GetQuest(Guid questId)
+            => this.repository.GetQuest(questId);
 
-        [HttpGet("GetAllQuests")]
+        [HttpGet("quests/getAllQuests")]
         public Task<Quest[]> GetAllQuests()
             => this.repository.GetAllQuests();
+
+        [HttpGet("quests/delegateRandomQuest")]
+        public void DelegateNewQuest()
+            => this.repository.AssignQuestInterval();
     }
 }
