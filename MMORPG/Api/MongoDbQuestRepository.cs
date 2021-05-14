@@ -2,7 +2,8 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MMORPG.Database;
+using MMORPG.BLL;
+using MMORPG.Data;
 using MMORPG.Utilities;
 using MongoDB.Bson;
 using MongoDB.Driver;

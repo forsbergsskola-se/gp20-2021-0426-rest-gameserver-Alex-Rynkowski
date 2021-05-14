@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using MMORPG.Database;
+using MMORPG.BLL;
 
 namespace MMORPG.Api{
     public interface IQuestRepository{

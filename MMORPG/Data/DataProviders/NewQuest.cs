@@ -1,6 +1,7 @@
 ﻿using System;
+using MMORPG.BLL;
 
-namespace MMORPG.Database{
+namespace MMORPG.Data{
     public class NewQuest{
         readonly Quest quest;
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using MMORPG.Database;
+using MMORPG.BLL;
+using MMORPG.Data;
 using MMORPG.Exceptions;
 using MMORPG.Utilities;
 using MongoDB.Driver;
@@ -32,7 +33,7 @@ namespace MMORPG.Api{
             if (player.Level < item.LevelRequirement)
                 throw new PlayerException("Level not high enough");
 
-            await UnEquip(id, name);
+            await UnEquip(id, item);
             var update = Builders<Player>.Update
                 .Set(x => x.EquippedItems[item.ItemType.ToString()], item)
                 .Inc(x => x.Level, item.LevelBonus);
@@ -41,13 +42,19 @@ namespace MMORPG.Api{
             return item;
         }
 
-        async Task UnEquip(Guid id, string name){
-            var item = await ItemRepository.GetItem(id, name);
-            var update = Builders<Player>.Update
-                .Set(x => x.EquippedItems[item.ItemType.ToString()], null)
-                .Inc(player => player.Level, -item.LevelBonus);
+        public async Task UnEquip(Guid playerId, Item item){
+            var equippedItems = await ApiUtility.GetPlayerCollection()
+                .FindAsync(x => x.EquippedItems[item.ItemType.ToString()] == item);
 
-            await ApiUtility.GetPlayerCollection().UpdateOneAsync(id.GetPlayerById(), update);
+            if (equippedItems != null)
+                return;
+
+            var getItem = await ItemRepository.GetItem(playerId, item.ItemName);
+            var update = Builders<Player>.Update
+                .Set(x => x.EquippedItems[getItem.ItemType.ToString()], null)
+                .Inc(player => player.Level, -getItem.LevelBonus);
+
+            await ApiUtility.GetPlayerCollection().UpdateOneAsync(playerId.GetPlayerById(), update);
         }
 
         static bool IsNullOrWrongType(ItemTypes type, Item item){

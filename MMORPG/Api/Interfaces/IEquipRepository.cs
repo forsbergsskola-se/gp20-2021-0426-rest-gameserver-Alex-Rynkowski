@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
-using MMORPG.Database;
+using MMORPG.BLL;
+using MMORPG.Data;
 
 namespace MMORPG.Api{
     public interface IEquipRepository{
@@ -8,5 +9,7 @@ namespace MMORPG.Api{
         Task<Item> EquipShield(Guid id, string shieldName);
         Task<Item> EquipArmor(Guid id, string armorName);
         Task<Item> EquipHelmet(Guid id, string helmetName);
+
+        public Task UnEquip(Guid playerId, Item item);
     }
 }

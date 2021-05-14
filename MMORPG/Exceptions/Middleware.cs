@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace MMORPG.Exceptions{
     public class Middleware{
@@ -24,6 +25,8 @@ namespace MMORPG.Exceptions{
                     NotFoundException exception => (int) HttpStatusCode.NotFound,
                     NoQuestFoundException exception => (int) HttpStatusCode.NotFound
                 };
+                var result = JsonSerializer.Serialize(new{message = e?.Message});
+                await response.WriteAsync(result);
             }
         }
     }

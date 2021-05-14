@@ -1,4 +1,4 @@
-﻿namespace MMORPG.Database{
+﻿namespace MMORPG.BLL{
     public class ModifiedPlayer{
         public int Score{ get; set; }
         public int Gold{ get; set; }

@@ -1,4 +1,5 @@
-﻿using MMORPG.Database;
+﻿using MMORPG.BLL;
+using MMORPG.Data;
 
 namespace MMORPG.Utilities{
     public static class Calculate{

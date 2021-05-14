@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using MMORPG.BLL;
 
-namespace MMORPG.Database{
+namespace MMORPG.Data{
     public class NewPlayer{
         public string Name{ get; set; }
 

@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using MMORPG.Database;
+using MMORPG.BLL;
+using MMORPG.Data;
 using MMORPG.Exceptions;
 using MMORPG.Utilities;
 using MongoDB.Bson;
@@ -9,6 +10,14 @@ using MongoDB.Driver;
 
 namespace MMORPG.Api{
     public class MongoDbPlayerRepository : IPlayerRepository{
+        public async Task<Player> UpdatePlayer(Guid playerId, UpdateDefinition<Player> update){
+            return await ApiUtility.GetPlayerCollection().FindOneAndUpdateAsync(playerId.GetPlayerById(), update,
+                new FindOneAndUpdateOptions<Player>{
+                    ReturnDocument = ReturnDocument.After,
+                    IsUpsert = true
+                });
+        }
+
         public async Task<Player> Get(Guid id){
             var foundPlayer = await ApiUtility.GetPlayerCollection().Find(id.GetPlayerById()).SingleAsync();
             if (!foundPlayer.IsDeleted) return foundPlayer;
@@ -70,7 +79,7 @@ namespace MMORPG.Api{
                 });
         }
 
-        public async Task<Player> PurchaseLevel(Guid id){
+        public async Task<Player> LevelUp(Guid id){
             var player = await Get(id);
             if (player.CurrentExperience < player.ExperienceToNextLevel)
                 throw new Exception("Not enough experience");

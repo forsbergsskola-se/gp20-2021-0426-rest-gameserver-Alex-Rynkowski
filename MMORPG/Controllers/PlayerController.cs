@@ -2,7 +2,8 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using MMORPG.Api;
-using MMORPG.Database;
+using MMORPG.BLL;
+using MMORPG.Data;
 
 namespace MMORPG.Controllers{
     [ApiController]
@@ -40,6 +41,6 @@ namespace MMORPG.Controllers{
 
         [HttpPost("{id:guid}/levelUp")]
         public Task<Player> LevelUp(Guid id)
-            => this.repository.PlayerRepository.PurchaseLevel(id);
+            => this.repository.PlayerRepository.LevelUp(id);
     }
 }

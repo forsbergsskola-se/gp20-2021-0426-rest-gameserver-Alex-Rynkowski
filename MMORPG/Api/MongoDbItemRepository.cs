@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MMORPG.BLL;
+using MMORPG.Data;
 using MMORPG.Database;
 using MMORPG.Exceptions;
 using MMORPG.Utilities;
@@ -9,20 +11,13 @@ using MongoDB.Driver;
 
 namespace MMORPG.Api{
     public class MongoDbItemRepository : IItemRepository{
-        public async Task<Player> CreateItem(Guid id, ModifyItem modifyItem){
-            if (!IsCorrectItemType(modifyItem.ItemType)){
+        public async Task<Item> CreateItem(Guid id, ModifiedItem newItem){
+            if (!IsCorrectItemType(newItem.ItemType)){
                 throw new NotFoundException("Item type does not exist");
             }
 
-            var item = new Item(modifyItem.ItemName, modifyItem.ItemType, modifyItem.LevelRequirement,
-                modifyItem.LevelBonus, modifyItem.Rarity, modifyItem.SellValue);
-
-            var update = Builders<Player>.Update.Push(x => x.Inventory, item);
-            return await ApiUtility.GetPlayerCollection().FindOneAndUpdateAsync(id.GetPlayerById(), update,
-                new FindOneAndUpdateOptions<Player>{
-                    ReturnDocument = ReturnDocument.After,
-                    IsUpsert = true
-                });
+            return await new NewItem(newItem.ItemName, newItem.ItemType, newItem.LevelRequirement,
+                newItem.LevelBonus, newItem.Rarity, newItem.SellValue).CreateItem(id);
         }
 
         static bool IsCorrectItemType(ItemTypes itemType){
@@ -53,19 +48,14 @@ namespace MMORPG.Api{
             return inventory.Find(item => item.ItemName == name);
         }
 
-        public async Task<Item> SellItem(Guid id, string itemName){
-            var item = await GetItem(id, itemName);
-            var equippedItems = await ApiUtility.GetPlayerCollection()
-                .FindAsync(x => x.EquippedItems[item.ItemType.ToString()] == item);
-            
-            //TODO fix this shit
-            // if (equippedItems != null)
-            //     await UnEquip(id, itemName);
+        public async Task<Item> SellItem(Guid playerId, string itemName, IRepository repository){
+            var item = await GetItem(playerId, itemName);
+            await repository.EquipRepository.UnEquip(playerId, item);
 
             var update = Builders<Player>.Update.Inc(x => x.Gold, item.SellValue);
             await ApiUtility.GetPlayerCollection()
-                .UpdateOneAsync(id.GetPlayerById(), update, new UpdateOptions{IsUpsert = true});
-            return await DeleteItem(id, itemName);
+                .UpdateOneAsync(playerId.GetPlayerById(), update, new UpdateOptions{IsUpsert = true});
+            return await DeleteItem(playerId, itemName);
         }
     }
 }

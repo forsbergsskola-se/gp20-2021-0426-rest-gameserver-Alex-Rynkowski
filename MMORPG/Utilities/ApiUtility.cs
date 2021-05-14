@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using Microsoft.Extensions.Configuration;
-using MMORPG.Database;
+using MMORPG.BLL;
 using MongoDB.Bson;
 using MongoDB.Driver;
 

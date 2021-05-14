@@ -3,7 +3,8 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using MMORPG.Api;
-using MMORPG.Database;
+using MMORPG.BLL;
+using MMORPG.Data;
 
 namespace MMORPG.Controllers{
     [ApiController]
