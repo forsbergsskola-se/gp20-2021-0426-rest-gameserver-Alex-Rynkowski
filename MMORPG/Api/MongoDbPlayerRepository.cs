@@ -35,12 +35,12 @@ namespace MMORPG.Api{
                 .Where(playerDe => !playerDe.IsDeleted).ToArray();
         }
 
-        public async Task<Player> Create(string name){
-            var exists = await ApiUtility.GetPlayerCollection().Find(_ => _.Name == name).AnyAsync();
+        public async Task<Player> Create(NewPlayer newPlayer){
+            var exists = await ApiUtility.GetPlayerCollection().Find(_ => _.Name == newPlayer.Name).AnyAsync();
             if (exists)
                 throw new Exception("Player with that name already exists");
 
-            var player = new NewPlayer(name).SetupNewPlayer(new Player());
+            var player = new NewPlayer(newPlayer.Name).SetupNewPlayer(new Player());
             await SendPlayerDataToMongo(player);
             return player;
         }

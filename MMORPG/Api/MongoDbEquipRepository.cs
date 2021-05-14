@@ -7,7 +7,8 @@ using MongoDB.Driver;
 
 namespace MMORPG.Api{
     public class MongoDbEquipRepository : IEquipRepository{
-        public IItemRepository ItemRepository => new MongoDbItemRepository();
+        static IItemRepository ItemRepository => new MongoDbItemRepository();
+        static IPlayerRepository PlayerRepository => new MongoDbPlayerRepository();
 
         public async Task<Item> EquipSword(Guid id, string weaponName)
             => await Equip(id, weaponName, ItemTypes.Sword);
@@ -22,16 +23,14 @@ namespace MMORPG.Api{
             => await Equip(id, helmetName, ItemTypes.Helmet);
 
         async Task<Item> Equip(Guid id, string name, ItemTypes type){
-            var item = await this.ItemRepository.GetItem(id, name);
+            var item = await ItemRepository.GetItem(id, name);
             if (IsNullOrWrongType(type, item))
                 throw new NotFoundException("Item not found in player inventory");
 
-            //TODO fix player id:
-            //var player = await Get(id);
+            var player = await PlayerRepository.Get(id);
 
-            //TODO implement custom exception
-            // if (player.Level < item.LevelRequirement)
-            //     throw new Exception("Level not high enough");
+            if (player.Level < item.LevelRequirement)
+                throw new PlayerException("Level not high enough");
 
             await UnEquip(id, name);
             var update = Builders<Player>.Update
@@ -43,7 +42,7 @@ namespace MMORPG.Api{
         }
 
         async Task UnEquip(Guid id, string name){
-            var item = await this.ItemRepository.GetItem(id, name);
+            var item = await ItemRepository.GetItem(id, name);
             var update = Builders<Player>.Update
                 .Set(x => x.EquippedItems[item.ItemType.ToString()], null)
                 .Inc(player => player.Level, -item.LevelBonus);

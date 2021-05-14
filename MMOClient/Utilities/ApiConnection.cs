@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
 using Client.Api;
 using Newtonsoft.Json;
@@ -44,7 +45,7 @@ namespace Client.Utilities{
 
             Console.WriteLine(request.RequestUri);
             var player = new Player();
-            request.Content = new StringContent(JsonConvert.SerializeObject(player));
+            request.Content = new StringContent(JsonConvert.SerializeObject(player), Encoding.UTF8, "application/json");
             var tmp = await client.PostAsync(request.RequestUri, request.Content);
             return JsonConvert.DeserializeObject<T>(await tmp.Content.ReadAsStringAsync());
         }

@@ -11,7 +11,7 @@ namespace MMORPG.Api{
     public class MongoDbItemRepository : IItemRepository{
         public async Task<Player> CreateItem(Guid id, ModifyItem modifyItem){
             if (!IsCorrectItemType(modifyItem.ItemType)){
-                throw new Exception("Item type does not exist");
+                throw new NotFoundException("Item type does not exist");
             }
 
             var item = new Item(modifyItem.ItemName, modifyItem.ItemType, modifyItem.LevelRequirement,
@@ -40,7 +40,7 @@ namespace MMORPG.Api{
 
         public async Task<List<Item>> GetInventory(Guid id){
             try{
-                var inventory = await ApiUtility.GetPlayerCollection().Find(Db.GetPlayerById(id)).SingleAsync();
+                var inventory = await ApiUtility.GetPlayerCollection().Find(id.GetPlayerById()).SingleAsync();
                 return inventory.Inventory.Where(x => !x.IsDeleted).Select(item => item).ToList();
             }
             catch (Exception e){

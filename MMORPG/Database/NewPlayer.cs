@@ -3,14 +3,14 @@ using System.Collections.Generic;
 
 namespace MMORPG.Database{
     public class NewPlayer{
-        readonly string name;
+        public string Name{ get; set; }
 
         public NewPlayer(string name){
-            this.name = name;
+            this.Name = name;
         }
 
         public Player SetupNewPlayer(Player player){
-            player.Name = this.name;
+            player.Name = this.Name;
             player.Id = Guid.NewGuid();
             player.Score = 0;
             player.Level = 0;

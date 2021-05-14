@@ -26,7 +26,7 @@ namespace Client.Api{
         }
 
         public async Task<Player> Create(string name){
-            return await ApiConnection.SendRequest<Player>($"/Create/{name}");
+            return await ApiConnection.SendRequest<Player>($"/Create");
         }
 
         public async Task<Player> Delete(Guid id){
