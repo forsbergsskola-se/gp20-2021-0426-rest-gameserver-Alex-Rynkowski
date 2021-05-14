@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-
-namespace MMORPG.Api{
+﻿namespace MMORPG.Repositories{
     public interface IRepository{
         IPlayerRepository PlayerRepository{ get; }
         IEquipRepository EquipRepository{ get; }

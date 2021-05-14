@@ -7,10 +7,10 @@ using Newtonsoft.Json;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace MMORPG.Exceptions{
-    public class Middleware{
+    public class ErrorHandlingMiddleware{
         readonly RequestDelegate next;
 
-        public Middleware(RequestDelegate next){
+        public ErrorHandlingMiddleware(RequestDelegate next){
             this.next = next;
         }
 
@@ -21,11 +21,14 @@ namespace MMORPG.Exceptions{
             catch (Exception e){
                 var response = context.Response;
 
+                response.ContentType = "application.json";
+                
                 response.StatusCode = e switch{
-                    NotFoundException exception => (int) HttpStatusCode.NotFound,
-                    NoQuestFoundException exception => (int) HttpStatusCode.NotFound
+                    NotFoundException => (int) HttpStatusCode.NotFound,
+                    NoQuestFoundException => (int) HttpStatusCode.NotFound,
+                    PlayerException => (int) HttpStatusCode.NotFound
                 };
-                var result = JsonSerializer.Serialize(new{message = e?.Message});
+                var result = JsonSerializer.Serialize(new{message = e.Message});
                 await response.WriteAsync(result);
             }
         }
@@ -33,7 +36,7 @@ namespace MMORPG.Exceptions{
 
     public static class MiddlewareExtensions{
         public static IApplicationBuilder UseMyMiddleware(this IApplicationBuilder builder){
-            return builder.UseMiddleware<Middleware>();
+            return builder.UseMiddleware<ErrorHandlingMiddleware>();
         }
     }
 }

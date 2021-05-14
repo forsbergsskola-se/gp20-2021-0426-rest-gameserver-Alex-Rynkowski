@@ -1,5 +1,4 @@
 ﻿using System;
-using MMORPG.BLL;
 
 namespace MMORPG.Data{
     public class NewQuest{

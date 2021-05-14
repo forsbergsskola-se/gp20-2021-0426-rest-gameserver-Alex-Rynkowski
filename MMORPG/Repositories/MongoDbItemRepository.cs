@@ -2,15 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MMORPG.BLL;
+using MMORPG.Api;
 using MMORPG.Data;
-using MMORPG.Database;
 using MMORPG.Exceptions;
 using MMORPG.Utilities;
 using MongoDB.Driver;
 
-namespace MMORPG.Api{
+namespace MMORPG.Repositories{
     public class MongoDbItemRepository : IItemRepository{
+        public static IRepository Repository => new MongoDbRepository();
+
         public async Task<Item> CreateItem(Guid id, ModifiedItem newItem){
             if (!IsCorrectItemType(newItem.ItemType)){
                 throw new NotFoundException("Item type does not exist");
@@ -24,13 +25,13 @@ namespace MMORPG.Api{
             return Enum.IsDefined(typeof(ItemTypes), itemType.ToString());
         }
 
-        public async Task<Item> DeleteItem(Guid id, string itemName){
-            var filter = Builders<Player>.Filter.And(id.GetPlayerById(),
+        public async Task<Item> DeleteItem(Guid playerId, string itemName){
+            var filter = Builders<Player>.Filter.And(playerId.GetPlayerById(),
                 Builders<Player>.Filter.ElemMatch(x => x.Inventory, x => x.ItemName == itemName));
 
             var update = Builders<Player>.Update.Set("Inventory.$.IsDeleted", true);
             await ApiUtility.GetPlayerCollection().UpdateOneAsync(filter, update);
-            return default;
+            return await GetItem(playerId, itemName);
         }
 
         public async Task<List<Item>> GetInventory(Guid id){
@@ -38,8 +39,8 @@ namespace MMORPG.Api{
                 var inventory = await ApiUtility.GetPlayerCollection().Find(id.GetPlayerById()).SingleAsync();
                 return inventory.Inventory.Where(x => !x.IsDeleted).Select(item => item).ToList();
             }
-            catch (Exception e){
-                throw new NotFoundException("Player not found or has been deleted " + e);
+            catch (Exception){
+                throw new NotFoundException("Player not found or has been deleted ");
             }
         }
 
@@ -48,13 +49,11 @@ namespace MMORPG.Api{
             return inventory.Find(item => item.ItemName == name);
         }
 
-        public async Task<Item> SellItem(Guid playerId, string itemName, IRepository repository){
+        public async Task<Item> SellItem(Guid playerId, string itemName){
             var item = await GetItem(playerId, itemName);
-            await repository.EquipRepository.UnEquip(playerId, item);
-
             var update = Builders<Player>.Update.Inc(x => x.Gold, item.SellValue);
-            await ApiUtility.GetPlayerCollection()
-                .UpdateOneAsync(playerId.GetPlayerById(), update, new UpdateOptions{IsUpsert = true});
+            await Repository.EquipRepository.UnEquip(playerId, item);
+            await Repository.PlayerRepository.UpdatePlayer(playerId, update);
             return await DeleteItem(playerId, itemName);
         }
     }

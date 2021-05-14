@@ -1,6 +1,4 @@
-﻿using MMORPG.Data;
-
-namespace MMORPG.Database{
+﻿namespace MMORPG.Data{
     public class ModifiedItem{
         public string ItemName{ get; set; }
         public ItemTypes ItemType{ get; set; }

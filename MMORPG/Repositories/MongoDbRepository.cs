@@ -1,4 +1,4 @@
-﻿namespace MMORPG.Api{
+﻿namespace MMORPG.Repositories{
     public class MongoDbRepository : IRepository{
         public IPlayerRepository PlayerRepository => new MongoDbPlayerRepository();
         public IEquipRepository EquipRepository => new MongoDbEquipRepository();

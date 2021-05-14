@@ -1,9 +1,8 @@
 using System;
 using System.Threading.Tasks;
-using MMORPG.BLL;
 using MMORPG.Data;
 
-namespace MMORPG.Api{
+namespace MMORPG.Repositories{
     public interface IEquipRepository{
         Task<Item> EquipSword(Guid id, string weaponName);
         Task<Item> EquipShield(Guid id, string shieldName);

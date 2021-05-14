@@ -1,5 +1,5 @@
 ﻿using System;
-using MMORPG.BLL;
+using MMORPG.Data;
 using MongoDB.Driver;
 
 namespace MMORPG.Utilities{

@@ -1,16 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MMORPG.BLL;
 using MMORPG.Data;
 using MMORPG.Utilities;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
-namespace MMORPG.Api{
+namespace MMORPG.Repositories{
     public class MongoDbQuestRepository : IQuestRepository{
         const int QuestIntervalSeconds = 10;
+        static IPlayerRepository PlayerRepository => new MongoDbPlayerRepository();
 
         public async Task<Quest> CreateQuest(string questName, int levelRequirement){
             var quest = new NewQuest(questName, levelRequirement).SetupNewQuest();
@@ -29,26 +30,10 @@ namespace MMORPG.Api{
         }
 
 
-        //TODO refactor this method, it's kind of unreadable atm
         public void AssignQuestInterval(){
             var totalPlayers = ApiUtility.GetPlayerCollection().CountDocuments(_ => true);
-            var size = new BsonDocument{
-                {
-                    "$sample", new BsonDocument{
-                        {"size", (int) totalPlayers}
-                    }
-                }
-            };
-
-            var match = new BsonDocument{
-                {
-                    "$sample", new BsonDocument{
-                        {"size", 1}
-                    }
-                }
-            };
-            var pipeline = new[]{match};
-            var playersPipeline = new[]{size};
+            var playersPipeline = PlayersPipeline(totalPlayers);
+            var pipeline = PipeLine();
             GenerateNewQuests(pipeline, playersPipeline);
         }
 
@@ -56,33 +41,28 @@ namespace MMORPG.Api{
             new Thread(async () => {
                     var index = 0;
                     while (true){
-                        var randomQuest = await ApiUtility.GetQuestCollection().AggregateAsync<Quest>(pipeline);
-                        var players = await ApiUtility.GetPlayerCollection().AggregateAsync<Player>(playersPipeline);
-                        var quest = await randomQuest.FirstAsync();
-                        var allPlayers = await players.ToListAsync();
-                        Console.WriteLine();
+                        var quest = await ApiUtility.GetQuestCollection().Aggregate<Quest>(pipeline).FirstAsync();
+                        var players = await ApiUtility.GetPlayerCollection().Aggregate<Player>(playersPipeline)
+                            .ToListAsync();
                         var update = Builders<Player>.Update.Set(x => x.Quests[index], quest);
-                        Console.WriteLine($"Time: {DateTime.Now.TimeOfDay}");
-                        foreach (var p in allPlayers){
-                            var filter = Builders<Player>.Filter.Eq(nameof(p.Id), p.Id);
-                            var player = await ApiUtility.GetPlayerCollection().FindOneAndUpdateAsync(
-                                filter, update,
-                                new FindOneAndUpdateOptions<Player>{
-                                    ReturnDocument = ReturnDocument.After,
-                                    IsUpsert = true
-                                });
-                            Console.WriteLine(
-                                $"Quest at index: {index}: {player.Quests[index].QuestName}, assigned to player: {p.Name}, level requirement: {player.Quests[index].LevelRequirement}");
+                        foreach (var p in players){
+                            await PlayerRepository.UpdatePlayer(p.Id, update);
                         }
 
                         Thread.Sleep(TimeSpan.FromSeconds(QuestIntervalSeconds));
-                        index++;
-                        if (index > allPlayers.Select(x => x).First().Quests.Length - 1){
-                            index = 0;
-                        }
+                        index = IncrementIndex(index, players);
                     }
                 }
             ).Start();
+        }
+
+        static int IncrementIndex(int index, List<Player> players){
+            index++;
+            if (index > players.Select(x => x).First().Quests.Length - 1){
+                index = 0;
+            }
+
+            return index;
         }
 
         public async Task<Player> CompleteQuest(Guid id, string questName){
@@ -134,6 +114,30 @@ namespace MMORPG.Api{
                 var update = Builders<Player>.Update.Set(x => x.CurrentExperience, player.ExperienceToNextLevel);
                 await ApiUtility.GetPlayerCollection().FindOneAndUpdateAsync(id.GetPlayerById(), update);
             }
+        }
+
+        static BsonDocument[] PlayersPipeline(long totalPlayers){
+            var size = new BsonDocument{
+                {
+                    "$sample", new BsonDocument{
+                        {"size", (int) totalPlayers}
+                    }
+                }
+            };
+            var playersPipeline = new[]{size};
+            return playersPipeline;
+        }
+
+        static BsonDocument[] PipeLine(){
+            var match = new BsonDocument{
+                {
+                    "$sample", new BsonDocument{
+                        {"size", 1}
+                    }
+                }
+            };
+            var pipeline = new[]{match};
+            return pipeline;
         }
     }
 }

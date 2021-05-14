@@ -1,7 +1,7 @@
 ﻿using System;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace MMORPG.BLL{
+namespace MMORPG.Data{
     [BsonIgnoreExtraElements]
     [BsonNoId]
     public class Quest{

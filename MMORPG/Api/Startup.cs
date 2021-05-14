@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using MMORPG.Exceptions;
+using MMORPG.Repositories;
 
 namespace MMORPG.Api{
     public class Startup{
@@ -31,7 +32,7 @@ namespace MMORPG.Api{
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "MMORPG v1"));
             }
 
-            app.UseMiddleware<Middleware>();            
+            app.UseMiddleware<ErrorHandlingMiddleware>();            
 
             app.UseHttpsRedirection();
 

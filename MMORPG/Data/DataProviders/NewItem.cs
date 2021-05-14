@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using MMORPG.Api;
-using MMORPG.BLL;
+using MMORPG.Repositories;
 using MongoDB.Driver;
 
 namespace MMORPG.Data{

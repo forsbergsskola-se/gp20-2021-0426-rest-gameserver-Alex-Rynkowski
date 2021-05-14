@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
-using MMORPG.BLL;
+using MMORPG.Data;
 
-namespace MMORPG.Api{
+namespace MMORPG.Repositories{
     public interface IQuestRepository{
         Task<Quest> CreateQuest(string questName, int levelRequirement);
         Task<Quest> GetQuest(Guid questId);

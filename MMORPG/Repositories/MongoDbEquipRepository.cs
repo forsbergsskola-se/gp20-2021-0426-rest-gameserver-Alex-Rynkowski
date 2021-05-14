@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
-using MMORPG.BLL;
 using MMORPG.Data;
 using MMORPG.Exceptions;
 using MMORPG.Utilities;
 using MongoDB.Driver;
 
-namespace MMORPG.Api{
+namespace MMORPG.Repositories{
     public class MongoDbEquipRepository : IEquipRepository{
         static IItemRepository ItemRepository => new MongoDbItemRepository();
         static IPlayerRepository PlayerRepository => new MongoDbPlayerRepository();

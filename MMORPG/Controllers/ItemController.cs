@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using MMORPG.Api;
-using MMORPG.BLL;
 using MMORPG.Data;
-using MMORPG.Database;
+using MMORPG.Repositories;
 
 namespace MMORPG.Controllers{
     [ApiController]
@@ -36,6 +35,6 @@ namespace MMORPG.Controllers{
 
         [HttpDelete("{id:guid}/items/{itemName}")]
         public Task<Item> SellItem(Guid id, string itemName)
-            => this.repository.ItemRepository.SellItem(id, itemName, new MongoDbRepository());
+            => this.repository.ItemRepository.SellItem(id, itemName);
     }
 }

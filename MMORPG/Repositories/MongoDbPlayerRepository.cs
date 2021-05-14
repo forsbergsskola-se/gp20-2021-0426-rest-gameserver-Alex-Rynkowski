@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using MMORPG.BLL;
 using MMORPG.Data;
 using MMORPG.Exceptions;
 using MMORPG.Utilities;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
-namespace MMORPG.Api{
+namespace MMORPG.Repositories{
     public class MongoDbPlayerRepository : IPlayerRepository{
+        /// <summary>
+        /// FindOneAndUpdateAsync (player)
+        /// </summary>
         public async Task<Player> UpdatePlayer(Guid playerId, UpdateDefinition<Player> update){
             return await ApiUtility.GetPlayerCollection().FindOneAndUpdateAsync(playerId.GetPlayerById(), update,
                 new FindOneAndUpdateOptions<Player>{
@@ -22,7 +24,7 @@ namespace MMORPG.Api{
             var foundPlayer = await ApiUtility.GetPlayerCollection().Find(id.GetPlayerById()).SingleAsync();
             if (!foundPlayer.IsDeleted) return foundPlayer;
 
-            throw new NotFoundException("Player does not exist or has been deleted");
+            throw new PlayerException("Player does not exist or has been deleted");
         }
 
         public async Task<Player> GetPlayerByName(string name){
@@ -47,15 +49,9 @@ namespace MMORPG.Api{
         public async Task<Player> Create(NewPlayer newPlayer){
             var exists = await ApiUtility.GetPlayerCollection().Find(_ => _.Name == newPlayer.Name).AnyAsync();
             if (exists)
-                throw new Exception("Player with that name already exists");
+                throw new PlayerException("Player with that name already exists");
 
-            var player = new NewPlayer(newPlayer.Name).SetupNewPlayer(new Player());
-            await SendPlayerDataToMongo(player);
-            return player;
-        }
-
-        async Task SendPlayerDataToMongo(Player player){
-            await ApiUtility.GetPlayerCollection().InsertOneAsync(player);
+            return await new NewPlayer(newPlayer.Name).SetupNewPlayer(new Player());
         }
 
         public async Task<Player> Modify(Guid id, ModifiedPlayer modifiedPlayer){
@@ -64,27 +60,22 @@ namespace MMORPG.Api{
                 .Set(x => x.Score, modifiedPlayer.Score)
                 .Set(x => x.Level, modifiedPlayer.Level);
 
-            return await ApiUtility.GetPlayerCollection().FindOneAndUpdateAsync(id.GetPlayerById(), update,
-                new FindOneAndUpdateOptions<Player>{
-                    ReturnDocument = ReturnDocument.After
-                });
+            return await UpdatePlayer(id, update);
         }
 
-
-        public async Task<Player> Delete(Guid id){
+        public async Task<Player> Delete(Guid playerId){
             var update = Builders<Player>.Update.Set("IsDeleted", true);
-            return await ApiUtility.GetPlayerCollection().FindOneAndUpdateAsync(id.GetPlayerById(), update,
-                new FindOneAndUpdateOptions<Player>{
-                    ReturnDocument = ReturnDocument.After
-                });
+            return await UpdatePlayer(playerId, update);
         }
 
-        public async Task<Player> LevelUp(Guid id){
-            var player = await Get(id);
+        public async Task<Player> LevelUp(Guid playerId){
+            var player = await Get(playerId);
+            
             if (player.CurrentExperience < player.ExperienceToNextLevel)
-                throw new Exception("Not enough experience");
+                throw new PlayerException("Not enough experience");
+            
             if (!Calculate.CanAffordLevel(player.Level, player.Gold))
-                throw new Exception("Not enough gold");
+                throw new PlayerException("Not enough gold");
 
             player.Gold -= (player.Level + 1) * 100;
             player.Level++;
@@ -93,10 +84,7 @@ namespace MMORPG.Api{
                 .Set(g => g.Gold, player.Gold)
                 .Set(e => e.CurrentExperience, 0)
                 .Set(e => e.CurrentExperience, player.Level + 1 * 100);
-            return await ApiUtility.GetPlayerCollection().FindOneAndUpdateAsync(id.GetPlayerById(), update,
-                new FindOneAndUpdateOptions<Player>{
-                    ReturnDocument = ReturnDocument.After
-                });
+            return await UpdatePlayer(playerId, update);
         }
     }
 }

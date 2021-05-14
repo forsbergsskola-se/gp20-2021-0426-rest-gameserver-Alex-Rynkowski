@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using MMORPG.Data;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace MMORPG.BLL{
+namespace MMORPG.Data{
     [BsonIgnoreExtraElements]
     [BsonNoId]
     public class Player{

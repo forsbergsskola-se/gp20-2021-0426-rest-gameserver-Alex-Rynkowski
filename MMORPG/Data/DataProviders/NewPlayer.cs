@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using MMORPG.BLL;
+using System.Threading.Tasks;
+using MMORPG.Utilities;
 
 namespace MMORPG.Data{
     public class NewPlayer{
@@ -10,7 +11,7 @@ namespace MMORPG.Data{
             this.Name = name;
         }
 
-        public Player SetupNewPlayer(Player player){
+        public async Task<Player> SetupNewPlayer(Player player){
             player.Name = this.Name;
             player.Id = Guid.NewGuid();
             player.Score = 0;
@@ -27,6 +28,7 @@ namespace MMORPG.Data{
                 [ItemTypes.Helmet.ToString()] = null
             };
             player.Quests = new Quest[5];
+            await ApiUtility.GetPlayerCollection().InsertOneAsync(player);
             return player;
         }
     }
