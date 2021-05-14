@@ -40,6 +40,10 @@ namespace MMORPG.Api{
         }
 
         public async Task<Player> Create(string name){
+            var exists = await ApiUtility.GetPlayerCollection().Find(_ => _.Name == name).AnyAsync();
+            if (exists)
+                throw new Exception("Player with that name already exists");
+
             var player = new NewPlayer(name).SetupNewPlayer(new Player());
             await SendPlayerDataToMongo(player);
             return player;
@@ -265,7 +269,7 @@ namespace MMORPG.Api{
                     }
                 }
             };
-            var pipeline = new BsonDocument[]{match};
+            var pipeline = new[]{match};
             var player = await Get(id);
             var questAgg = await ApiUtility.GetQuestCollection().AggregateAsync<Quest>(pipeline);
             var quest = questAgg.First();
