@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using MMORPG.Api;
 using MMORPG.Repositories;
 using MongoDB.Driver;
 

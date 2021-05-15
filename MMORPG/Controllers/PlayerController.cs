@@ -27,7 +27,7 @@ namespace MMORPG.Controllers{
         public Task<Player[]> GetAll()
             => this.repository.PlayerRepository.GetAll();
 
-        [HttpPost("players/create")]
+        [HttpPost("create")]
         public Task<Player> Create(NewPlayer name)
             => this.repository.PlayerRepository.Create(name);
 

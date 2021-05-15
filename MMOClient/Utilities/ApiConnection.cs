@@ -3,7 +3,6 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using Client.Api;
 using Newtonsoft.Json;
 
 namespace Client.Utilities{
@@ -17,16 +16,16 @@ namespace Client.Utilities{
                 ServerCertificateCustomValidationCallback = (_, _, _, _) => true
             };
 
-            var client = new HttpClient(clientHandler){BaseAddress = new Uri("https://localhost:44317/api/players/")};
+            var client = new HttpClient(clientHandler){BaseAddress = new Uri($"https://localhost:44317/api/")};
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
             var response = await client.GetAsync(client.BaseAddress + adjustedUrl);
-
+            Console.WriteLine(client.BaseAddress + adjustedUrl);
             return JsonConvert.DeserializeObject<T>(await response.Content.ReadAsStringAsync());
         }
 
-        public static async Task<T> SendRequest<T>(string url){
+        public static async Task<T> SendRequest<T>(string url, string jsonValue){
             var adjustedUrl = url;
             if (url[0] == '/')
                 adjustedUrl = url[1..];
@@ -40,13 +39,28 @@ namespace Client.Utilities{
                 new MediaTypeWithQualityHeaderValue("application/json"));
 
             var request = new HttpRequestMessage{
-                RequestUri = new Uri($"https://localhost:44317/api/players/{adjustedUrl}")
+                RequestUri = new Uri($"https://localhost:44317/api/{adjustedUrl}")
             };
 
             Console.WriteLine(request.RequestUri);
-            var player = new Player();
-            request.Content = new StringContent(JsonConvert.SerializeObject(player), Encoding.UTF8, "application/json");
+            request.Content = new StringContent(jsonValue, Encoding.UTF8, "application/json");
+
             var tmp = await client.PostAsync(request.RequestUri, request.Content);
+            return JsonConvert.DeserializeObject<T>(await tmp.Content.ReadAsStringAsync());
+        }
+
+        public static async Task<T> DeleteRequest<T>(string url){
+            var clientHandler = new HttpClientHandler{
+                ServerCertificateCustomValidationCallback = (_, _, _, _) => true
+            };
+
+            var client = new HttpClient(clientHandler){BaseAddress = new Uri($"https://localhost:44317/api/")};
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            var request = new HttpRequestMessage(HttpMethod.Delete, client.BaseAddress + url);
+
+            var tmp = await client.SendAsync(request);
             return JsonConvert.DeserializeObject<T>(await tmp.Content.ReadAsStringAsync());
         }
     }

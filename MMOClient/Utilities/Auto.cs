@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Client.Api;
+using Client.Model;
 
 namespace Client.Utilities{
     public static class Auto{

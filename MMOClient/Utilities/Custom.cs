@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 
 namespace Client.Utilities{
     public static class Custom{
@@ -11,12 +12,12 @@ namespace Client.Utilities{
             Console.WriteLine(txt);
         }
 
-        public static string ReadLine(ConsoleColor textColor){
+        public static string? ReadLine(ConsoleColor textColor){
             Console.ForegroundColor = textColor;
             return Console.ReadLine();
         }
 
-        public static void WriteMultiLines(ConsoleColor textColor, params string[] args){
+        public static void WriteMultiLines(ConsoleColor textColor, params object[] args){
             Console.ForegroundColor = textColor;
             foreach (var arg in args){
                 Console.WriteLine(arg);

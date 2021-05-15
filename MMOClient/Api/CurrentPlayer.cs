@@ -1,4 +1,6 @@
-﻿namespace Client.Api{
+﻿using Client.Model;
+
+namespace Client.Api{
     public class CurrentPlayer{
         readonly Player player;
 
