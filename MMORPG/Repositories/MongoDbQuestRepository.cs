@@ -54,15 +54,15 @@ namespace MMORPG.Repositories{
         }
 
         static async Task<List<Player>> GetAllPlayersAsync(){
-            var totalPlayers = ApiUtility.GetPlayerCollection().CountDocuments(_ => true);
+            var totalPlayers = await ApiUtility.GetPlayerCollection().CountDocumentsAsync(_ => true);
             return await ApiUtility.GetPlayerCollection()
-                .Aggregate<Player>(Pipeline("$sample", "size", totalPlayers))
+                .Aggregate<Player>(Db.Pipeline("$sample", "size", totalPlayers))
                 .ToListAsync();
         }
 
         static async Task<Quest> RandomQuestAsync(){
             return await ApiUtility.GetQuestCollection()
-                .Aggregate<Quest>(Pipeline("$sample", "size", 1)).FirstAsync();
+                .Aggregate<Quest>(Db.Pipeline("$sample", "size", 1)).FirstAsync();
         }
 
         static int IncrementIndex(int index, List<Player> players){
@@ -102,7 +102,7 @@ namespace MMORPG.Repositories{
         }
 
         static async Task<Quest> GetQuestAsync(string questName){
-            return await ApiUtility.GetQuestCollection().Aggregate<Quest>(Pipeline("$match", "QuestName", questName)).FirstAsync();
+            return await ApiUtility.GetQuestCollection().Aggregate<Quest>(Db.Pipeline("$match", "QuestName", questName)).FirstAsync();
         }
 
         async Task AwardExp(Guid id, int expToGive){
@@ -119,18 +119,6 @@ namespace MMORPG.Repositories{
             }
         }
 
-        /// <summary>
-        /// arg one needs to be written with a dollar sign as first character "$sample" 
-        /// </summary>
-        static BsonDocument[] Pipeline(string argOne, string argTwo, BsonValue value){
-            var bsonDoc = new BsonDocument{
-                {
-                    argOne, new BsonDocument{
-                        {argTwo, value}
-                    }
-                }
-            };
-            return new[]{bsonDoc};
-        }
+
     }
 }

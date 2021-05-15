@@ -4,5 +4,7 @@
         IEquipRepository EquipRepository{ get; }
         IItemRepository ItemRepository{ get; }
         IQuestRepository QuestRepository{ get; }
+        
+        IStatistics Statistics{ get; }
     }
 }
