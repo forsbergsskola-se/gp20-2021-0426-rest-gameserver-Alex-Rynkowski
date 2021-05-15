@@ -6,5 +6,7 @@
         IQuestRepository QuestRepository{ get; }
         
         IStatistics Statistics{ get; }
+        
+        IDrop DropCollection{ get; }
     }
 }

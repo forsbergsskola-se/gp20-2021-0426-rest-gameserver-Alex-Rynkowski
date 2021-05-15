@@ -57,9 +57,9 @@ namespace Client.Utilities{
             var client = new HttpClient(clientHandler){BaseAddress = new Uri($"https://localhost:44317/api/")};
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
+            
             var request = new HttpRequestMessage(HttpMethod.Delete, client.BaseAddress + url);
-
+            Console.WriteLine(client.BaseAddress + url);
             var tmp = await client.SendAsync(request);
             return JsonConvert.DeserializeObject<T>(await tmp.Content.ReadAsStringAsync());
         }

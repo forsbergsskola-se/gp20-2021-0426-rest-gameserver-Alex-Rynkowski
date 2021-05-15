@@ -1,4 +1,7 @@
-﻿using Client.UserStrategy;
+﻿using System.Threading.Tasks;
+using Client.Model;
+using Client.UserStrategy;
+using Client.Utilities;
 
 //Color codes:
 // Output White
@@ -7,8 +10,9 @@
 // red error or exception
 namespace Client{
     class Program{
-        static void Main(string[] args){
+        static async Task Main(string[] args){
             var playerStrategy = new PlayerStrategy();
+            await ApiConnection.DeleteRequest<Player>("/drop/playerCollection");
             playerStrategy.ChooseCharacter();
             while (true){
                 

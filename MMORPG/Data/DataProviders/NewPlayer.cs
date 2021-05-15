@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MMORPG.Utilities;
+using MongoDB.Driver;
 
 namespace MMORPG.Data{
     public class NewPlayer{

@@ -17,7 +17,7 @@ namespace Client.Utilities{
         }
 
         static async Task<Player> CreateCharacter(Player player, string name){
-            var createdPlayer = await player.Create(name);
+            var createdPlayer = await Player.Create(name);
             Custom.WriteMultiLines(ConsoleColor.White, "Created player:", $"Id: {createdPlayer.Id}",
                 $"Name: {createdPlayer.Name}", $"Level: {createdPlayer.Level}");
             return createdPlayer;

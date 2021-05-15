@@ -16,22 +16,22 @@ namespace Client.Model{
         public int ExperienceToNextLevel{ get; set; }
         public List<Item> InventoryList{ get; set; }
 
-        public async Task<Player> Get(Guid id){
+        public static async Task<Player> Get(Guid id){
             var player = await ApiConnection.GetResponse<Player>($"players/Get/{id}");
             return player;
         }
 
-        public async Task<Player> Get(string id){
+        public static async Task<Player> Get(string id){
             var player = await ApiConnection.GetResponse<Player>($"players/Get/{id}");
             return player;
         }
 
-        public async Task<List<Player>> GetAll(){
+        public static async Task<List<Player>> GetAll(){
             var players = await ApiConnection.GetResponse<List<Player>>("/players");
             return players;
         }
 
-        public async Task<Player> Create(string name){
+        public static async Task<Player> Create(string name){
             return await ApiConnection.SendRequest<Player>("players/create",
                 JsonConvert.SerializeObject(new Player{Name = name}));
         }
