@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MMORPG.Data;
+using MMORPG.Exceptions;
 using MMORPG.Utilities;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -31,19 +32,15 @@ namespace MMORPG.Repositories{
 
 
         public void AssignQuestInterval(){
-            var totalPlayers = ApiUtility.GetPlayerCollection().CountDocuments(_ => true);
-            var playersPipeline = PlayersPipeline(totalPlayers);
-            var pipeline = PipeLine();
-            GenerateNewQuests(pipeline, playersPipeline);
+            GenerateNewQuests();
         }
 
-        static void GenerateNewQuests(BsonDocument[] pipeline, BsonDocument[] playersPipeline){
+        static void GenerateNewQuests(){
             new Thread(async () => {
                     var index = 0;
                     while (true){
-                        var quest = await ApiUtility.GetQuestCollection().Aggregate<Quest>(pipeline).FirstAsync();
-                        var players = await ApiUtility.GetPlayerCollection().Aggregate<Player>(playersPipeline)
-                            .ToListAsync();
+                        var quest = await RandomQuestAsync();
+                        var players = await GetAllPlayersAsync();
                         var update = Builders<Player>.Update.Set(x => x.Quests[index], quest);
                         foreach (var p in players){
                             await PlayerRepository.UpdatePlayer(p.Id, update);
@@ -56,6 +53,18 @@ namespace MMORPG.Repositories{
             ).Start();
         }
 
+        static async Task<List<Player>> GetAllPlayersAsync(){
+            var totalPlayers = ApiUtility.GetPlayerCollection().CountDocuments(_ => true);
+            return await ApiUtility.GetPlayerCollection()
+                .Aggregate<Player>(Pipeline("$sample", "size", totalPlayers))
+                .ToListAsync();
+        }
+
+        static async Task<Quest> RandomQuestAsync(){
+            return await ApiUtility.GetQuestCollection()
+                .Aggregate<Quest>(Pipeline("$sample", "size", 1)).FirstAsync();
+        }
+
         static int IncrementIndex(int index, List<Player> players){
             index++;
             if (index > players.Select(x => x).First().Quests.Length - 1){
@@ -66,28 +75,18 @@ namespace MMORPG.Repositories{
         }
 
         public async Task<Player> CompleteQuest(Guid id, string questName){
-            var match = new BsonDocument{
-                {
-                    "$match", new BsonDocument{
-                        {"QuestName", questName}
-                    }
-                }
-            };
-            var pipeline = new[]{match};
             var player = await ApiUtility.GetPlayerCollection().Find(id.GetPlayerById()).FirstAsync();
-            var questAgg = await ApiUtility.GetQuestCollection().AggregateAsync<Quest>(pipeline);
-            var quest = questAgg.First();
-
+            var quest = await GetQuestAsync(questName);
 
             try{
                 player.Quests.First(q => q.QuestName == questName);
             }
-            catch (InvalidOperationException e){
-                throw new InvalidOperationException("Player does not have that quest " + e);
+            catch (Exception){
+                throw new NotFoundException("Player does not have that quest ");
             }
 
             if (player.Level < quest.LevelRequirement)
-                throw new Exception("Not high enough level to complete quest");
+                throw new PlayerException("Not high enough level to complete quest");
 
 
             var filter = Builders<Player>.Filter.ElemMatch(p => p.Quests, q => q.QuestName == questName);
@@ -100,6 +99,10 @@ namespace MMORPG.Repositories{
 
             return await ApiUtility.GetPlayerCollection().FindOneAndUpdateAsync(id.GetPlayerById(), update,
                 new FindOneAndUpdateOptions<Player>{ReturnDocument = ReturnDocument.After});
+        }
+
+        static async Task<Quest> GetQuestAsync(string questName){
+            return await ApiUtility.GetQuestCollection().Aggregate<Quest>(Pipeline("$match", "QuestName", questName)).FirstAsync();
         }
 
         async Task AwardExp(Guid id, int expToGive){
@@ -116,28 +119,18 @@ namespace MMORPG.Repositories{
             }
         }
 
-        static BsonDocument[] PlayersPipeline(long totalPlayers){
-            var size = new BsonDocument{
+        /// <summary>
+        /// arg one needs to be written with a dollar sign as first character "$sample" 
+        /// </summary>
+        static BsonDocument[] Pipeline(string argOne, string argTwo, BsonValue value){
+            var bsonDoc = new BsonDocument{
                 {
-                    "$sample", new BsonDocument{
-                        {"size", (int) totalPlayers}
+                    argOne, new BsonDocument{
+                        {argTwo, value}
                     }
                 }
             };
-            var playersPipeline = new[]{size};
-            return playersPipeline;
-        }
-
-        static BsonDocument[] PipeLine(){
-            var match = new BsonDocument{
-                {
-                    "$sample", new BsonDocument{
-                        {"size", 1}
-                    }
-                }
-            };
-            var pipeline = new[]{match};
-            return pipeline;
+            return new[]{bsonDoc};
         }
     }
 }
