@@ -18,36 +18,33 @@ namespace MMO.Test{
             Assert.AreEqual(0, player.Level);
             Assert.AreEqual(0, player.Score);
             Assert.AreEqual(0, player.CurrentExperience);
-            Assert.AreEqual(null, player.InventoryList);
             Assert.AreEqual(100, player.ExperienceToNextLevel);
             Assert.AreEqual(false, player.IsDeleted);
         }
-
+        
         [Test]
-        public async Task CreateMarcTest(){
-            var player = await Player.Create(P2);
-            Assert.AreEqual(P2, player.Name);
-            Assert.AreEqual(0, player.Level);
-            Assert.AreEqual(0, player.Score);
-            Assert.AreEqual(0, player.CurrentExperience);
-            Assert.AreEqual(null, player.InventoryList);
-            Assert.AreEqual(100, player.ExperienceToNextLevel);
-            Assert.AreEqual(false, player.IsDeleted);
+        public async Task FindPlayerByNameTest(){
+            await ApiConnection.DeleteRequest<Player>("drop/playerCollection");
+            var player1 = await Player.Create(P1);
+            var player2 = await Player.Create(P2);
+            var player3 = await Player.Create(P3);
+
+            var playerTwo = await Player.Get(P2);
+            Assert.AreEqual(playerTwo.Id, player2.Id);
+        }
+        
+        [Test]
+        public async Task PlayerByIdTest(){
+            await ApiConnection.DeleteRequest<Player>("drop/playerCollection");
+            var player1 = await Player.Create(P1);
+            var player2 = await Player.Create(P2);
+            var player3 = await Player.Create(P3);
+
+            var playerOne = await Player.Get(player1.Id);
+            Assert.AreEqual(playerOne.Id, player1.Id);
         }
 
-        [Test]
-        public async Task CreateRaphaelTest(){
-            var player = await Player.Create(P3);
-            Assert.AreEqual(P3, player.Name);
-            Assert.AreEqual(0, player.Level);
-            Assert.AreEqual(0, player.Score);
-            Assert.AreEqual(0, player.CurrentExperience);
-            Assert.AreEqual(null, player.InventoryList);
-            Assert.AreEqual(100, player.ExperienceToNextLevel);
-            Assert.AreEqual(false, player.IsDeleted);
-        }
-
-        [Test]
+       [Test]
         public async Task GetAll(){
             await ApiConnection.DeleteRequest<Player>("drop/playerCollection");
             var player1 = await Player.Create(P1);
@@ -57,17 +54,6 @@ namespace MMO.Test{
             Assert.AreEqual(player1.Name, players.Where(x => x.Name == P1).Select(x => x).First().Name);
             Assert.AreEqual(player2.Name, players.Where(x => x.Name == P2).Select(x => x).First().Name);
             Assert.AreEqual(player3.Name, players.Where(x => x.Name == P3).Select(x => x).First().Name);
-        }
-
-        [Test]
-        public async Task Get(){
-            await ApiConnection.DeleteRequest<Player>("drop/playerCollection");
-            var player1 = await Player.Create(P1);
-            var player2 = await Player.Create(P2);
-            var player3 = await Player.Create(P3);
-
-            var player = await Player.Get(P2);
-            Assert.AreEqual(player.Id, player2.Id);
         }
     }
 }

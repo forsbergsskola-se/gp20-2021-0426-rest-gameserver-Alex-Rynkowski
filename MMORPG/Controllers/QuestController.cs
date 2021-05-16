@@ -26,10 +26,10 @@ namespace MMORPG.Controllers{
         public Task<Quest[]> GetAllQuests()
             => this.repository.QuestRepository.GetAllQuests();
 
-        [HttpGet("quests/delegateRandomQuest")]
-        public void DelegateNewQuest()
-            => this.repository.QuestRepository.AssignQuestInterval();
-        
+       // [HttpGet("quests/delegateRandomQuest")]
+        // public async Task AssignQuests(Guid playerId, DateTime lastLoginTime)
+        //     => await this.repository.QuestRepository.AssignQuests(playerId, lastLoginTime);
+
         [HttpPost("CompleteQuest/{id:guid}/questing/{questName}")]
         public Task<Player> CompleteQuest(Guid id, string questName)
             => this.repository.QuestRepository.CompleteQuest(id, questName);

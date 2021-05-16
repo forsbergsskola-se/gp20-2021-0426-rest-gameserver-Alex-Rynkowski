@@ -37,7 +37,7 @@ namespace MMO.Test{
         [Test]
         public async Task PlayerThreeTest(){
             await SetupTest();
-            Assert.IsNull(this.player3.InventoryList);
+            Assert.IsEmpty(this.player3.Inventory);
         }
 
         [Test]

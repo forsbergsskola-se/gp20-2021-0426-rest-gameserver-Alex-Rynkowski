@@ -29,6 +29,8 @@ namespace MMORPG.Data{
                 [ItemTypes.Helmet.ToString()] = null
             };
             player.Quests = new Quest[5];
+            player.LastLogin = DateTime.Now;
+            player.QuestIndex = 0;
             await ApiUtility.GetPlayerCollection().InsertOneAsync(player);
             return player;
         }

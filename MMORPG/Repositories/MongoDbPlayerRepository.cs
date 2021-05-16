@@ -12,6 +12,8 @@ namespace MMORPG.Repositories{
         /// <summary>
         /// FindOneAndUpdateAsync (player)
         /// </summary>
+        static IRepository Repository => new MongoDbRepository();
+
         public async Task<Player> UpdatePlayer(Guid playerId, UpdateDefinition<Player> update){
             return await ApiUtility.GetPlayerCollection().FindOneAndUpdateAsync(playerId.GetPlayerById(), update,
                 new FindOneAndUpdateOptions<Player>{
@@ -22,7 +24,8 @@ namespace MMORPG.Repositories{
 
         public async Task<Player> Get(Guid id){
             var foundPlayer = await ApiUtility.GetPlayerCollection().Find(id.GetPlayerById()).SingleAsync();
-            if (!foundPlayer.IsDeleted) return foundPlayer;
+            if (!foundPlayer.IsDeleted)
+                return await Repository.QuestRepository.AssignQuests(foundPlayer, foundPlayer.LastLogin);
 
             throw new PlayerException("Player does not exist or has been deleted");
         }
@@ -37,7 +40,8 @@ namespace MMORPG.Repositories{
             };
             var pipeline = new[]{match};
             var playerAgg = await ApiUtility.GetPlayerCollection().AggregateAsync<Player>(pipeline);
-            return playerAgg.ToList().First();
+            var player = await playerAgg.FirstAsync();
+            return await Repository.QuestRepository.AssignQuests(player, player.LastLogin);
         }
 
         public async Task<Player[]> GetAll(){
@@ -70,10 +74,10 @@ namespace MMORPG.Repositories{
 
         public async Task<Player> LevelUp(Guid playerId){
             var player = await Get(playerId);
-            
+
             if (player.CurrentExperience < player.ExperienceToNextLevel)
                 throw new PlayerException("Not enough experience");
-            
+
             if (!Calculate.CanAffordLevel(player.Level, player.Gold))
                 throw new PlayerException("Not enough gold");
 

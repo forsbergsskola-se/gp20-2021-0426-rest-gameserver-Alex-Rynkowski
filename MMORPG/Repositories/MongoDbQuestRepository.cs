@@ -1,17 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using MMORPG.Data;
 using MMORPG.Exceptions;
 using MMORPG.Utilities;
-using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace MMORPG.Repositories{
     public class MongoDbQuestRepository : IQuestRepository{
-        const int QuestIntervalSeconds = 10;
+        const int QuestIntervalSeconds = 3;
         static IPlayerRepository PlayerRepository => new MongoDbPlayerRepository();
 
         public async Task<Quest> CreateQuest(string questName, int levelRequirement){
@@ -31,26 +29,31 @@ namespace MMORPG.Repositories{
         }
 
 
-        public void AssignQuestInterval(){
-            GenerateNewQuests();
+        public async Task<Player> AssignQuests(Player player, DateTime lastLoginTime){
+            var timeDiff = GetSeconds(lastLoginTime) / QuestIntervalSeconds;
+            Console.WriteLine($"Assigned quest? {player.Name}");
+
+            for (var i = 0; i < timeDiff; i++){
+                var quest = await RandomQuestAsync();
+                var update = Builders<Player>.Update
+                    .Set(x => x.Quests[player.QuestIndex], quest)
+                    .Set(i => i.QuestIndex, player.QuestIndex);
+
+                player = await ApiUtility.GetPlayerCollection().FindOneAndUpdateAsync(player.Id.GetPlayerById(),
+                    update, new FindOneAndUpdateOptions<Player>{
+                        ReturnDocument = ReturnDocument.After
+                    });
+                Console.WriteLine(
+                    $"Quest {player.Quests[player.QuestIndex].QuestName} assigned to: {player.Name} at index: {player.QuestIndex}");
+                IncrementIndex(player);
+            }
+
+            return player;
         }
 
-        static void GenerateNewQuests(){
-            new Thread(async () => {
-                    var index = 0;
-                    while (true){
-                        var quest = await RandomQuestAsync();
-                        var players = await GetAllPlayersAsync();
-                        var update = Builders<Player>.Update.Set(x => x.Quests[index], quest);
-                        foreach (var p in players){
-                            await PlayerRepository.UpdatePlayer(p.Id, update);
-                        }
-
-                        Thread.Sleep(TimeSpan.FromSeconds(QuestIntervalSeconds));
-                        index = IncrementIndex(index, players);
-                    }
-                }
-            ).Start();
+        int GetSeconds(DateTime lastLogin){
+            var calculation = DateTime.Now - lastLogin;
+            return calculation.Seconds;
         }
 
         static async Task<List<Player>> GetAllPlayersAsync(){
@@ -65,13 +68,11 @@ namespace MMORPG.Repositories{
                 .Aggregate<Quest>(Db.Pipeline("$sample", "size", 1)).FirstAsync();
         }
 
-        static int IncrementIndex(int index, List<Player> players){
-            index++;
-            if (index > players.Select(x => x).First().Quests.Length - 1){
-                index = 0;
+        static void IncrementIndex(Player player){
+            player.QuestIndex++;
+            if (player.QuestIndex > player.Quests.Length - 1){
+                player.QuestIndex = 0;
             }
-
-            return index;
         }
 
         public async Task<Player> CompleteQuest(Guid id, string questName){
@@ -102,7 +103,8 @@ namespace MMORPG.Repositories{
         }
 
         static async Task<Quest> GetQuestAsync(string questName){
-            return await ApiUtility.GetQuestCollection().Aggregate<Quest>(Db.Pipeline("$match", "QuestName", questName)).FirstAsync();
+            return await ApiUtility.GetQuestCollection().Aggregate<Quest>(Db.Pipeline("$match", "QuestName", questName))
+                .FirstAsync();
         }
 
         async Task AwardExp(Guid id, int expToGive){
@@ -118,7 +120,5 @@ namespace MMORPG.Repositories{
                 await ApiUtility.GetPlayerCollection().FindOneAndUpdateAsync(id.GetPlayerById(), update);
             }
         }
-
-
     }
 }

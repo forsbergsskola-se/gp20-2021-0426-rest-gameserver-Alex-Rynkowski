@@ -17,7 +17,8 @@ namespace MMORPG.Data{
         public int ExperienceToNextLevel{ get; set; }
         public List<Item> Inventory{ get; set; }
         public Dictionary<string, Item> EquippedItems{ get; set; }
-
         public Quest[] Quests{ get; set; }
+        public DateTime LastLogin{ get; set; }
+        public int QuestIndex{ get; set; }
     }
 }
