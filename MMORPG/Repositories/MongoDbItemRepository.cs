@@ -10,7 +10,7 @@ using MongoDB.Driver;
 
 namespace MMORPG.Repositories{
     public class MongoDbItemRepository : IItemRepository{
-        public static IRepository Repository => new MongoDbRepository();
+        static IRepository Repository => new MongoDbRepository();
 
         public async Task<Item> CreateItem(Guid id, ModifiedItem newItem){
             if (!IsCorrectItemType(newItem.ItemType)){

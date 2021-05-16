@@ -5,8 +5,8 @@ using Client.Model;
 using Client.Utilities;
 using NUnit.Framework;
 
-namespace MMO.Test.ItemTests{
-    public class CreateItemTests{
+namespace MMO.Test{
+    public class ItemTests{
         const string P1 = "Alex R";
         const string P2 = "Marc Z";
         const string P3 = "Raphael A";
@@ -29,6 +29,7 @@ namespace MMO.Test.ItemTests{
             await SetupTest();
             var sword = await Item.Get(this.player2.Id, "Holy Sword");
             var shield = await Item.Get(this.player2.Id, "Holy Shield");
+
             Assert.IsNotNull(shield);
             Assert.IsNull(sword);
         }
@@ -66,11 +67,14 @@ namespace MMO.Test.ItemTests{
             Assert.AreEqual(0, this.player1.Gold);
             await Item.Sell(this.player1.Id, "Holy Sword");
             this.player1 = await Player.Get(P1);
+            var inventory = await Item.GetAll(this.player1.Id);
             Assert.AreEqual(1000, this.player1.Gold);
-
+            Assert.Throws<InvalidOperationException>(() => inventory.First(x => x.ItemName == "Holy Sword"));
+            Assert.ThrowsAsync<Newtonsoft.Json.JsonReaderException>(async () => await Item.Sell(this.player1.Id, "Holy Shield"));
+            
         }
 
-        public async Task SetupTest(){
+        async Task SetupTest(){
             await ApiConnection.DeleteRequest<Player>("drop/playerCollection");
             this.player1 = await Player.Create(P1);
             this.player2 = await Player.Create(P2);

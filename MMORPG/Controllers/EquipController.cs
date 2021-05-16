@@ -16,19 +16,19 @@ namespace MMORPG.Controllers{
 
 
         [HttpPost("weapon")]
-        public async Task<Item> EquipSword(Guid id, string weaponName)
+        public async Task<Item> EquipSword(Guid id, Item weaponName)
             => await this.repository.EquipRepository.EquipSword(id, weaponName);
 
         [HttpPost("shield")]
-        public async Task<Item> EquipShield(Guid id, string shieldName)
+        public async Task<Item> EquipShield(Guid id, Item shieldName)
             => await this.repository.EquipRepository.EquipShield(id, shieldName);
 
         [HttpPost("armor")]
-        public async Task<Item> EquipArmor(Guid id, string armorName)
+        public async Task<Item> EquipArmor(Guid id, Item armorName)
             => await this.repository.EquipRepository.EquipArmor(id, armorName);
 
         [HttpPost("helmet")]
-        public async Task<Item> EquipHelmet(Guid id, string helmetName)
+        public async Task<Item> EquipHelmet(Guid id, Item helmetName)
             => await this.repository.EquipRepository.EquipHelmet(id, helmetName);
     }
 }

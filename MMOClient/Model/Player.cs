@@ -16,6 +16,7 @@ namespace Client.Model{
         public int CurrentExperience{ get; set; }
         public int ExperienceToNextLevel{ get; set; }
         public List<Item> InventoryList{ get; set; }
+        public Dictionary<string, Item> EquippedItems{ get; set; }
 
         public static async Task<Player> Get(Guid id){
             var player = await ApiConnection.GetResponse<Player>($"players/Get/{id}");

@@ -10,20 +10,19 @@ namespace MMORPG.Repositories{
         static IItemRepository ItemRepository => new MongoDbItemRepository();
         static IPlayerRepository PlayerRepository => new MongoDbPlayerRepository();
 
-        public async Task<Item> EquipSword(Guid id, string weaponName)
+        public async Task<Item> EquipSword(Guid id, Item weaponName)
             => await Equip(id, weaponName, ItemTypes.Sword);
 
-        public async Task<Item> EquipShield(Guid id, string shieldName)
+        public async Task<Item> EquipShield(Guid id, Item shieldName)
             => await Equip(id, shieldName, ItemTypes.Shield);
 
-        public async Task<Item> EquipArmor(Guid id, string armorName)
+        public async Task<Item> EquipArmor(Guid id, Item armorName)
             => await Equip(id, armorName, ItemTypes.Armor);
 
-        public async Task<Item> EquipHelmet(Guid id, string helmetName)
+        public async Task<Item> EquipHelmet(Guid id, Item helmetName)
             => await Equip(id, helmetName, ItemTypes.Helmet);
 
-        async Task<Item> Equip(Guid id, string name, ItemTypes type){
-            var item = await ItemRepository.GetItem(id, name);
+        async Task<Item> Equip(Guid id, Item item, ItemTypes type){
             if (IsNullOrWrongType(type, item))
                 throw new NotFoundException("Item not found in player inventory");
 
