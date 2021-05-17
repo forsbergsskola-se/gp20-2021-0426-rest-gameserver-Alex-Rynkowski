@@ -19,14 +19,19 @@ namespace Client.Model{
         public Dictionary<string, Item> EquippedItems{ get; set; }
         public Quest[] Quests{ get; set; }
 
-        public static async Task<Player> Get(Guid id){
-            var player = await ApiConnection.GetResponse<Player>($"players/Get/{id}");
+        public static async Task<Player> Get(Guid playerId){
+            var player = await ApiConnection.GetResponse<Player>($"players/Get/{playerId}");
             return player;
         }
 
-        public static async Task<Player> Get(string id){
-            var player = await ApiConnection.GetResponse<Player>($"players/Get/{id}");
+        public static async Task<Player> Get(string playerName){
+            var player = await ApiConnection.GetResponse<Player>($"players/Get/{playerName}");
             return player;
+        }
+
+        public static async Task<Player> Modify(Guid playerId, ModifiedPlayer modifiedPlayer){
+            return await ApiConnection.PutRequest<Player>($"players/{playerId}/modify",
+                JsonConvert.SerializeObject(modifiedPlayer));
         }
 
         public static async Task<List<Player>> GetAll(){
@@ -35,7 +40,7 @@ namespace Client.Model{
         }
 
         public static async Task<Player> Create(string name){
-            return await ApiConnection.SendRequest<Player>("players/create",
+            return await ApiConnection.PostRequest<Player>("players/create",
                 JsonConvert.SerializeObject(new Player{Name = name}));
         }
 

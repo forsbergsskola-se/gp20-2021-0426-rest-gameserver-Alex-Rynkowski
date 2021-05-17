@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Client.Model;
+using Client.Requests;
 using Client.Utilities;
 using NUnit.Framework;
 
@@ -18,8 +19,8 @@ namespace MMO.Test{
         [Test]
         public async Task PlayerOneTest(){
             await SetupTest();
-            var sword = await Item.Get(this.player1.Id, "Holy Sword");
-            var shield = await Item.Get(this.player1.Id, "Holy Shield");
+            var sword = await ItemResponse.Get(this.player1.Id, "Holy Sword");
+            var shield = await ItemResponse.Get(this.player1.Id, "Holy Shield");
             Assert.IsNotNull(sword);
             Assert.IsNull(shield);
         }
@@ -27,8 +28,8 @@ namespace MMO.Test{
         [Test]
         public async Task PlayerTwoTest(){
             await SetupTest();
-            var sword = await Item.Get(this.player2.Id, "Holy Sword");
-            var shield = await Item.Get(this.player2.Id, "Holy Shield");
+            var sword = await ItemResponse.Get(this.player2.Id, "Holy Sword");
+            var shield = await ItemResponse.Get(this.player2.Id, "Holy Shield");
 
             Assert.IsNotNull(shield);
             Assert.IsNull(sword);
@@ -43,7 +44,7 @@ namespace MMO.Test{
         [Test]
         public async Task GetInventoryPlayerOne(){
             await SetupTest();
-            var playerOneInventory = await Item.GetAll(this.player1.Id);
+            var playerOneInventory = await ItemResponse.GetAll(this.player1.Id);
 
             Assert.AreEqual(2, playerOneInventory.Count);
             Assert.AreEqual(ItemTypes.Armor, playerOneInventory.First(x => x.ItemType == ItemTypes.Armor).ItemType);
@@ -53,8 +54,8 @@ namespace MMO.Test{
         [Test]
         public async Task GetInventoryPlayerTwo(){
             await SetupTest();
-            var playerOneInventory = await Item.GetAll(this.player1.Id);
-            var playerTwoInventory = await Item.GetAll(this.player2.Id);
+            var playerOneInventory = await ItemResponse.GetAll(this.player1.Id);
+            var playerTwoInventory = await ItemResponse.GetAll(this.player2.Id);
 
             Assert.Greater(playerTwoInventory.Count, playerOneInventory.Count);
             Assert.AreEqual(6, playerTwoInventory.First(x => x.ItemName == "Holy Shield").LevelRequirement);
@@ -65,12 +66,12 @@ namespace MMO.Test{
         public async Task PlayerOneSellItemTest(){
             await SetupTest();
             Assert.AreEqual(0, this.player1.Gold);
-            await Item.Sell(this.player1.Id, "Holy Sword");
+            await ItemResponse.Sell(this.player1.Id, "Holy Sword");
             this.player1 = await Player.Get(P1);
-            var inventory = await Item.GetAll(this.player1.Id);
+            var inventory = await ItemResponse.GetAll(this.player1.Id);
             Assert.AreEqual(1000, this.player1.Gold);
             Assert.Throws<InvalidOperationException>(() => inventory.First(x => x.ItemName == "Holy Sword"));
-            Assert.ThrowsAsync<Newtonsoft.Json.JsonReaderException>(async () => await Item.Sell(this.player1.Id, "Holy Shield"));
+            Assert.ThrowsAsync<Newtonsoft.Json.JsonReaderException>(async () => await ItemResponse.Sell(this.player1.Id, "Holy Shield"));
             
         }
 
@@ -94,7 +95,7 @@ namespace MMO.Test{
 
         static async Task ItemCreator(Guid playerId, string name, ItemTypes type, ItemRarity rarity,
             int levelRequirement, int levelBonus, int sellValue){
-            await Item.CreateItem(playerId, new Item{
+            await ItemResponse.CreateItem(playerId, new Item{
                 ItemName = name,
                 ItemType = type,
                 LevelRequirement = levelRequirement,

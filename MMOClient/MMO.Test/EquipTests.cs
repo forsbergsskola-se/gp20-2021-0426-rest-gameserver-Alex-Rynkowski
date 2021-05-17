@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Client.Model;
+using Client.Requests;
 using Client.Utilities;
 using NUnit.Framework;
 
@@ -21,7 +22,7 @@ namespace MMO.Test{
         public async Task EquipSwordTest(){
             await SetupTest();
             this.player1.EquippedItems = new Dictionary<string, Item>{
-                [ItemTypes.Sword.ToString()] = await Equip.EquipSword(this.player1.Id, this.holySword)
+                [ItemTypes.Sword.ToString()] = await EquipResponse.EquipSword(this.player1.Id, this.holySword)
             };
             Assert.AreEqual("Holy Sword", this.player1.EquippedItems[ItemTypes.Sword.ToString()].ItemName);
         }
@@ -49,7 +50,7 @@ namespace MMO.Test{
 
         static async Task<Item> ItemCreator(Guid playerId, string name, ItemTypes type, ItemRarity rarity,
             int levelRequirement, int levelBonus, int sellValue){
-            return await Item.CreateItem(playerId, new Item{
+            return await ItemResponse.CreateItem(playerId, new Item{
                 ItemName = name,
                 ItemType = type,
                 LevelRequirement = levelRequirement,

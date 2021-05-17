@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Client.Api;
 using Client.Model;
+using Client.Requests;
 using Client.Utilities;
 
 namespace Client.UserStrategy{
@@ -56,7 +57,7 @@ namespace Client.UserStrategy{
             Custom.WriteLine("Which item in your inventory would you like to sell? Enter item name...",
                 ConsoleColor.Yellow);
             var itemName = Custom.ReadLine(ConsoleColor.Green);
-            return await Item.Sell(playerId, itemName);
+            return await ItemResponse.Sell(playerId, itemName);
         }
 
         static void PrintItemProperties(Item item){
@@ -69,11 +70,11 @@ namespace Client.UserStrategy{
         static async Task<Item> Get(Guid playerId){
             Custom.WriteLine("Enter item name to display info for that item: ", ConsoleColor.Yellow);
             var itemName = Custom.ReadLine(ConsoleColor.Green);
-            return await Item.Get(playerId, itemName);
+            return await ItemResponse.Get(playerId, itemName);
         }
 
         async Task<List<Item>> GetInventory(Guid playerId){
-            return await Item.GetAll(playerId);
+            return await ItemResponse.GetAll(playerId);
         }
 
         async Task<Item> CreateItem(Player player){
@@ -103,7 +104,7 @@ namespace Client.UserStrategy{
                 return null;
             }
 
-            return await Item.CreateItem(player.Id, item);
+            return await ItemResponse.CreateItem(player.Id, item);
         }
     }
 }

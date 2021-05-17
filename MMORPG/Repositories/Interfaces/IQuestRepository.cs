@@ -9,6 +9,6 @@ namespace MMORPG.Repositories{
         Task<Quest> GetQuest(Guid questId);
         Task<Quest[]> GetAllQuests();
         Task<Player> AssignQuests(Player player, DateTime lastLoginTime);
-        Task<Player> CompleteQuest(Guid id, string questName);
+        Task<Player> CompleteQuest(Guid id, Quest quest);
     }
 }

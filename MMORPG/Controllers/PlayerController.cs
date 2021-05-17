@@ -31,7 +31,7 @@ namespace MMORPG.Controllers{
         public Task<Player> Create(NewPlayer name)
             => this.repository.PlayerRepository.Create(name);
 
-        [HttpPut("{id:guid}/modify/{modifiedPlayer}")]
+        [HttpPut("{id:guid}/modify")]
         public Task<Player> Modify(Guid id, ModifiedPlayer modifiedPlayer)
             => this.repository.PlayerRepository.Modify(id, modifiedPlayer);
 

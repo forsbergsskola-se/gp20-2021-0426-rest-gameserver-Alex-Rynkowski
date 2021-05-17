@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Client.Model;
+using Client.Requests;
 using Client.Utilities;
 using NUnit.Framework;
 
@@ -70,6 +71,26 @@ namespace MMO.Test{
             Assert.IsNotNull(this.player1.Quests[3]);
             Assert.IsNotNull(this.player1.Quests[4]);
         }
+        [Test]
+        public async Task CompleteQuestTest(){
+            await SetupTest();
+            this.player1 = await Player.Modify(this.player1.Id, new ModifiedPlayer{
+                Gold = 1000,
+                Level = 5,
+                Score = 100
+            });
+            var quest = new Quest{
+                ExpReward = 2000,
+                GoldReward = 1000,
+                LevelRequirement = 5,
+                QuestName = "Sky"
+            };
+            
+            await QuestRequest.CompleteQuest(this.player1.Id, quest);
+            this.player1 = await Player.Get(this.player1.Id);
+            
+            Assert.AreEqual(2000, this.player1.Gold);
+        }
 
         async Task SetupTest(){
             await ApiConnection.DeleteRequest<Player>("drop/playerCollection");
@@ -82,16 +103,11 @@ namespace MMO.Test{
             await ItemCreator(this.player2.Id, "Holy Shield", ItemTypes.Shield, ItemRarity.Epic, 6, 4, 2000);
             await ItemCreator(this.player2.Id, "Dark Sword", ItemTypes.Sword, ItemRarity.Common, 1, 4, 2000);
             await ItemCreator(this.player2.Id, "Dark Armor", ItemTypes.Armor, ItemRarity.Epic, 78, 15, 20000);
-
-
-            this.player1 = await Player.Get(this.player1.Id);
-            this.player2 = await Player.Get(this.player2.Id);
-            this.player3 = await Player.Get(this.player3.Id);
         }
 
         static async Task ItemCreator(Guid playerId, string name, ItemTypes type, ItemRarity rarity,
             int levelRequirement, int levelBonus, int sellValue){
-            await Item.CreateItem(playerId, new Item{
+            await ItemResponse.CreateItem(playerId, new Item{
                 ItemName = name,
                 ItemType = type,
                 LevelRequirement = levelRequirement,

@@ -75,30 +75,24 @@ namespace MMORPG.Repositories{
             }
         }
 
-        public async Task<Player> CompleteQuest(Guid id, string questName){
-            var player = await ApiUtility.GetPlayerCollection().Find(id.GetPlayerById()).FirstAsync();
-            var quest = await GetQuestAsync(questName);
-
-            try{
-                player.Quests.First(q => q.QuestName == questName);
-            }
-            catch (Exception){
-                throw new NotFoundException("Player does not have that quest ");
-            }
+        public async Task<Player> CompleteQuest(Guid playerId, Quest quest){
+            var player = await ApiUtility.GetPlayerCollection().Find(playerId.GetPlayerById()).FirstAsync();
+            Console.WriteLine("Gonna complete a quest");
 
             if (player.Level < quest.LevelRequirement)
                 throw new PlayerException("Not high enough level to complete quest");
 
 
-            var filter = Builders<Player>.Filter.ElemMatch(p => p.Quests, q => q.QuestName == questName);
+            var filter = Builders<Player>.Filter.ElemMatch(p => p.Quests, q => q.QuestName == quest.QuestName);
             var updateQuest =
                 Builders<Player>.Update.Set(x => x.Quests[-1], null);
 
             var update = Builders<Player>.Update.Inc(g => g.Gold, quest.GoldReward);
-            await AwardExp(id, quest.ExpReward);
+            await AwardExp(playerId, quest.ExpReward);
             await ApiUtility.GetPlayerCollection().FindOneAndUpdateAsync(filter, updateQuest);
 
-            return await ApiUtility.GetPlayerCollection().FindOneAndUpdateAsync(id.GetPlayerById(), update,
+            Console.WriteLine("Completed the shit");
+            return await ApiUtility.GetPlayerCollection().FindOneAndUpdateAsync(playerId.GetPlayerById(), update,
                 new FindOneAndUpdateOptions<Player>{ReturnDocument = ReturnDocument.After});
         }
 

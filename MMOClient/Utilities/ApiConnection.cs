@@ -25,7 +25,7 @@ namespace Client.Utilities{
             return JsonConvert.DeserializeObject<T>(await response.Content.ReadAsStringAsync());
         }
 
-        public static async Task<T> SendRequest<T>(string url, string jsonValue){
+        public static async Task<T> PostRequest<T>(string url, string jsonValue){
             var adjustedUrl = url;
             if (url[0] == '/')
                 adjustedUrl = url[1..];
@@ -45,10 +45,32 @@ namespace Client.Utilities{
             Console.WriteLine(request.RequestUri);
             request.Content = new StringContent(jsonValue, Encoding.UTF8, "application/json");
 
-            var tmp = await client.PostAsync(request.RequestUri, request.Content);
+            var httpResponseMessage = await client.PostAsync(request.RequestUri, request.Content);
             var link = client.BaseAddress + url;
             Console.WriteLine(link);
-            return JsonConvert.DeserializeObject<T>(await tmp.Content.ReadAsStringAsync());
+            return JsonConvert.DeserializeObject<T>(await httpResponseMessage.Content.ReadAsStringAsync());
+        }
+
+        public static async Task<T> PutRequest<T>(string url, string jsonValue){
+            var clientHandler = new HttpClientHandler{
+                ServerCertificateCustomValidationCallback = (_, _, _, _) => true
+            };
+            var client = new HttpClient(clientHandler);
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(
+                new MediaTypeWithQualityHeaderValue("application/json"));
+
+            var request = new HttpRequestMessage{
+                RequestUri = new Uri($"https://localhost:44317/api/{url}")
+            };
+            
+            Console.WriteLine(request.RequestUri);
+            request.Content = new StringContent(jsonValue, Encoding.UTF8, "application/json");
+
+            var httpResponseMessage = await client.PutAsync(request.RequestUri, request.Content);
+            var link = client.BaseAddress + url;
+            Console.WriteLine(link);
+            return JsonConvert.DeserializeObject<T>(await httpResponseMessage.Content.ReadAsStringAsync());
         }
 
         public static async Task<T> DeleteRequest<T>(string url){
