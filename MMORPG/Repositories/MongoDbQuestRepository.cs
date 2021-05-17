@@ -75,12 +75,12 @@ namespace MMORPG.Repositories{
             }
         }
 
-        public async Task<Player> CompleteQuest(Guid playerId, Quest quest){
+        public async Task<Quest> CompleteQuest(Guid playerId, Quest quest){
             var player = await ApiUtility.GetPlayerCollection().Find(playerId.GetPlayerById()).FirstAsync();
             Console.WriteLine("Gonna complete a quest");
-
-            if (player.Level < quest.LevelRequirement)
+            if (player.Level < quest.LevelRequirement){
                 throw new PlayerException("Not high enough level to complete quest");
+            }
 
 
             var filter = Builders<Player>.Filter.ElemMatch(p => p.Quests, q => q.QuestName == quest.QuestName);
@@ -92,8 +92,9 @@ namespace MMORPG.Repositories{
             await ApiUtility.GetPlayerCollection().FindOneAndUpdateAsync(filter, updateQuest);
 
             Console.WriteLine("Completed the shit");
-            return await ApiUtility.GetPlayerCollection().FindOneAndUpdateAsync(playerId.GetPlayerById(), update,
+            await ApiUtility.GetPlayerCollection().FindOneAndUpdateAsync(playerId.GetPlayerById(), update,
                 new FindOneAndUpdateOptions<Player>{ReturnDocument = ReturnDocument.After});
+            return quest;
         }
 
         static async Task<Quest> GetQuestAsync(string questName){

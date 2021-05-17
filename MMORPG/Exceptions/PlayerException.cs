@@ -7,7 +7,7 @@ namespace MMORPG.Exceptions{
         public PlayerException(){
         }
 
-        public PlayerException(string message) : base(){
+        public PlayerException(string message) : base(message){
             this.Message = message;
         }
     }

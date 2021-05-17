@@ -21,7 +21,7 @@ namespace MMO.Test{
             Assert.AreEqual(100, player.ExperienceToNextLevel);
             Assert.AreEqual(false, player.IsDeleted);
         }
-        
+
         [Test]
         public async Task FindPlayerByNameTest(){
             await ApiConnection.DeleteRequest<Player>("drop/playerCollection");
@@ -32,7 +32,7 @@ namespace MMO.Test{
             var playerTwo = await Player.Get(P2);
             Assert.AreEqual(playerTwo.Id, player2.Id);
         }
-        
+
         [Test]
         public async Task PlayerByIdTest(){
             await ApiConnection.DeleteRequest<Player>("drop/playerCollection");
@@ -44,7 +44,7 @@ namespace MMO.Test{
             Assert.AreEqual(playerOne.Id, player1.Id);
         }
 
-       [Test]
+        [Test]
         public async Task GetAll(){
             await ApiConnection.DeleteRequest<Player>("drop/playerCollection");
             var player1 = await Player.Create(P1);

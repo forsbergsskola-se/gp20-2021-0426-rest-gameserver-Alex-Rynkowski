@@ -12,14 +12,17 @@
 
   <ItemGroup>
     <Compile Remove="MMO.Test\**" />
+    <Compile Remove="Client.Test\**" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Remove="MMO.Test\**" />
+    <EmbeddedResource Remove="Client.Test\**" />
   </ItemGroup>
 
   <ItemGroup>
     <None Remove="MMO.Test\**" />
+    <None Remove="Client.Test\**" />
   </ItemGroup>
 
 </Project>

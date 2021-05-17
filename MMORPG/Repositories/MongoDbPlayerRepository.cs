@@ -62,7 +62,8 @@ namespace MMORPG.Repositories{
             var update = Builders<Player>.Update
                 .Set(x => x.Gold, modifiedPlayer.Gold)
                 .Set(x => x.Score, modifiedPlayer.Score)
-                .Set(x => x.Level, modifiedPlayer.Level);
+                .Set(x => x.Level, modifiedPlayer.Level)
+                .Set(x => x.ExperienceToNextLevel, modifiedPlayer.Level * 100);
 
             return await UpdatePlayer(id, update);
         }
@@ -84,7 +85,7 @@ namespace MMORPG.Repositories{
             player.Gold -= (player.Level + 1) * 100;
             player.Level++;
             var update = Builders<Player>.Update
-                .Inc(l => l.Level, player.Level)
+                .Set(l => l.Level, player.Level)
                 .Set(g => g.Gold, player.Gold)
                 .Set(e => e.CurrentExperience, 0)
                 .Set(e => e.CurrentExperience, player.Level + 1 * 100);
