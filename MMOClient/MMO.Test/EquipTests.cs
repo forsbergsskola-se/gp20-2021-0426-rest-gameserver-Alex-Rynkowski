@@ -97,9 +97,9 @@ namespace MMO.Test{
                 Score = 0
             });
             await EquipResponse.EquipHelmet(this.player2.Id, this.darkHelmet);
+            await ItemResponse.Sell(this.player2.Id, "Dark Helmet");
             this.player2 = await Player.Get(this.player2.Id);
-            //await ItemResponse.Sell(this.player2.Id, )
-            Assert.AreEqual("Dark Helmet", this.player2.EquippedItems[ItemTypes.Helmet.ToString()].ItemName);
+            Assert.IsNull(this.player2.EquippedItems[ItemTypes.Helmet.ToString()]);
         }
 
         async Task SetupTest(){

@@ -45,7 +45,7 @@ namespace MMORPG.Repositories{
             var equippedItems = await ApiUtility.GetPlayerCollection()
                 .FindAsync(x => x.EquippedItems[item.ItemType.ToString()] == item);
 
-            if (equippedItems != null)
+            if (equippedItems == null)
                 return;
 
             var getItem = await ItemRepository.GetItem(playerId, item.ItemName);
