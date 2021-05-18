@@ -4,6 +4,7 @@ using MMORPG.Data;
 
 namespace MMORPG.Repositories{
     public interface ILeaderboard{
-        public Task<List<Player>> TopTen();
+        public Task<List<LeaderboardData>> GetTopTenByLevel();
+        public Task<List<LeaderboardData>> GetTopTenByGold();
     }
 }
