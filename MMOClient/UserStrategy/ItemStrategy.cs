@@ -57,7 +57,7 @@ namespace Client.UserStrategy{
             Custom.WriteLine("Which item in your inventory would you like to sell? Enter item name...",
                 ConsoleColor.Yellow);
             var itemName = Custom.ReadLine(ConsoleColor.Green);
-            return await ItemResponse.Sell(playerId, itemName);
+            return await ItemRequest.Sell(playerId, itemName);
         }
 
         static void PrintItemProperties(Item item){
@@ -70,11 +70,11 @@ namespace Client.UserStrategy{
         static async Task<Item> Get(Guid playerId){
             Custom.WriteLine("Enter item name to display info for that item: ", ConsoleColor.Yellow);
             var itemName = Custom.ReadLine(ConsoleColor.Green);
-            return await ItemResponse.Get(playerId, itemName);
+            return await ItemRequest.Get(playerId, itemName);
         }
 
         async Task<List<Item>> GetInventory(Guid playerId){
-            return await ItemResponse.GetAll(playerId);
+            return await ItemRequest.GetAll(playerId);
         }
 
         async Task<Item> CreateItem(Player player){
@@ -104,7 +104,7 @@ namespace Client.UserStrategy{
                 return null;
             }
 
-            return await ItemResponse.CreateItem(player.Id, item);
+            return await ItemRequest.CreateItem(player.Id, item);
         }
     }
 }

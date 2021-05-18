@@ -26,13 +26,13 @@ namespace MMO.Test{
         public async Task GetTotalAmountOfGoldTest(){
             await SetupTest();
 
-            this.player1 = await PlayerResponse.Modify(this.player1.Id, new ModifiedPlayer{
+            this.player1 = await PlayerRequest.Modify(this.player1.Id, new ModifiedPlayer{
                 Gold = 1000,
             });
-            this.player2 = await PlayerResponse.Modify(this.player2.Id, new ModifiedPlayer{
+            this.player2 = await PlayerRequest.Modify(this.player2.Id, new ModifiedPlayer{
                 Gold = 500,
             });
-            this.player3 = await PlayerResponse.Modify(this.player3.Id, new ModifiedPlayer{
+            this.player3 = await PlayerRequest.Modify(this.player3.Id, new ModifiedPlayer{
                 Gold = 600,
             });
 
@@ -44,13 +44,13 @@ namespace MMO.Test{
         public async Task GetTotalAmountOfLevelTest(){
             await SetupTest();
 
-            this.player1 = await PlayerResponse.Modify(this.player1.Id, new ModifiedPlayer{
+            this.player1 = await PlayerRequest.Modify(this.player1.Id, new ModifiedPlayer{
                 Level = 50,
             });
-            this.player2 = await PlayerResponse.Modify(this.player2.Id, new ModifiedPlayer{
+            this.player2 = await PlayerRequest.Modify(this.player2.Id, new ModifiedPlayer{
                 Level = 65,
             });
-            this.player3 = await PlayerResponse.Modify(this.player3.Id, new ModifiedPlayer{
+            this.player3 = await PlayerRequest.Modify(this.player3.Id, new ModifiedPlayer{
                 Level = 95,
             });
 
@@ -61,10 +61,10 @@ namespace MMO.Test{
         [Test]
         public async Task GetTotalAmountOfItemsTest(){
             await SetupTest();
-            this.player2 = await PlayerResponse.Modify(this.player2.Id, new ModifiedPlayer{
+            this.player2 = await PlayerRequest.Modify(this.player2.Id, new ModifiedPlayer{
                 Level = 99,
             });
-            this.player3 = await PlayerResponse.Modify(this.player3.Id, new ModifiedPlayer{
+            this.player3 = await PlayerRequest.Modify(this.player3.Id, new ModifiedPlayer{
                 Level = 95,
             });
             await ItemCreator(this.player1.Id, "Holy Sword", ItemTypes.Sword, ItemRarity.Rare, 3, 2, 1000);
@@ -78,22 +78,22 @@ namespace MMO.Test{
             var helmet = await ItemCreator(this.player3.Id, "Yes Box", ItemTypes.Helmet, ItemRarity.Uncommon, 78, 1,
                 200);
 
-            await EquipResponse.EquipHelmet(this.player3.Id, helmet);
-            await EquipResponse.EquipArmor(this.player2.Id, armor);
+            await EquipRequest.EquipHelmet(this.player3.Id, helmet);
+            await EquipRequest.EquipArmor(this.player2.Id, armor);
             var stats = await StatisticsRequest.GetStatistics();
             Assert.AreEqual(10, stats.ItemsAmount);
         }
 
         async Task SetupTest(){
             await Api.DeleteRequest<Player>("drop/playerCollection");
-            this.player1 = await PlayerResponse.Create(P1);
-            this.player2 = await PlayerResponse.Create(P2);
-            this.player3 = await PlayerResponse.Create(P3);
+            this.player1 = await PlayerRequest.Create(P1);
+            this.player2 = await PlayerRequest.Create(P2);
+            this.player3 = await PlayerRequest.Create(P3);
         }
 
         static async Task<Item> ItemCreator(Guid playerId, string name, ItemTypes type, ItemRarity rarity,
             int levelRequirement, int levelBonus, int sellValue){
-            return await ItemResponse.CreateItem(playerId, new Item{
+            return await ItemRequest.CreateItem(playerId, new Item{
                 ItemName = name,
                 ItemType = type,
                 LevelRequirement = levelRequirement,

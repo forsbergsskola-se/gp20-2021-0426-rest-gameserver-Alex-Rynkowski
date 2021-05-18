@@ -29,14 +29,14 @@ namespace MMO.Test{
             await QuestRequest.CompleteQuest(this.player1.Id, quest);
             await Api.PostRequest<Player>($"players/{this.player1.Id}/levelUp", "");
 
-            this.player1 = await PlayerResponse.Get(this.player1.Id);
+            this.player1 = await PlayerRequest.Get(this.player1.Id);
             Assert.AreEqual(1, this.player1.Level);
         }
 
         [Test]
         public async Task LevelUpToLevelTenTest(){
             await SetupTest();
-            this.player1 = await PlayerResponse.Modify(this.player1.Id, new ModifiedPlayer{
+            this.player1 = await PlayerRequest.Modify(this.player1.Id, new ModifiedPlayer{
                 Gold = 1000,
                 Level = 10,
                 Score = 100
@@ -51,14 +51,14 @@ namespace MMO.Test{
 
             await QuestRequest.CompleteQuest(this.player1.Id, quest);
             await Api.PostRequest<Player>($"players/{this.player1.Id}/levelUp", "");
-            this.player1 = await PlayerResponse.Get(this.player1.Id);
+            this.player1 = await PlayerRequest.Get(this.player1.Id);
             Assert.AreEqual(11, this.player1.Level);
         }
         
         [Test]
         public async Task LevelUpFailNotEnoughGoldTest(){
             await SetupTest();
-            this.player1 = await PlayerResponse.Modify(this.player1.Id, new ModifiedPlayer{
+            this.player1 = await PlayerRequest.Modify(this.player1.Id, new ModifiedPlayer{
                 Gold = 0,
                 Level = 10,
                 Score = 100
@@ -79,7 +79,7 @@ namespace MMO.Test{
         [Test]
         public async Task LevelUpFailNotEnoughExpTest(){
             await SetupTest();
-            this.player1 = await PlayerResponse.Modify(this.player1.Id, new ModifiedPlayer{
+            this.player1 = await PlayerRequest.Modify(this.player1.Id, new ModifiedPlayer{
                 Gold = 0,
                 Level = 10,
                 Score = 100
@@ -99,9 +99,9 @@ namespace MMO.Test{
 
         async Task SetupTest(){
             await Api.DeleteRequest<Player>("drop/playerCollection");
-            this.player1 = await PlayerResponse.Create(P1);
-            this.player2 = await PlayerResponse.Create(P2);
-            this.player3 = await PlayerResponse.Create(P3);
+            this.player1 = await PlayerRequest.Create(P1);
+            this.player2 = await PlayerRequest.Create(P2);
+            this.player3 = await PlayerRequest.Create(P3);
 
             await ItemCreator(this.player1.Id, "Holy Sword", ItemTypes.Sword, ItemRarity.Rare, 3, 2, 1000);
             await ItemCreator(this.player1.Id, "Basic Armor", ItemTypes.Armor, ItemRarity.Common, 1, 0, 20);
@@ -112,7 +112,7 @@ namespace MMO.Test{
 
         static async Task ItemCreator(Guid playerId, string name, ItemTypes type, ItemRarity rarity,
             int levelRequirement, int levelBonus, int sellValue){
-            await ItemResponse.CreateItem(playerId, new Item{
+            await ItemRequest.CreateItem(playerId, new Item{
                 ItemName = name,
                 ItemType = type,
                 LevelRequirement = levelRequirement,

@@ -22,7 +22,7 @@ namespace MMO.Test{
         public async Task GetOneQuestsTest(){
             await SetupTest();
             await Task.Delay(QuestDelayMilliSeconds);
-            this.player1 = await PlayerResponse.Get(this.player1.Id);
+            this.player1 = await PlayerRequest.Get(this.player1.Id);
             Assert.IsNotNull(this.player1.Quests[0]);
             Assert.IsNull(this.player1.Quests[1]);
             Assert.IsNull(this.player1.Quests[2]);
@@ -33,7 +33,7 @@ namespace MMO.Test{
         public async Task GetTwoQuestsTest(){
             await SetupTest();
             await Task.Delay(QuestDelayMilliSeconds * 2);
-            this.player1 = await PlayerResponse.Get(this.player1.Id);
+            this.player1 = await PlayerRequest.Get(this.player1.Id);
             Assert.IsNotNull(this.player1.Quests[0]);
             Assert.IsNotNull(this.player1.Quests[1]);
             Assert.IsNull(this.player1.Quests[2]);
@@ -44,7 +44,7 @@ namespace MMO.Test{
         public async Task GetThreeQuestsTest(){
             await SetupTest();
             await Task.Delay(QuestDelayMilliSeconds * 3);
-            this.player1 = await PlayerResponse.Get(this.player1.Id);
+            this.player1 = await PlayerRequest.Get(this.player1.Id);
             Assert.IsNotNull(this.player1.Quests[0]);
             Assert.IsNotNull(this.player1.Quests[1]);
             Assert.IsNotNull(this.player1.Quests[2]);
@@ -55,7 +55,7 @@ namespace MMO.Test{
         public async Task GetFourQuestsTest(){
             await SetupTest();
             await Task.Delay(QuestDelayMilliSeconds * 4);
-            this.player1 = await PlayerResponse.Get(this.player1.Id);
+            this.player1 = await PlayerRequest.Get(this.player1.Id);
             Assert.IsNotNull(this.player1.Quests[0]);
             Assert.IsNotNull(this.player1.Quests[1]);
             Assert.IsNotNull(this.player1.Quests[2]);
@@ -66,7 +66,7 @@ namespace MMO.Test{
         public async Task GetFiveQuestsTest(){
             await SetupTest();
             await Task.Delay(QuestDelayMilliSeconds * 5);
-            this.player1 = await PlayerResponse.Get(this.player1.Id);
+            this.player1 = await PlayerRequest.Get(this.player1.Id);
             Assert.IsNotNull(this.player1.Quests[0]);
             Assert.IsNotNull(this.player1.Quests[1]);
             Assert.IsNotNull(this.player1.Quests[2]);
@@ -76,7 +76,7 @@ namespace MMO.Test{
         [Test]
         public async Task CompleteQuestTest(){
             await SetupTest();
-            this.player1 = await PlayerResponse.Modify(this.player1.Id, new ModifiedPlayer{
+            this.player1 = await PlayerRequest.Modify(this.player1.Id, new ModifiedPlayer{
                 Gold = 1000,
                 Level = 5,
                 Score = 100
@@ -89,16 +89,16 @@ namespace MMO.Test{
             };
             
             await QuestRequest.CompleteQuest(this.player1.Id, quest);
-            this.player1 = await PlayerResponse.Get(this.player1.Id);
+            this.player1 = await PlayerRequest.Get(this.player1.Id);
             
             Assert.AreEqual(2000, this.player1.Gold);
         }
 
         async Task SetupTest(){
             await Api.DeleteRequest<Player>("drop/playerCollection");
-            this.player1 = await PlayerResponse.Create(P1);
-            this.player2 = await PlayerResponse.Create(P2);
-            this.player3 = await PlayerResponse.Create(P3);
+            this.player1 = await PlayerRequest.Create(P1);
+            this.player2 = await PlayerRequest.Create(P2);
+            this.player3 = await PlayerRequest.Create(P3);
 
             await ItemCreator(this.player1.Id, "Holy Sword", ItemTypes.Sword, ItemRarity.Rare, 3, 2, 1000);
             await ItemCreator(this.player1.Id, "Basic Armor", ItemTypes.Armor, ItemRarity.Common, 1, 0, 20);
@@ -109,7 +109,7 @@ namespace MMO.Test{
 
         static async Task ItemCreator(Guid playerId, string name, ItemTypes type, ItemRarity rarity,
             int levelRequirement, int levelBonus, int sellValue){
-            await ItemResponse.CreateItem(playerId, new Item{
+            await ItemRequest.CreateItem(playerId, new Item{
                 ItemName = name,
                 ItemType = type,
                 LevelRequirement = levelRequirement,

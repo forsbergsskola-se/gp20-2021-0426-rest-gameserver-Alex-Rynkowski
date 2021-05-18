@@ -8,7 +8,7 @@ using Client.Utilities;
 using Newtonsoft.Json;
 
 namespace Client.Requests{
-    public static class ItemResponse{
+    public static class ItemRequest{
         public static async Task<Item> CreateItem(Guid playerId, Item item){
             return await RestApi.Api.PostRequest<Item>($"/players/{playerId}/items/create",
                 JsonConvert.SerializeObject(item));

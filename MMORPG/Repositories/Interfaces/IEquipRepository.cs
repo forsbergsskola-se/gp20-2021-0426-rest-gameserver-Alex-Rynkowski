@@ -8,7 +8,6 @@ namespace MMORPG.Repositories{
         Task<Item> EquipShield(Guid id, Item shieldName);
         Task<Item> EquipArmor(Guid id, Item armorName);
         Task<Item> EquipHelmet(Guid id, Item helmetName);
-
         public Task UnEquip(Guid playerId, Item item);
     }
 }

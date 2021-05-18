@@ -5,7 +5,7 @@ using Client.Model;
 using Newtonsoft.Json;
 
 namespace Client.Requests{
-    public class PlayerResponse{
+    public class PlayerRequest{
         public static async Task<Player> Get(Guid playerId){
             var player = await RestApi.Api.GetResponse<Player>($"players/Get/{playerId}");
             return player;

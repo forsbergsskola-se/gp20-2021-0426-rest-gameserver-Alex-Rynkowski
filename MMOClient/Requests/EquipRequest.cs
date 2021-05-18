@@ -7,7 +7,7 @@ using Client.Utilities;
 using Newtonsoft.Json;
 
 namespace Client.Requests{
-    public static class EquipResponse{
+    public static class EquipRequest{
         public static async Task<Item> EquipSword(Guid playerId, Item item){
             return await RestApi.Api.PostRequest<Item>($"/players/{playerId}/items/equip/weapon",
                 JsonConvert.SerializeObject(item));
