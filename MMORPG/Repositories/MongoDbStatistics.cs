@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using MMORPG.Data;
 using MMORPG.Utilities;
@@ -11,16 +11,14 @@ namespace MMORPG.Repositories{
         public async Task<PlayerStatistics> GetAllPlayers(){
             var players = await Repository.PlayerRepository.GetAll();
             var statistics = new PlayerStatistics{
-                Statistics = new List<Statistics>(),
                 TotalPlayersAmount = (int) await ApiUtility.GetPlayerCollection().CountDocumentsAsync(_ => true)
             };
 
             foreach (var player in players){
-                statistics.Statistics.Add(new Statistics{
-                    Gold = player.Gold,
-                    ItemsAmount = player.Inventory.Count,
-                    Level = player.Level
-                });
+                statistics.Gold += player.Gold;
+                statistics.Level += player.Level;
+                statistics.ItemsAmount += player.Inventory.Count;
+                statistics.ItemsAmount += player.EquippedItems.Count(x => x.Key != null);
             }
 
             return statistics;

@@ -5,10 +5,10 @@ using Client.RestApi;
 using NUnit.Framework;
 
 namespace MMO.Test{
-    public static class StatisticsTest{
-        static object player1;
-        static Player player2;
-        static Player player3;
+    public class StatisticsTest{
+        Player player1;
+        Player player2;
+        Player player3;
 
         const string P1 = "Alex R";
         const string P2 = "Marc Z";
@@ -20,24 +20,48 @@ namespace MMO.Test{
 
             Assert.AreEqual(3, stats.TotalPlayersAmount);
         }
+
+        [Test]
+        public async Task GetTotalAmountOfGoldFromPlayersTest(){
+            await SetupTest();
+
+            this.player1 = await PlayerResponse.Modify(this.player1.Id, new ModifiedPlayer{
+                Gold = 1000,
+            });
+            this.player2 = await PlayerResponse.Modify(this.player2.Id, new ModifiedPlayer{
+                Gold = 500,
+            });
+            this.player3 = await PlayerResponse.Modify(this.player3.Id, new ModifiedPlayer{
+                Gold = 600,
+            });
+
+            var stats = await StatisticsRequest.GetStatistics();
+            Assert.AreEqual(2100, stats.Gold);
+        }
         
         [Test]
-        public static async Task GetTotalOfEachPlayerTest(){
-            var stats = await StatisticsRequest.GetStatistics();
+        public async Task GetTotalAmountOfLevelFromPlayersTest(){
+            await SetupTest();
 
-            
-            
-            
-            Assert.AreEqual(3, stats.TotalPlayersAmount);
-            Assert.AreEqual(3, stats.TotalPlayersAmount);
-            Assert.AreEqual(3, stats.TotalPlayersAmount);
+            this.player1 = await PlayerResponse.Modify(this.player1.Id, new ModifiedPlayer{
+                Gold = 1000,
+            });
+            this.player2 = await PlayerResponse.Modify(this.player2.Id, new ModifiedPlayer{
+                Gold = 500,
+            });
+            this.player3 = await PlayerResponse.Modify(this.player3.Id, new ModifiedPlayer{
+                Gold = 600,
+            });
+
+            var stats = await StatisticsRequest.GetStatistics();
+            Assert.AreEqual(2100, stats.Gold);
         }
 
-        static async Task SetupTest(){
+        async Task SetupTest(){
             await Api.DeleteRequest<Player>("drop/playerCollection");
-            player1 = await PlayerResponse.Create(P1);
-            player2 = await PlayerResponse.Create(P2);
-            player3 = await PlayerResponse.Create(P3);
+            this.player1 = await PlayerResponse.Create(P1);
+            this.player2 = await PlayerResponse.Create(P2);
+            this.player3 = await PlayerResponse.Create(P3);
         }
     }
 }
