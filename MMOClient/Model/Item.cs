@@ -1,6 +1,4 @@
-﻿using Client.Api;
-
-namespace Client.Model{
+﻿namespace Client.Model{
     public class Item{
         public string ItemName{ get; set; }
         public ItemTypes ItemType{ get; set; }

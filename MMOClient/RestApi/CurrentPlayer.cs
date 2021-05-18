@@ -1,6 +1,6 @@
 ﻿using Client.Model;
 
-namespace Client.Api{
+namespace Client.RestApi{
     public class CurrentPlayer{
         readonly Player player;
 

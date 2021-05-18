@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Client.Api;
 using Client.Model;
-using Client.RestApi;
-using Client.Utilities;
 using Newtonsoft.Json;
 
-namespace Client.Requests{
+namespace Client.RestApi{
     public static class EquipRequest{
         public static async Task<Item> EquipSword(Guid playerId, Item item){
             return await RestApi.Api.PostRequest<Item>($"/players/{playerId}/items/equip/weapon",

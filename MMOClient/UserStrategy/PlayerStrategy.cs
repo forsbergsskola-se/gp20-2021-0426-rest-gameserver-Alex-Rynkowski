@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Client.Api;
 using Client.Model;
-using Client.Requests;
+using Client.RestApi;
 using Client.Utilities;
 
 namespace Client.UserStrategy{

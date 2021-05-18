@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Client.Api;
 using Client.Model;
-using Client.Requests;
 using Client.RestApi;
 using Client.Utilities;
 using NUnit.Framework;

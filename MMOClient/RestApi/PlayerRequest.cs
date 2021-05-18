@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 using Client.Model;
 using Newtonsoft.Json;
 
-namespace Client.Requests{
-    public class PlayerRequest{
+namespace Client.RestApi{
+    public static class PlayerRequest{
         public static async Task<Player> Get(Guid playerId){
             var player = await RestApi.Api.GetResponse<Player>($"players/Get/{playerId}");
             return player;
@@ -31,7 +31,7 @@ namespace Client.Requests{
                 JsonConvert.SerializeObject(new Player{Name = name}));
         }
 
-        public async Task<Player> Delete(Guid id){
+        public static async Task<Player> Delete(Guid id){
             var player = await RestApi.Api.GetResponse<Player>($"/Delete/{id}");
             return player;
         }

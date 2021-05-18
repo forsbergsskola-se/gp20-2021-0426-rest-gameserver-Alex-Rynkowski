@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Client.Api;
 using Client.RestApi;
 using Client.Utilities;
 
