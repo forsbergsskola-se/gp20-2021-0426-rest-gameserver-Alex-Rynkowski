@@ -18,7 +18,7 @@ namespace Client.Requests{
         public static async Task<Item> Get(Guid playerId, string itemName)
             => await ApiConnection.GetResponse<Item>($"players/{playerId}/items/get/{itemName}");
 
-        public static async Task<Item> Sell(Guid playerId, string itemName)
-            => await ApiConnection.DeleteRequest<Item>($"players/{playerId}/items/{itemName}");
+        public static async Task<Item> Sell(Guid playerId, string item)
+            => await ApiConnection.DeleteRequest<Item>($"players/{playerId}/items/{item}");
     }
 }

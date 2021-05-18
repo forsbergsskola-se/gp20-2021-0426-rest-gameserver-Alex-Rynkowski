@@ -7,7 +7,6 @@ namespace Client.Model{
         public int LevelRequirement{ get; set; }
         public int LevelBonus{ get; set; }
         public ItemRarity Rarity{ get; set; }
-        public bool IsDeleted{ get; set; }
         public int SellValue{ get; set; }
     }
 
