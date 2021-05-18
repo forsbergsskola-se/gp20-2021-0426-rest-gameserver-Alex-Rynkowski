@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using MMORPG.Data;
 using MMORPG.Utilities;
@@ -18,9 +19,10 @@ namespace MMORPG.Repositories{
                 statistics.Gold += player.Gold;
                 statistics.Level += player.Level;
                 statistics.ItemsAmount += player.Inventory.Count;
-                statistics.ItemsAmount += player.EquippedItems.Count(x => x.Key != null);
+                statistics.ItemsAmount += player.EquippedItems.Count(x => x.Value != null);
             }
 
+            
             return statistics;
         }
     }

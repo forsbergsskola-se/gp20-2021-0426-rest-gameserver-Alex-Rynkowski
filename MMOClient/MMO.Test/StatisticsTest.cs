@@ -58,6 +58,7 @@ namespace MMO.Test{
             Assert.AreEqual(210, stats.Level);
         }
 
+        [Test]
         public async Task GetTotalAmountOfItemsTest(){
             await SetupTest();
             this.player2 = await PlayerResponse.Modify(this.player2.Id, new ModifiedPlayer{
