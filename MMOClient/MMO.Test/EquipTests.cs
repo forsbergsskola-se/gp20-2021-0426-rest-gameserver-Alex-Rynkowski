@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Client.Api;
 using Client.Model;
 using Client.Requests;
+using Client.RestApi;
 using Client.Utilities;
 using NUnit.Framework;
 
@@ -27,13 +29,13 @@ namespace MMO.Test{
         public async Task EquipSwordTest(){
             await SetupTest();
             this.player1.EquippedItems = new Dictionary<string, Item>();
-            await Player.Modify(this.player1.Id, new ModifiedPlayer{
+            await PlayerResponse.Modify(this.player1.Id, new ModifiedPlayer{
                 Gold = 0,
                 Level = 10,
                 Score = 0
             });
             await EquipResponse.EquipSword(this.player1.Id, this.holySword);
-            this.player1 = await Player.Get(this.player1.Id);
+            this.player1 = await PlayerResponse.Get(this.player1.Id);
             Assert.AreEqual("Holy Sword", this.player1.EquippedItems[ItemTypes.Sword.ToString()].ItemName);
         }
 
@@ -41,13 +43,13 @@ namespace MMO.Test{
         public async Task EquipShieldTest(){
             await SetupTest();
             this.player1.EquippedItems = new Dictionary<string, Item>();
-            await Player.Modify(this.player1.Id, new ModifiedPlayer{
+            await PlayerResponse.Modify(this.player1.Id, new ModifiedPlayer{
                 Gold = 0,
                 Level = 10,
                 Score = 0
             });
             await EquipResponse.EquipShield(this.player1.Id, this.holySword);
-            this.player1 = await Player.Get(this.player1.Id);
+            this.player1 = await PlayerResponse.Get(this.player1.Id);
             Assert.IsNull(this.player1.EquippedItems[ItemTypes.Shield.ToString()]);
 
             var massiveShield = await ItemCreator(this.player1.Id, "Massive Shield", ItemTypes.Shield, ItemRarity.Epic,
@@ -55,7 +57,7 @@ namespace MMO.Test{
                 2000);
 
             await EquipResponse.EquipShield(this.player1.Id, massiveShield);
-            this.player1 = await Player.Get(this.player1.Id);
+            this.player1 = await PlayerResponse.Get(this.player1.Id);
             Assert.AreEqual("Massive Shield", this.player1.EquippedItems[ItemTypes.Shield.ToString()].ItemName);
         }
 
@@ -63,13 +65,13 @@ namespace MMO.Test{
         public async Task EquipArmorTest(){
             await SetupTest();
             this.player2.EquippedItems = new Dictionary<string, Item>();
-            await Player.Modify(this.player2.Id, new ModifiedPlayer{
+            await PlayerResponse.Modify(this.player2.Id, new ModifiedPlayer{
                 Gold = 0,
                 Level = 78,
                 Score = 0
             });
             await EquipResponse.EquipArmor(this.player2.Id, this.darkArmor);
-            this.player2 = await Player.Get(this.player2.Id);
+            this.player2 = await PlayerResponse.Get(this.player2.Id);
             Assert.AreEqual("Dark Armor", this.player2.EquippedItems[ItemTypes.Armor.ToString()].ItemName);
         }
 
@@ -77,13 +79,13 @@ namespace MMO.Test{
         public async Task EquipHelmetTest(){
             await SetupTest();
             this.player2.EquippedItems = new Dictionary<string, Item>();
-            await Player.Modify(this.player2.Id, new ModifiedPlayer{
+            await PlayerResponse.Modify(this.player2.Id, new ModifiedPlayer{
                 Gold = 0,
                 Level = 51,
                 Score = 0
             });
             await EquipResponse.EquipHelmet(this.player2.Id, this.darkHelmet);
-            this.player2 = await Player.Get(this.player2.Id);
+            this.player2 = await PlayerResponse.Get(this.player2.Id);
             Assert.AreEqual("Dark Helmet", this.player2.EquippedItems[ItemTypes.Helmet.ToString()].ItemName);
         }
         
@@ -91,22 +93,22 @@ namespace MMO.Test{
         public async Task SellEquippedItemTest(){
             await SetupTest();
             this.player2.EquippedItems = new Dictionary<string, Item>();
-            await Player.Modify(this.player2.Id, new ModifiedPlayer{
+            await PlayerResponse.Modify(this.player2.Id, new ModifiedPlayer{
                 Gold = 0,
                 Level = 51,
                 Score = 0
             });
             await EquipResponse.EquipHelmet(this.player2.Id, this.darkHelmet);
             await ItemResponse.Sell(this.player2.Id, "Dark Helmet");
-            this.player2 = await Player.Get(this.player2.Id);
+            this.player2 = await PlayerResponse.Get(this.player2.Id);
             Assert.IsNull(this.player2.EquippedItems[ItemTypes.Helmet.ToString()]);
         }
 
         async Task SetupTest(){
-            await ApiConnection.DeleteRequest<Player>("drop/playerCollection");
-            this.player1 = await Player.Create(P1);
-            this.player2 = await Player.Create(P2);
-            this.player3 = await Player.Create(P3);
+            await Api.DeleteRequest<Player>("drop/playerCollection");
+            this.player1 = await PlayerResponse.Create(P1);
+            this.player2 = await PlayerResponse.Create(P2);
+            this.player3 = await PlayerResponse.Create(P3);
 
 
             this.holySword = await ItemCreator(this.player1.Id, "Holy Sword", ItemTypes.Sword, ItemRarity.Rare, 3, 2,
@@ -123,9 +125,9 @@ namespace MMO.Test{
                 20000);
 
 
-            this.player1 = await Player.Get(P1);
-            this.player2 = await Player.Get(P2);
-            this.player3 = await Player.Get(P3);
+            this.player1 = await PlayerResponse.Get(P1);
+            this.player2 = await PlayerResponse.Get(P2);
+            this.player3 = await PlayerResponse.Get(P3);
         }
 
         static async Task<Item> ItemCreator(Guid playerId, string name, ItemTypes type, ItemRarity rarity,

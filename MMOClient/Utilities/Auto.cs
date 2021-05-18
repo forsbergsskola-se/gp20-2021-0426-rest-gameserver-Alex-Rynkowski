@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Client.Api;
 using Client.Model;
+using Client.Requests;
 
 namespace Client.Utilities{
     public static class Auto{
@@ -17,7 +18,7 @@ namespace Client.Utilities{
         }
 
         static async Task<Player> CreateCharacter(Player player, string name){
-            var createdPlayer = await Player.Create(name);
+            var createdPlayer = await PlayerResponse.Create(name);
             Custom.WriteMultiLines(ConsoleColor.White, "Created player:", $"Id: {createdPlayer.Id}",
                 $"Name: {createdPlayer.Name}", $"Level: {createdPlayer.Level}");
             return createdPlayer;

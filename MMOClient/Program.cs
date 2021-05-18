@@ -1,5 +1,7 @@
 ﻿using System.Threading.Tasks;
+using Client.Api;
 using Client.Model;
+using Client.RestApi;
 using Client.UserStrategy;
 using Client.Utilities;
 
@@ -12,7 +14,7 @@ namespace Client{
     class Program{
         static async Task Main(string[] args){
             var playerStrategy = new PlayerStrategy();
-            await ApiConnection.DeleteRequest<Player>("/drop/playerCollection");
+            await RestApi.Api.DeleteRequest<Player>("/drop/playerCollection");
             playerStrategy.ChooseCharacter();
             while (true){
                 

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Client.Api;
 using Client.Model;
 using Client.Requests;
+using Client.RestApi;
 using Client.Utilities;
 using NUnit.Framework;
 
@@ -23,8 +25,8 @@ namespace MMO.Test{
 
         [Test]
         public async Task CommonItemTest(){
-            await ApiConnection.DeleteRequest<Player>("drop/playerCollection");
-            this.player1 = await Player.Create(P1);
+            await Api.DeleteRequest<Player>("drop/playerCollection");
+            this.player1 = await PlayerResponse.Create(P1);
             var commonSword = new Item{
                 ItemName = "Common Sword",
                 ItemType = ItemTypes.Sword,
@@ -33,7 +35,7 @@ namespace MMO.Test{
                 Rarity = ItemRarity.Common
             };
             await ItemResponse.CreateItem(this.player1.Id, commonSword);
-            this.player1 = await Player.Get(this.player1.Id);
+            this.player1 = await PlayerResponse.Get(this.player1.Id);
             var playerItem = this.player1.Inventory.First(x => x.ItemName == "Common Sword");
             Assert.AreEqual(ItemTypes.Sword, playerItem.ItemType);
             Assert.AreEqual(0, playerItem.LevelBonus);
@@ -42,8 +44,8 @@ namespace MMO.Test{
         }
         [Test]
         public async Task UnCommonItemTest(){
-            await ApiConnection.DeleteRequest<Player>("drop/playerCollection");
-            this.player1 = await Player.Create(P1);
+            await Api.DeleteRequest<Player>("drop/playerCollection");
+            this.player1 = await PlayerResponse.Create(P1);
             var uncommonShield = new Item{
                 ItemName = "UnCommon Shield",
                 ItemType = ItemTypes.Shield,
@@ -52,7 +54,7 @@ namespace MMO.Test{
                 Rarity = ItemRarity.Uncommon
             };
             await ItemResponse.CreateItem(this.player1.Id, uncommonShield);
-            this.player1 = await Player.Get(this.player1.Id);
+            this.player1 = await PlayerResponse.Get(this.player1.Id);
             var playerItem = this.player1.Inventory.First(x => x.ItemName == "UnCommon Shield");
             Assert.AreEqual(ItemTypes.Shield, playerItem.ItemType);
             Assert.AreEqual(1, playerItem.LevelBonus);
@@ -61,8 +63,8 @@ namespace MMO.Test{
         }
         [Test]
         public async Task RareItemTest(){
-            await ApiConnection.DeleteRequest<Player>("drop/playerCollection");
-            this.player1 = await Player.Create(P1);
+            await Api.DeleteRequest<Player>("drop/playerCollection");
+            this.player1 = await PlayerResponse.Create(P1);
             var rareArmor = new Item{
                 ItemName = "Rare Armor",
                 ItemType = ItemTypes.Armor,
@@ -71,7 +73,7 @@ namespace MMO.Test{
                 Rarity = ItemRarity.Rare
             };
             await ItemResponse.CreateItem(this.player1.Id, rareArmor);
-            this.player1 = await Player.Get(this.player1.Id);
+            this.player1 = await PlayerResponse.Get(this.player1.Id);
             var playerItem = this.player1.Inventory.First(x => x.ItemName == "Rare Armor");
             Assert.AreEqual(ItemTypes.Armor, playerItem.ItemType);
             Assert.AreEqual(2, playerItem.LevelBonus);
@@ -80,8 +82,8 @@ namespace MMO.Test{
         }
         [Test]
         public async Task EpicItemTest(){
-            await ApiConnection.DeleteRequest<Player>("drop/playerCollection");
-            this.player1 = await Player.Create(P1);
+            await Api.DeleteRequest<Player>("drop/playerCollection");
+            this.player1 = await PlayerResponse.Create(P1);
             var epicHelmet = new Item{
                 ItemName = "Epic Helmet",
                 ItemType = ItemTypes.Helmet,
@@ -90,7 +92,7 @@ namespace MMO.Test{
                 Rarity = ItemRarity.Epic
             };
             await ItemResponse.CreateItem(this.player1.Id, epicHelmet);
-            this.player1 = await Player.Get(this.player1.Id);
+            this.player1 = await PlayerResponse.Get(this.player1.Id);
             var playerItem = this.player1.Inventory.First(x => x.ItemName == "Epic Helmet");
             Assert.AreEqual(ItemTypes.Helmet, playerItem.ItemType);
             Assert.AreEqual(5, playerItem.LevelBonus);
@@ -149,7 +151,7 @@ namespace MMO.Test{
             await SetupTest();
             Assert.AreEqual(0, this.player1.Gold);
             await ItemResponse.Sell(this.player1.Id, this.holySword.ItemName);
-            this.player1 = await Player.Get(P1);
+            this.player1 = await PlayerResponse.Get(P1);
             var inventory = await ItemResponse.GetAll(this.player1.Id);
             Assert.AreEqual(1000, this.player1.Gold);
             Assert.Throws<InvalidOperationException>(() => inventory.First(x => x.ItemName == "Holy Sword"));
@@ -158,10 +160,10 @@ namespace MMO.Test{
         }
 
         async Task SetupTest(){
-            await ApiConnection.DeleteRequest<Player>("drop/playerCollection");
-            this.player1 = await Player.Create(P1);
-            this.player2 = await Player.Create(P2);
-            this.player3 = await Player.Create(P3);
+            await Api.DeleteRequest<Player>("drop/playerCollection");
+            this.player1 = await PlayerResponse.Create(P1);
+            this.player2 = await PlayerResponse.Create(P2);
+            this.player3 = await PlayerResponse.Create(P3);
 
             this.holySword = await ItemCreator(this.player1.Id, "Holy Sword", ItemTypes.Sword, ItemRarity.Rare, 3, 2, 1000);
             this.basicArmor = await ItemCreator(this.player1.Id, "Basic Armor", ItemTypes.Armor, ItemRarity.Common, 1, 0, 20);
@@ -170,9 +172,9 @@ namespace MMO.Test{
             this.darkArmor = await ItemCreator(this.player2.Id, "Dark Armor", ItemTypes.Armor, ItemRarity.Epic, 78, 15, 20000);
 
 
-            this.player1 = await Player.Get(P1);
-            this.player2 = await Player.Get(P2);
-            this.player3 = await Player.Get(P3);
+            this.player1 = await PlayerResponse.Get(P1);
+            this.player2 = await PlayerResponse.Get(P2);
+            this.player3 = await PlayerResponse.Get(P3);
         }
 
         static async Task<Item> ItemCreator(Guid playerId, string name, ItemTypes type, ItemRarity rarity,

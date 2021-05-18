@@ -1,7 +1,9 @@
 using System;
 using System.Threading.Tasks;
+using Client.Api;
 using Client.Model;
 using Client.Requests;
+using Client.RestApi;
 using Client.Utilities;
 using NUnit.Framework;
 
@@ -25,16 +27,16 @@ namespace MMO.Test{
                 QuestName = "Aiming for the Sky"
             };
             await QuestRequest.CompleteQuest(this.player1.Id, quest);
-            await ApiConnection.PostRequest<Player>($"players/{this.player1.Id}/levelUp", "");
+            await Api.PostRequest<Player>($"players/{this.player1.Id}/levelUp", "");
 
-            this.player1 = await Player.Get(this.player1.Id);
+            this.player1 = await PlayerResponse.Get(this.player1.Id);
             Assert.AreEqual(1, this.player1.Level);
         }
 
         [Test]
         public async Task LevelUpToLevelTenTest(){
             await SetupTest();
-            this.player1 = await Player.Modify(this.player1.Id, new ModifiedPlayer{
+            this.player1 = await PlayerResponse.Modify(this.player1.Id, new ModifiedPlayer{
                 Gold = 1000,
                 Level = 10,
                 Score = 100
@@ -48,15 +50,15 @@ namespace MMO.Test{
             };
 
             await QuestRequest.CompleteQuest(this.player1.Id, quest);
-            await ApiConnection.PostRequest<Player>($"players/{this.player1.Id}/levelUp", "");
-            this.player1 = await Player.Get(this.player1.Id);
+            await Api.PostRequest<Player>($"players/{this.player1.Id}/levelUp", "");
+            this.player1 = await PlayerResponse.Get(this.player1.Id);
             Assert.AreEqual(11, this.player1.Level);
         }
         
         [Test]
         public async Task LevelUpFailNotEnoughGoldTest(){
             await SetupTest();
-            this.player1 = await Player.Modify(this.player1.Id, new ModifiedPlayer{
+            this.player1 = await PlayerResponse.Modify(this.player1.Id, new ModifiedPlayer{
                 Gold = 0,
                 Level = 10,
                 Score = 100
@@ -70,14 +72,14 @@ namespace MMO.Test{
             };
 
             await QuestRequest.CompleteQuest(this.player1.Id, quest);
-            this.player1 = await ApiConnection.PostRequest<Player>($"players/{this.player1.Id}/levelUp", "");
+            this.player1 = await Api.PostRequest<Player>($"players/{this.player1.Id}/levelUp", "");
             Assert.IsNull(this.player1.Name);
         }
         
         [Test]
         public async Task LevelUpFailNotEnoughExpTest(){
             await SetupTest();
-            this.player1 = await Player.Modify(this.player1.Id, new ModifiedPlayer{
+            this.player1 = await PlayerResponse.Modify(this.player1.Id, new ModifiedPlayer{
                 Gold = 0,
                 Level = 10,
                 Score = 100
@@ -91,15 +93,15 @@ namespace MMO.Test{
             };
 
             await QuestRequest.CompleteQuest(this.player1.Id, quest);
-            this.player1 = await ApiConnection.PostRequest<Player>($"players/{this.player1.Id}/levelUp", "");
+            this.player1 = await Api.PostRequest<Player>($"players/{this.player1.Id}/levelUp", "");
             Assert.IsNull(this.player1.Name);
         }
 
         async Task SetupTest(){
-            await ApiConnection.DeleteRequest<Player>("drop/playerCollection");
-            this.player1 = await Player.Create(P1);
-            this.player2 = await Player.Create(P2);
-            this.player3 = await Player.Create(P3);
+            await Api.DeleteRequest<Player>("drop/playerCollection");
+            this.player1 = await PlayerResponse.Create(P1);
+            this.player2 = await PlayerResponse.Create(P2);
+            this.player3 = await PlayerResponse.Create(P3);
 
             await ItemCreator(this.player1.Id, "Holy Sword", ItemTypes.Sword, ItemRarity.Rare, 3, 2, 1000);
             await ItemCreator(this.player1.Id, "Basic Armor", ItemTypes.Armor, ItemRarity.Common, 1, 0, 20);

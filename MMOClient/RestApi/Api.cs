@@ -5,8 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace Client.Utilities{
-    public static class ApiConnection{
+namespace Client.RestApi{
+    public static class Api{
         public static async Task<T> GetResponse<T>(string url){
             var adjustedUrl = url;
             if (url[0] == '/')

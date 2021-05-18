@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Client.Api;
 using Client.Model;
+using Client.Requests;
 using Client.Utilities;
 
 namespace Client.UserStrategy{
@@ -64,14 +65,14 @@ namespace Client.UserStrategy{
             Custom.WriteLine("Give me a username or user ID:", ConsoleColor.Yellow);
             var userInput = Custom.ReadLine(ConsoleColor.Green);
             if (Guid.TryParse(userInput, out var result)){
-                return await Player.Get(result);
+                return await PlayerResponse.Get(result);
             }
 
-            return await Player.Get(userInput);
+            return await PlayerResponse.Get(userInput);
         }
 
         static async Task<List<Player>> GetAllPlayers(Player player){
-            var players = await Player.GetAll();
+            var players = await PlayerResponse.GetAll();
             foreach (var getPlayer in players){
                 Custom.WriteMultiLines(ConsoleColor.White,
                     $"Id: {getPlayer.Id}", $"Name: {getPlayer.Name}", $"Level: {getPlayer.Level}");
@@ -83,7 +84,7 @@ namespace Client.UserStrategy{
         static async Task<Player> CreateCharacter(Player player){
             Custom.WriteLine("Character name:", ConsoleColor.Yellow);
             var userInput = Custom.ReadLine(ConsoleColor.Green);
-            var createdPlayer = await Player.Create(userInput);
+            var createdPlayer = await PlayerResponse.Create(userInput);
             Custom.WriteMultiLines(ConsoleColor.White, "Created player:", $"Id: {createdPlayer.Id}",
                 $"Name: {createdPlayer.Name}", $"Level: {createdPlayer.Level}");
             return createdPlayer;
