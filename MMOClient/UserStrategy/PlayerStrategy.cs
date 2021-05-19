@@ -38,7 +38,7 @@ namespace Client.UserStrategy{
             while (true){
                 Custom.WriteMultiLines(ConsoleColor.Yellow,
                     "0: Go back", "1: Check out items",
-                    "2: Check out equipment", "3: Check out quests");
+                    "2: Check out equipment", "3: Check out quests", "4: Modify Player");
                 var userInput = Custom.ReadLine(ConsoleColor.Green);
                 switch (userInput){
                     case "0":
@@ -52,7 +52,14 @@ namespace Client.UserStrategy{
                         await equipStrategy.PlayerEquippedItems(player);
                         break;
                     case "3":
-                        Console.WriteLine("Doing something quest related");
+                        var questStrategy = new QuestStrategy();
+                        await questStrategy.PlayerQuests(player);
+                        break;
+                    case "4":
+                        player = await ModifyPlayer(player.Id);
+                        Custom.WriteMultiLines(ConsoleColor.White, $"New values for player: {player.Name}",
+                            $"-Gold: {player.Gold}",
+                            $"-Level: {player.Level}", $"-Score: {player.Score}");
                         break;
                     default:
                         Custom.WriteLine("Unknown input", ConsoleColor.Red);
@@ -80,6 +87,23 @@ namespace Client.UserStrategy{
             }
 
             return players;
+        }
+
+        static async Task<Player> ModifyPlayer(Guid playerId){
+            try{
+                var modifiedPlayer = new ModifiedPlayer();
+                Custom.WriteLine("Gold:", ConsoleColor.Yellow);
+                modifiedPlayer.Gold = int.Parse(Custom.ReadLine(ConsoleColor.Green) ?? string.Empty);
+                Custom.WriteLine("Level:", ConsoleColor.Yellow);
+                modifiedPlayer.Level = int.Parse(Custom.ReadLine(ConsoleColor.Green) ?? string.Empty);
+                Custom.WriteLine("Score:", ConsoleColor.Yellow);
+                modifiedPlayer.Score = int.Parse(Custom.ReadLine(ConsoleColor.Green) ?? string.Empty);
+                return await PlayerRequest.Modify(playerId, modifiedPlayer);
+            }
+            catch (Exception){
+                Custom.WriteLine("Invalid input", ConsoleColor.Red);
+                return null;
+            }
         }
 
         static async Task<Player> CreateCharacter(){

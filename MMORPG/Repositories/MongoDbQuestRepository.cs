@@ -23,9 +23,11 @@ namespace MMORPG.Repositories{
             return await ApiUtility.GetQuestCollection().Find(filter).SingleAsync();
         }
 
-        public async Task<Quest[]> GetAllQuests(){
-            var allQuests = await ApiUtility.GetQuestCollection().Find(_ => true).ToListAsync();
-            return allQuests.ToArray();
+        public async Task<Quest[]> GetAllQuests(Guid playerId){
+            var player = await ApiUtility.GetPlayerCollection().Find(x => x.Id == playerId).FirstAsync();
+            return player.Quests;
+            // var allQuests = await ApiUtility.GetQuestCollection().Find(_ => true).ToListAsync();
+            // return allQuests.ToArray();
         }
 
 

@@ -57,7 +57,7 @@ namespace MMORPG.Repositories{
                 await Repository.PlayerRepository.UpdatePlayer(playerId, update);
                 return await DeleteItem(playerId, itemName);
             }
-            catch (Exception e){
+            catch (Exception){
                 throw new PlayerException("Item not found or has been delete");
             }
         }
