@@ -14,7 +14,7 @@ namespace Client.UserStrategy{
             while (true){
                 Custom.WriteLine("What would you like to do:", ConsoleColor.Yellow);
                 Custom.WriteMultiLines(ConsoleColor.Yellow, "1: Create Character",
-                    "2: Get Character", "3: Get all Characters", "4: Peek at leaderboard");
+                    "2: Get Character", "3: Get all Characters", "4: Peek at leaderboard", "5: Get statistics");
                 var userInput = Custom.ReadLine(ConsoleColor.Green);
                 Custom.Exit(userInput);
 
@@ -32,6 +32,10 @@ namespace Client.UserStrategy{
                     case "4":
                         var leaderboardStrategy = new LeaderboardStrategy();
                         await leaderboardStrategy.Leaderboard();
+                        break;
+                    case "5":
+                        var statistics = new StatisticsStrategy();
+                        await statistics.Statistics();
                         break;
                 }
             }
