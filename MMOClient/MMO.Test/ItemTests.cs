@@ -151,6 +151,7 @@ namespace MMO.Test{
             await ItemRequest.Sell(this.player1.Id, this.holySword.ItemName);
             this.player1 = await PlayerRequest.Get(P1);
             var inventory = await ItemRequest.GetAll(this.player1.Id);
+            Assert.AreEqual(0, this.player1.Level);
             Assert.AreEqual(1000, this.player1.Gold);
             Assert.Throws<InvalidOperationException>(() => inventory.First(x => x.ItemName == "Holy Sword"));
             Assert.ThrowsAsync<Newtonsoft.Json.JsonReaderException>(async () =>

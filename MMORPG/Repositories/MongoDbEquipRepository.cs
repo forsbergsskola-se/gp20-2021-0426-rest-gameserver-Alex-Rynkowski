@@ -45,15 +45,18 @@ namespace MMORPG.Repositories{
             var equippedItems = await ApiUtility.GetPlayerCollection()
                 .FindAsync(x => x.EquippedItems[item.ItemType.ToString()] == item);
 
-            if (equippedItems == null)
-                return;
+            try{
+                equippedItems.First();
+                var getItem = await ItemRepository.GetItem(playerId, item.ItemName);
+                var update = Builders<Player>.Update
+                    .Set(x => x.EquippedItems[getItem.ItemType.ToString()], null)
+                    .Inc(player => player.Level, -getItem.LevelBonus);
 
-            var getItem = await ItemRepository.GetItem(playerId, item.ItemName);
-            var update = Builders<Player>.Update
-                .Set(x => x.EquippedItems[getItem.ItemType.ToString()], null)
-                .Inc(player => player.Level, -getItem.LevelBonus);
-
-            await ApiUtility.GetPlayerCollection().UpdateOneAsync(playerId.GetPlayerById(), update);
+                await ApiUtility.GetPlayerCollection().UpdateOneAsync(playerId.GetPlayerById(), update);
+            }
+            catch (Exception){
+                //ignore
+            }
         }
 
         static bool IsNullOrWrongType(ItemTypes type, Item item){
