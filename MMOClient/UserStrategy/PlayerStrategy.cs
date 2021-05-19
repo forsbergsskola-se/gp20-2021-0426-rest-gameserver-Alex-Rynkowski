@@ -32,6 +32,7 @@ namespace Client.UserStrategy{
                 }
             }
         }
+
         async Task PickStrategy(Player player){
             Custom.WriteLine($"Hello {player.Name}, what would you like to do?", ConsoleColor.White);
             while (true){
@@ -47,7 +48,8 @@ namespace Client.UserStrategy{
                         await itemStrategy.PlayerItems(player);
                         break;
                     case "2":
-                        Console.WriteLine("Doing something equipment related");
+                        var equipStrategy = new EquipStrategy();
+                        await equipStrategy.PlayerEquippedItems(player);
                         break;
                     case "3":
                         Console.WriteLine("Doing something quest related");
@@ -58,7 +60,7 @@ namespace Client.UserStrategy{
                 }
             }
         }
-        
+
         static async Task<Player> GetPlayer(){
             Custom.WriteLine("Give me a username or user ID:", ConsoleColor.Yellow);
             var userInput = Custom.ReadLine(ConsoleColor.Green);

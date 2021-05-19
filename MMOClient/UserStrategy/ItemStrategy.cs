@@ -64,12 +64,6 @@ namespace Client.UserStrategy{
                 $"Sell value: {item.SellValue}");
         }
 
-        static async Task<Item> Get(Guid playerId){
-            Custom.WriteLine("Enter item name to display info for that item: ", ConsoleColor.Yellow);
-            var itemName = Custom.ReadLine(ConsoleColor.Green);
-            return await ItemRequest.Get(playerId, itemName);
-        }
-
         async Task<List<Item>> GetInventory(Guid playerId){
             return await ItemRequest.GetAll(playerId);
         }
