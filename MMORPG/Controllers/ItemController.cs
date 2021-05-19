@@ -21,10 +21,6 @@ namespace MMORPG.Controllers{
         public Task<Item> CreateItem(Guid id, ModifiedItem newItem)
             => this.repository.ItemRepository.CreateItem(id, newItem);
 
-        [HttpDelete("{id:guid}/items/delete/{itemName}")]
-        public Task DeleteItem(Guid id, string itemName)
-            => this.repository.ItemRepository.DeleteItem(id, itemName);
-
         [HttpGet("{id:guid}/items")]
         public Task<List<Item>> GetInventory(Guid id)
             => this.repository.ItemRepository.GetInventory(id);

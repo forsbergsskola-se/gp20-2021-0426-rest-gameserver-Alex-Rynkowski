@@ -25,6 +25,5 @@ namespace MMORPG.Data{
         Shield,
         Armor,
         Helmet,
-        Potion,
     }
 }

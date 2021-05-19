@@ -25,7 +25,7 @@ namespace MMORPG.Repositories{
             return Enum.IsDefined(typeof(ItemTypes), itemType.ToString());
         }
 
-        public async Task<Item> DeleteItem(Guid playerId, string itemName){
+        async Task<Item> DeleteItem(Guid playerId, string itemName){
             var filter = Builders<Player>.Filter.And(playerId.GetPlayerById(),
                 Builders<Player>.Filter.ElemMatch(x => x.Inventory, x => x.ItemName == itemName));
 

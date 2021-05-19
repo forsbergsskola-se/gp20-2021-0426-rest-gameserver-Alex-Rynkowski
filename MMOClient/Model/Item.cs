@@ -20,6 +20,5 @@
         Shield,
         Armor,
         Helmet,
-        Potion,
     }
 }

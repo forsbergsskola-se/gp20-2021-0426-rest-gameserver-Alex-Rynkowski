@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace MMORPG.Data{
@@ -10,7 +11,7 @@ namespace MMORPG.Data{
         public string Name{ get; set; }
         public int Score{ get; set; }
         public int Gold{ get; set; }
-        public int Level{ get; set; }
+        [Range(0, 99)] public int Level{ get; set; }
         public bool IsDeleted{ get; set; }
         public DateTime CreationTime{ get; set; }
         public int CurrentExperience{ get; set; }
