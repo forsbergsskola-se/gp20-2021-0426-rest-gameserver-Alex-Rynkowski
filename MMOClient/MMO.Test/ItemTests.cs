@@ -40,6 +40,7 @@ namespace MMO.Test{
             Assert.AreEqual(3, playerItem.LevelRequirement);
             Assert.AreEqual(ItemRarity.Common, playerItem.Rarity);
         }
+
         [Test]
         public async Task UnCommonItemTest(){
             await Api.DeleteRequest<Player>("drop/playerCollection");
@@ -59,6 +60,7 @@ namespace MMO.Test{
             Assert.AreEqual(6, playerItem.LevelRequirement);
             Assert.AreEqual(ItemRarity.Uncommon, playerItem.Rarity);
         }
+
         [Test]
         public async Task RareItemTest(){
             await Api.DeleteRequest<Player>("drop/playerCollection");
@@ -78,6 +80,7 @@ namespace MMO.Test{
             Assert.AreEqual(9, playerItem.LevelRequirement);
             Assert.AreEqual(ItemRarity.Rare, playerItem.Rarity);
         }
+
         [Test]
         public async Task EpicItemTest(){
             await Api.DeleteRequest<Player>("drop/playerCollection");
@@ -97,7 +100,7 @@ namespace MMO.Test{
             Assert.AreEqual(20, playerItem.LevelRequirement);
             Assert.AreEqual(ItemRarity.Epic, playerItem.Rarity);
         }
-        
+
         [Test]
         public async Task PlayerOneTest(){
             await SetupTest();
@@ -150,12 +153,10 @@ namespace MMO.Test{
             Assert.AreEqual(0, this.player1.Gold);
             await ItemRequest.Sell(this.player1.Id, this.holySword.ItemName);
             this.player1 = await PlayerRequest.Get(P1);
-            var inventory = await ItemRequest.GetAll(this.player1.Id);
             Assert.AreEqual(0, this.player1.Level);
             Assert.AreEqual(1000, this.player1.Gold);
-            Assert.Throws<InvalidOperationException>(() => inventory.First(x => x.ItemName == "Holy Sword"));
-            Assert.ThrowsAsync<Newtonsoft.Json.JsonReaderException>(async () =>
-                await ItemRequest.Sell(this.player1.Id, this.holySword.ItemName));
+            var tryItem = await ItemRequest.Sell(this.player1.Id, this.holySword.ItemName);
+            Assert.IsNull(tryItem.ItemName);
         }
 
         async Task SetupTest(){
@@ -164,11 +165,16 @@ namespace MMO.Test{
             this.player2 = await PlayerRequest.Create(P2);
             this.player3 = await PlayerRequest.Create(P3);
 
-            this.holySword = await ItemCreator(this.player1.Id, "Holy Sword", ItemTypes.Sword, ItemRarity.Rare, 3, 2, 1000);
-            this.basicArmor = await ItemCreator(this.player1.Id, "Basic Armor", ItemTypes.Armor, ItemRarity.Common, 1, 0, 20);
-            this.holyShield = await ItemCreator(this.player2.Id, "Holy Shield", ItemTypes.Shield, ItemRarity.Epic, 6, 4, 2000);
-            this.darkSword = await ItemCreator(this.player2.Id, "Dark Sword", ItemTypes.Sword, ItemRarity.Common, 1, 4, 2000);
-            this.darkArmor = await ItemCreator(this.player2.Id, "Dark Armor", ItemTypes.Armor, ItemRarity.Epic, 78, 15, 20000);
+            this.holySword = await ItemCreator(this.player1.Id, "Holy Sword", ItemTypes.Sword, ItemRarity.Rare, 3, 2,
+                1000);
+            this.basicArmor = await ItemCreator(this.player1.Id, "Basic Armor", ItemTypes.Armor, ItemRarity.Common, 1,
+                0, 20);
+            this.holyShield = await ItemCreator(this.player2.Id, "Holy Shield", ItemTypes.Shield, ItemRarity.Epic, 6, 4,
+                2000);
+            this.darkSword = await ItemCreator(this.player2.Id, "Dark Sword", ItemTypes.Sword, ItemRarity.Common, 1, 4,
+                2000);
+            this.darkArmor = await ItemCreator(this.player2.Id, "Dark Armor", ItemTypes.Armor, ItemRarity.Epic, 78, 15,
+                20000);
 
 
             this.player1 = await PlayerRequest.Get(P1);

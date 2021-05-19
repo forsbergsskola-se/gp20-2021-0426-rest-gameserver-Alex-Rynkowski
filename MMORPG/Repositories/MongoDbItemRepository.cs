@@ -51,10 +51,15 @@ namespace MMORPG.Repositories{
 
         public async Task<Item> SellItem(Guid playerId, string itemName){
             var item = await GetItem(playerId, itemName);
-            var update = Builders<Player>.Update.Inc(x => x.Gold, item.SellValue);
-            await Repository.EquipRepository.UnEquip(playerId, item);
-            await Repository.PlayerRepository.UpdatePlayer(playerId, update);
-            return await DeleteItem(playerId, itemName);
+            try{
+                var update = Builders<Player>.Update.Inc(x => x.Gold, item.SellValue);
+                await Repository.EquipRepository.UnEquip(playerId, item);
+                await Repository.PlayerRepository.UpdatePlayer(playerId, update);
+                return await DeleteItem(playerId, itemName);
+            }
+            catch (Exception e){
+                throw new PlayerException("Item not found or has been delete");
+            }
         }
     }
 }
