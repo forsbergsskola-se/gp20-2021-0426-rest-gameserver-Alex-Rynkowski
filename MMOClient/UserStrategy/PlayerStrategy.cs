@@ -36,7 +36,7 @@ namespace Client.UserStrategy{
             Custom.WriteLine($"Hello {player.Name}, what would you like to do?", ConsoleColor.White);
             while (true){
                 Custom.WriteMultiLines(ConsoleColor.Yellow,
-                    "0: Go back", "1: Check items",
+                    "0: Go back", "1: Check out items",
                     "2: Check out equipment", "3: Check out quests");
                 var userInput = Custom.ReadLine(ConsoleColor.Green);
                 switch (userInput){
@@ -45,7 +45,6 @@ namespace Client.UserStrategy{
                     case "1":
                         var itemStrategy = new ItemStrategy();
                         await itemStrategy.PlayerItems(player);
-                        Console.WriteLine("Doing something item related");
                         break;
                     case "2":
                         Console.WriteLine("Doing something equipment related");

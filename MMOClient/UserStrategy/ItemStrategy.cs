@@ -13,7 +13,7 @@ namespace Client.UserStrategy{
             Item item;
             while (true){
                 Custom.WriteMultiLines(ConsoleColor.Yellow, "0: Go back", "1: Create an item",
-                    "2: Get inventory", "3: Get an item", "4: Sell an item");
+                    "2: Get inventory", "3: Sell an item");
                 var userInput = Custom.ReadLine(ConsoleColor.Green);
                 switch (userInput){
                     case "0":
@@ -33,18 +33,15 @@ namespace Client.UserStrategy{
                                 $"Rarity: {inventoryItem.Rarity}", $"Type: {inventoryItem.ItemType}");
                             Console.WriteLine("-----------------------");
                         }
-
                         break;
                     case "3":
-                        item = await Get(player.Id);
-                        if (item != null){
-                            Custom.WriteLine("Item info:", ConsoleColor.White);
-                            PrintItemProperties(item);
-                        }
-
-                        break;
-                    case "4":
                         item = await SellItem(player.Id);
+                        if (!string.IsNullOrEmpty(item.ItemName)){
+                            Custom.WriteLine($"{item.ItemName} has been sold for {item.SellValue}", ConsoleColor.White);
+                        }
+                        else{
+                            Custom.WriteLine("That item does not exist in your inventory",ConsoleColor.Red);
+                        }
                         break;
                     default:
                         Custom.WriteLine("Unknown input", ConsoleColor.Red);
