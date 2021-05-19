@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Client.Model;
 using Client.RestApi;
@@ -84,7 +85,13 @@ namespace Client.UserStrategy{
                 item.ItemName = Custom.ReadLine(ConsoleColor.Green);
 
                 Custom.WriteLine("Item type:", ConsoleColor.Yellow);
-                item.ItemType = (ItemTypes) Convert.ToInt32(Custom.ReadLine(ConsoleColor.Green));
+                var itemType = Custom.ReadLine(ConsoleColor.Green);
+                if (int.TryParse(itemType, out var itemTypeResult)){
+                    item.ItemType = (ItemTypes) itemTypeResult;
+                }
+                else{
+                    item.ItemType = (ItemTypes) Enum.Parse(typeof(ItemTypes), itemType ?? string.Empty);
+                }
 
                 Custom.WriteLine("level requirement:", ConsoleColor.Yellow);
                 item.LevelRequirement = Convert.ToInt32(Custom.ReadLine(ConsoleColor.Green));
@@ -93,7 +100,14 @@ namespace Client.UserStrategy{
                 item.LevelBonus = Convert.ToInt32(Custom.ReadLine(ConsoleColor.Green));
 
                 Custom.WriteLine("item rarity:", ConsoleColor.Yellow);
-                item.Rarity = (ItemRarity) Convert.ToInt32(Custom.ReadLine(ConsoleColor.Green));
+                var rarity = Custom.ReadLine(ConsoleColor.Green);
+
+                if (int.TryParse(rarity, out var result)){
+                    item.Rarity = (ItemRarity) result;
+                }
+                else{
+                    item.Rarity = (ItemRarity) Enum.Parse(typeof(ItemRarity), rarity ?? string.Empty);
+                }
 
                 Custom.WriteLine("sell value:", ConsoleColor.Yellow);
                 item.SellValue = Convert.ToInt32(Custom.ReadLine(ConsoleColor.Green));

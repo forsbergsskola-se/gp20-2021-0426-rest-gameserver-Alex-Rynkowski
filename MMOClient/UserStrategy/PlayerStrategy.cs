@@ -20,14 +20,14 @@ namespace Client.UserStrategy{
 
                 switch (userInput){
                     case "1":
-                        player = await CreateCharacter(player);
+                        player = await CreateCharacter();
                         break;
                     case "2":
-                        player = await GetPlayer(player);
+                        player = await GetPlayer();
                         await PickStrategy(player);
                         break;
                     case "3":
-                        playerList = await GetAllPlayers(player);
+                        playerList = await GetAllPlayers();
                         break;
                 }
             }
@@ -60,7 +60,7 @@ namespace Client.UserStrategy{
             }
         }
         
-        static async Task<Player> GetPlayer(Player player){
+        static async Task<Player> GetPlayer(){
             Custom.WriteLine("Give me a username or user ID:", ConsoleColor.Yellow);
             var userInput = Custom.ReadLine(ConsoleColor.Green);
             if (Guid.TryParse(userInput, out var result)){
@@ -70,17 +70,18 @@ namespace Client.UserStrategy{
             return await PlayerRequest.Get(userInput);
         }
 
-        static async Task<List<Player>> GetAllPlayers(Player player){
+        static async Task<List<Player>> GetAllPlayers(){
             var players = await PlayerRequest.GetAll();
             foreach (var getPlayer in players){
                 Custom.WriteMultiLines(ConsoleColor.White,
                     $"Id: {getPlayer.Id}", $"Name: {getPlayer.Name}", $"Level: {getPlayer.Level}");
+                Console.WriteLine("----------------------------------");
             }
 
             return players;
         }
 
-        static async Task<Player> CreateCharacter(Player player){
+        static async Task<Player> CreateCharacter(){
             Custom.WriteLine("Character name:", ConsoleColor.Yellow);
             var userInput = Custom.ReadLine(ConsoleColor.Green);
             var createdPlayer = await PlayerRequest.Create(userInput);
